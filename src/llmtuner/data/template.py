@@ -771,3 +771,13 @@ _register_template(
     format_user=StringFormatter(slots=["<human>:{{content}}\n<bot>:"]),
     format_separator=EmptyFormatter(slots=["\n"]),
 )
+
+_register_template(
+    name="solaris",
+    format_system=StringFormatter(slots=[{"bos_token"}, "### System\n\n {{content}}"]),
+    format_user=StringFormatter(slots=["\n\n ### User\n\n {{content}}\n\n ### Assistant\n\n"]),
+    # format_user=StringFormatter(slots=["### User:\n\n{{content}}"]),
+    # format_assistant=StringFormatter(slots=["### Assistant:\n\n{{content}}"]),
+    # format_separator=EmptyFormatter(slots=["\n\n"]),
+    # efficient_eos=True,
+)

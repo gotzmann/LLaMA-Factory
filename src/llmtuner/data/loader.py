@@ -161,9 +161,19 @@ def get_dataset(
                 dataset.save_to_disk(data_args.cache_path)
                 logger.info("Dataset cache saved at {}.".format(data_args.cache_path))
 
-        if training_args.should_log:
+        if True: # training_args.should_log:
             try:
-                print_function(next(iter(dataset)))
+                print("\n\n=== [ 01 ] =============================================================================\n")
+                datasetIterator = iter(dataset)
+                print_function(next(datasetIterator))
+                print("\n\n=== [ 02 ] =============================================================================\n")
+                print_function(next(datasetIterator))
+                print_function(next(datasetIterator))
+                print("\n\n=== [ 03 ] =============================================================================\n")
+                print_function(next(datasetIterator))
+                print("\n\n=== [ 04 ] =============================================================================\n")
+                print_function(next(datasetIterator))
+                #print("\n\n================================================================================\n\n")
             except StopIteration:
                 raise RuntimeError("Cannot find valid samples, check `data/README.md` for the data format.")
 

@@ -97,12 +97,30 @@ def preprocess_packed_supervised_dataset(
     template: "Template",
     data_args: "DataArguments",
 ) -> Dict[str, List[List[int]]]:
+    
     # build inputs with format `<bos> X1 Y1 <eos> <bos> X2 Y2 <eos>`
     # and labels with format `<ignore> ... <ignore> Y1 <eos> <ignore> ... <ignore> Y2 <eos>`
     model_inputs = {"input_ids": [], "attention_mask": [], "labels": []}
     input_ids, labels = [], []
+    block_size = data_args.cutoff_len
+    current_block = 0
+
     for i in range(len(examples["prompt"])):
+
+        #print("\n\n=== [ PROMPT + RESPONSE ] =======================================================================\n\n")
+        #print(examples["prompt"][i])
+        #print("\n\n")
+        #print(examples["response"][i])
+
+        # TODO: Why there no such samples?
+        # if len(examples["prompt"][i]) > 1:
+        #    exit()
+
         if len(examples["prompt"][i]) % 2 != 1 or len(examples["response"][i]) != 1:
+            #print("\n\n=== len(examples[prompt][i]) % 2 != 1 or len(examples[response][i]) != 1 ===\n\n")
+            #print(examples["prompt"][i])
+            #print("\n\n")
+            #print(examples["response"][i])
             continue
 
         messages = examples["prompt"][i] + examples["response"][i]
@@ -116,8 +134,44 @@ def preprocess_packed_supervised_dataset(
             else:
                 source_mask = [IGNORE_INDEX] * len(source_ids)
 
-            input_ids += source_ids + target_ids
-            labels += source_mask + target_ids
+            sample_length = len(source_ids) + len(target_ids)
+            total_length = len(input_ids)
+            expected_length = total_length + sample_length
+            total_blocks = total_length // block_size
+            expected_blocks = expected_length // block_size
+
+            # -- draft solution for sample padding / shrinking / aligning
+
+            # easy flow, just add new sample
+            if total_blocks == expected_blocks:
+                input_ids += source_ids + target_ids
+                labels += source_mask + target_ids
+
+            # otherwise pad block space with pad token, add sample to a new block
+            # TODO: Introduce better strategy - shrink (?) samples longer than [ block_size ]
+            # TODO: Shrink longer samples around meaningful parts: sentences and paragraphs
+            # TODO: Optimize block filling depending on different sample size of the whole dataset
+            else:
+                # add right padding to the current block
+                #print("\n\n=== [ !!! PADDING !!! ] ===")
+                padding_length = (total_blocks + 1) * block_size - total_length
+                #print("\n\n=== [ PADDING LENGTH = ", padding_length, " ] ===\n\n")
+                input_ids += padding_length * [ tokenizer.eos_token_id ]
+                labels += padding_length * [ -100 ]
+
+                if sample_length > block_size:
+                    allow_length = block_size - len(source_ids) - 1
+                    #print("\n\n=== [ CUT LENGTH = ", cut_length, " ] ===\n\n")
+                    target_ids = target_ids[:allow_length] + [ tokenizer.eos_token_id ]
+                    #print("\n\n=== [ SAMPLE LENGTH = ", sample_length, " || REFRAMED LENGTH = ", len(source_ids) + len(target_ids), " ] ===\n\n")    
+
+                input_ids += source_ids + target_ids
+                labels += source_mask + target_ids
+
+            #print("\n\n=== [ input_ids + labels ] =======================================================================\n\n")
+            #print(input_ids)
+            #print("\n\n")
+            #print(labels)
 
     if template.efficient_eos:
         input_ids += [tokenizer.eos_token_id]
@@ -217,11 +271,11 @@ def preprocess_pairwise_dataset(
 
 
 def print_supervised_dataset_example(example: Dict[str, List[int]], tokenizer: "PreTrainedTokenizer") -> None:
-    print("input_ids:\n{}".format(example["input_ids"]))
-    print("inputs:\n{}".format(tokenizer.decode(example["input_ids"], skip_special_tokens=False)))
-    print("label_ids:\n{}".format(example["labels"]))
+    print("\n=== input_ids: ===\n\n{}".format(example["input_ids"]))
+    print("\n=== inputs: ===\n\n{}".format(tokenizer.decode(example["input_ids"], skip_special_tokens=False)))
+    print("\n=== label_ids: ===\n\n{}".format(example["labels"]))
     print(
-        "labels:\n{}".format(
+        "\n=== labels: ===\n\n{}".format(
             tokenizer.decode(list(filter(lambda x: x != IGNORE_INDEX, example["labels"])), skip_special_tokens=False)
         )
     )
@@ -253,10 +307,12 @@ def get_preprocess_and_print_func(
         print_function = partial(print_unsupervised_dataset_example, tokenizer=tokenizer)
     elif stage == "sft" and not training_args.predict_with_generate:
         if data_args.packing:
+            print("\n\n[ INFO ] We DO going to pack the SFT dataset...")
             preprocess_func = partial(
                 preprocess_packed_supervised_dataset, tokenizer=tokenizer, template=template, data_args=data_args
             )
         else:
+            print("\n\n[ INFO ] We will NOT pack the SFT dataset...")
             preprocess_func = partial(
                 preprocess_supervised_dataset, tokenizer=tokenizer, template=template, data_args=data_args
             )

@@ -1,4 +1,8 @@
 {
+  "final": {
+    "file_name": "/home/git/lenta/final.10K.50K.5K.10K.v0.8.3.jsonl",
+    "formatting": "sharegpt"
+  },
   "alpaca_en": {
     "file_name": "alpaca_data_en_52k.json",
     "file_sha1": "607f94a7f581341e59685aef32f531095232cf23"
