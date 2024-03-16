@@ -9,10 +9,13 @@ from ...extras.constants import IGNORE_INDEX
 from ...extras.misc import get_logits_processor
 from ...extras.ploting import plot_loss
 from ...model import load_model, load_tokenizer
-from ...train.sft.metric import ComputeMetrics
-from ...train.sft.trainer import CustomSeq2SeqTrainer
-from ...train.utils import create_modelcard_and_push
-from ..utils import create_custom_optimzer
+#from ...train.sft.metric import ComputeMetrics
+#from ...train.sft.trainer import CustomSeq2SeqTrainer
+#from ...train.utils import create_modelcard_and_push
+#from ..utils import create_custom_optimzer
+from ..utils import create_modelcard_and_push
+from .metric import ComputeMetrics
+from .trainer import CustomSeq2SeqTrainer
 
 
 if TYPE_CHECKING:
@@ -29,7 +32,8 @@ def run_sft(
     generating_args: "GeneratingArguments",
     callbacks: Optional[List["TrainerCallback"]] = None,
 ):
-    tokenizer = load_tokenizer(model_args)
+    # WAS: tokenizer = load_tokenizer(model_args)
+    tokenizer = load_tokenizer(model_args) # gotzmann
     dataset = get_dataset(tokenizer, model_args, data_args, training_args, stage="sft")
     model = load_model(tokenizer, model_args, finetuning_args, training_args.do_train)
 
@@ -50,17 +54,20 @@ def run_sft(
     training_args.generation_num_beams = data_args.eval_num_beams or training_args.generation_num_beams
 
     # Initialize our Trainer
-    optimizer = create_custom_optimzer(model, dataset, training_args, finetuning_args)
+    # FIXME: https://github.com/huggingface/transformers/issues/15784
+    # optimizer = create_custom_optimzer(model, dataset, training_args, finetuning_args)
     trainer = CustomSeq2SeqTrainer(
         model=model,
         args=training_args,
+        finetuning_args=finetuning_args,
         tokenizer=tokenizer,
         data_collator=data_collator,
         callbacks=callbacks,
-        optimizers=(optimizer, None),
+        # optimizers=(optimizer, None), # ORIGINAL
         compute_metrics=ComputeMetrics(tokenizer) if training_args.predict_with_generate else None,
         **split_dataset(dataset, data_args, training_args),
     )
+    # trainer.optimizer = optimizer # FIXME
 
     # Keyword arguments for `model.generate`
     gen_kwargs = generating_args.to_dict()

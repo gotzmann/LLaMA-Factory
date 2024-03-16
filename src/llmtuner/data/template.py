@@ -774,10 +774,26 @@ _register_template(
 
 _register_template(
     name="solaris",
-    format_system=StringFormatter(slots=[{"bos_token"}, "### System\n\n {{content}}"]),
-    format_user=StringFormatter(slots=["\n\n ### User\n\n {{content}}\n\n ### Assistant\n\n"]),
-    # format_user=StringFormatter(slots=["### User:\n\n{{content}}"]),
-    # format_assistant=StringFormatter(slots=["### Assistant:\n\n{{content}}"]),
+
+    format_system=StringFormatter(slots=[{"bos_token"}, "### System:\n\n{{content}}"]),
+    format_user=StringFormatter(slots=["\n\n### Human:\n\n{{content}}"]),
+    format_assistant=StringFormatter(slots=["\n\n### Assistant:\n\n{{content}}", {"eos_token"}]),
+
+    # format_system=StringFormatter(slots=[{"bos_token"}, "### System: {{content}}\n\n"]),
+    # format_user=StringFormatter(slots=["### User: {{content}}\n\n ### Assistant:"]),
     # format_separator=EmptyFormatter(slots=["\n\n"]),
-    # efficient_eos=True,
+
+    #format_user=StringFormatter(slots=["## User: {{content}}"]),
+    #format_assistant=StringFormatter(slots=["## Assistant: {{content}}", {"eos_token"}]),
+    #format_system=StringFormatter(slots=["## System:\n\n{{content}}"]),
+    #format_user=StringFormatter(slots=["## User: {{content}}\n\n ### Assistant:"]),
+    #efficient_eos=True,
+)
+
+_register_template(
+    name="chatter",
+
+    format_system=StringFormatter(slots=[{"bos_token"}, "<<SYS>>\n{{content}}\n<</SYS>>"]),
+    format_user=StringFormatter(slots=["\n\n[INST] {{content}} [/INST]\n\n"]),
+    format_assistant=StringFormatter(slots=["{{content}}", {"eos_token"}]),
 )
