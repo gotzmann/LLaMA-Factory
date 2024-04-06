@@ -4,12 +4,12 @@ from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple, Union
 
 import numpy as np
 import torch
-#import torch.nn as nn
 from transformers import Seq2SeqTrainer
 
 from ...extras.constants import IGNORE_INDEX
 from ...extras.logging import get_logger
-from ..utils import create_custom_optimzer
+from ..utils import create_custom_optimzer, create_custom_scheduler
+
 
 if TYPE_CHECKING:
     from transformers.trainer import PredictionOutput
@@ -21,7 +21,6 @@ logger = get_logger(__name__)
 
 class CustomSeq2SeqTrainer(Seq2SeqTrainer):
     r"""
-    # Inherits PeftTrainer to compute generative metrics such as BLEU and ROUGE.
     Inherits Seq2SeqTrainer to compute generative metrics such as BLEU and ROUGE.
     """
 
@@ -29,16 +28,19 @@ class CustomSeq2SeqTrainer(Seq2SeqTrainer):
         super().__init__(**kwargs)
         self.finetuning_args = finetuning_args
 
-    def create_optimizer_and_scheduler(self, num_training_steps: int) -> None:
-        self.optimizer = create_custom_optimzer(self.model, self.args, self.finetuning_args, num_training_steps)
+    def create_optimizer(self) -> "torch.optim.Optimizer":
         if self.optimizer is None:
-            self.create_optimizer()
+            self.optimizer = create_custom_optimzer(self.model, self.args, self.finetuning_args)
+        return super().create_optimizer()
 
-        self.create_scheduler(num_training_steps=num_training_steps, optimizer=self.optimizer)
+    def create_scheduler(
+        self, num_training_steps: int, optimizer: Optional["torch.optim.Optimizer"] = None
+    ) -> "torch.optim.lr_scheduler.LRScheduler":
+        create_custom_scheduler(self.args, num_training_steps, optimizer)
+        return super().create_scheduler(num_training_steps, optimizer)
 
     def prediction_step(
         self,
-        #model: nn.Module,
         model: "torch.nn.Module",
         inputs: Dict[str, Union[torch.Tensor, Any]],
         prediction_loss_only: bool,
