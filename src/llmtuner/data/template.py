@@ -778,8 +778,12 @@ _register_template(
     name="solaris",
 
     format_system=StringFormatter(slots=[{"bos_token"}, "### System:\n\n{{content}}"]),
-    format_user=StringFormatter(slots=["\n\n### Human:\n\n{{content}}"]),
-    format_assistant=StringFormatter(slots=["\n\n### Assistant:\n\n{{content}}", {"eos_token"}]),
+    format_user=StringFormatter(slots=["\n\n### Human:\n\n{{content}}\n\n### Assistant:\n\n"]),
+    format_assistant=StringFormatter(slots=["{{content}}", {"eos_token"}]),
+
+    # format_system=StringFormatter(slots=[{"bos_token"}, "### System:\n\n{{content}}"]),
+    # format_user=StringFormatter(slots=["\n\n### Human:\n\n{{content}}"]),
+    # format_assistant=StringFormatter(slots=["\n\n### Assistant:\n\n{{content}}", {"eos_token"}]),
 
     # format_system=StringFormatter(slots=[{"bos_token"}, "### System: {{content}}\n\n"]),
     # format_user=StringFormatter(slots=["### User: {{content}}\n\n ### Assistant:"]),

@@ -177,9 +177,16 @@ def get_dataset(
                     break
                 # block = next(datasetIterator)
                 sample = format(tokenizer.decode(block["input_ids"], skip_special_tokens=False))
-                f = open('input.' + str(num), 'w')
+
+                f = open('inputs.' + str(num), 'w')
                 f.write(sample)
                 f.close()
+
+                labels = ', ' . join(map(str, block["labels"]))
+                f = open('labels.' + str(num), 'w')
+                f.write(labels)
+                f.close()
+
                 num += 1
 
         # DEBUG

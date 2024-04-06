@@ -294,7 +294,6 @@ def create_custom_optimzer(
     model: "PreTrainedModel",
     training_args: "Seq2SeqTrainingArguments",
     finetuning_args: "FinetuningArguments",
-    max_steps: int,
 ) -> Optional["torch.optim.Optimizer"]:
     if finetuning_args.use_galore:
         return _create_galore_optimizer(model, training_args, finetuning_args)

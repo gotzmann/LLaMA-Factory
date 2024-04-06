@@ -42,7 +42,7 @@ def load_tokenizer(model_args: "ModelArguments") -> "PreTrainedTokenizer":
         split_special_tokens=model_args.split_special_tokens,
         padding_side="right",
         **init_kwargs,
-        add_prefix_space = False, # gotzmann
+        add_prefix_space = False, # FIXME: gotzmann - it's incompatible with fast tokenizer !!!
     )
     patch_tokenizer(tokenizer)
     return tokenizer
