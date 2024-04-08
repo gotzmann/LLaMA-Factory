@@ -777,7 +777,8 @@ _register_template(
 _register_template(
     name="solaris",
 
-    format_system=StringFormatter(slots=[{"bos_token"}, "### System:\n\n{{content}}"]),
+    # format_system=StringFormatter(slots=[{"bos_token"}, "### System:\n\n{{content}}"]),
+    format_system=StringFormatter(slots=[{"bos_token"}, "{{content}}"]),
     format_user=StringFormatter(slots=["\n\n### Human:\n\n{{content}}\n\n### Assistant:\n\n"]),
     format_assistant=StringFormatter(slots=["{{content}}", {"eos_token"}]),
 
