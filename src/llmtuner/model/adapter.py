@@ -139,6 +139,9 @@ def init_adapter(
                 "lora_alpha": finetuning_args.lora_alpha,
                 "lora_dropout": finetuning_args.lora_dropout,
                 "use_rslora": finetuning_args.use_rslora,
+
+                # "init_lora_weights": "loftq", # gotzmann
+                # "loftq_config": loftq_config, # gotzmann
             }
 
             if model_args.use_unsloth:
@@ -146,6 +149,33 @@ def init_adapter(
 
                 unsloth_peft_kwargs = {"model": model, "max_seq_length": model_args.model_max_length}
                 model = FastLanguageModel.get_peft_model(**peft_kwargs, **unsloth_peft_kwargs)
+
+                # gotzmann
+                print("\n=== peft_kwargs === \n")
+                print(','.join('{0}={1!r}'.format(k,v) for k,v in peft_kwargs.items()))
+                # print("\n=== peft_kwargs === \n", **peft_kwargs)
+                print("\n=== unsloth_peft_kwargs === \n")
+                #print("\n=== unsloth_peft_kwargs === \n", **unsloth_peft_kwargs)
+                print(','.join('{0}={1!r}'.format(k,v) for k,v in unsloth_peft_kwargs.items()))
+
+                # === peft_kwargs ===
+
+                # r=64,
+                # target_modules=['q_proj', 'k_proj', 'v_proj', 'o_proj'],
+                # lora_alpha=64,
+                # lora_dropout=0.0,
+                # use_rslora=True
+
+                # === unsloth_peft_kwargs ===
+
+                # model=LlamaForCausalLM(
+                # (model): LlamaModel(
+                # (embed_tokens): Embedding(32000, 8192)
+                # (layers): ModuleList(
+                # ...
+                # (lm_head): Linear(in_features=8192, out_features=32000, bias=False)
+                # ),max_seq_length=4096
+
             else:
                 lora_config = LoraConfig(
                     task_type=TaskType.CAUSAL_LM,
@@ -160,6 +190,7 @@ def init_adapter(
             for param in filter(lambda p: p.requires_grad, model.parameters()):
                 param.data = param.data.to(torch.float32)
 
+        print("=== model_args.adapter_name_or_path = ", model_args.adapter_name_or_path) # gotzmann
         if model_args.adapter_name_or_path is not None:
             logger.info("Loaded adapter(s): {}".format(",".join(model_args.adapter_name_or_path)))
 
