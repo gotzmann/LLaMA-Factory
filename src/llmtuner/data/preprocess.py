@@ -123,10 +123,11 @@ def preprocess_packed_supervised_dataset(
     # -- set max allowed for debug or zero for production
 
     MAX_ALLOWED = 0
+    sampleCount = len(examples["prompt"])
 
     # -- pre-tokenize all dataset
 
-    for i in range(len(examples["prompt"])):
+    for i in range(sampleCount):
 
         if MAX_ALLOWED != 0 and i >= MAX_ALLOWED: break
 
@@ -139,7 +140,9 @@ def preprocess_packed_supervised_dataset(
         #print(i)
         #print(examples["system"][i])
 
-        # -- PT
+        # === PT | PRE-TRAIN MODE ===
+
+        # NB! We expect only one GPT sample here, not conversations!
         #print(examples["system"][i])
         #exit(0)
         if examples["system"][i] == "": # and len(examples["prompt"][i]) == 0 and examples["prompt"][i][0] == "":
@@ -162,7 +165,8 @@ def preprocess_packed_supervised_dataset(
             all_target_ids[i].append(target_ids)
             total_tokens[i] += len(source_ids) + len(target_ids)
 
-        # -- STF
+        # === STF | FINE TUNE MODE ===
+
         else:
 
             for source_ids, target_ids in template.encode_multiturn(
@@ -213,7 +217,7 @@ def preprocess_packed_supervised_dataset(
 
     # -- main loop
 
-    for i in range(len(examples["prompt"])):
+    for i in range(sampleCount):
 
         if MAX_ALLOWED != 0 and i >= MAX_ALLOWED: break
 
@@ -313,7 +317,7 @@ def preprocess_packed_supervised_dataset(
             total_blocks = len(input_ids) // block_size
             padding_length = (total_blocks + 1) * block_size - len(input_ids)
 
-            for short in range(i + 1, len(examples["prompt"])):
+            for short in range(i + 1, sampleCount):
 
                 if padding_length < 100: break
                 if short in skip_samples: continue
