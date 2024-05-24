@@ -167,8 +167,11 @@ def get_dataset(
         # NOW: dataset = preprocess_func(dataset[:100]) # DEBUG
         # dataset = dataset[:100] # DEBUG
         #dataset = dataset.filter(lambda sample, indice: indice < 30, with_indices=True) # DEBUG
-            
-        dataset = dataset.map(preprocess_func, batched=True, batch_size=5000, remove_columns=column_names, **kwargs)
+
+        # NEW
+        # dataset = dataset.map(preprocess_func, batched=True, remove_columns=column_names, **kwargs)
+
+        dataset = dataset.map(preprocess_func, batched=True, remove_columns=column_names, **kwargs, batch_size=5000)
 
         # DEBUG
         print ("\n\n=== Writing [ 10 ] blocks to disk... ===\n\n")
@@ -189,7 +192,7 @@ def get_dataset(
                 f.write(labels)
                 f.close()
 
-                num += 1
+                num += 1  
 
         # DEBUG
         # print ("\n\n=== SEARCHING FOR DUBS... ===\n\n")
@@ -212,7 +215,7 @@ def get_dataset(
         #         if hashes[z] == hashes[dub]:
         #             print("\n\n=== DUB FOUND !!! {} == {} === \n\n".format(z, dub))
         #             print(samples[dub])
-        #             #exit()
+        #             #exit()                      
 
         if data_args.tokenized_path is not None:
             if training_args.should_save:
@@ -222,41 +225,6 @@ def get_dataset(
 
             sys.exit(0)
 
-            # datasetIterator = iter(dataset)
-            # #print("\n\n=== [ 01 ] =============================================================================\n")
-            # block = next(datasetIterator)
-            # print_function(block)
-            # f = open('input.01', 'w')
-            # f.write(format(tokenizer.decode(block["input_ids"], skip_special_tokens=False)))
-            # f.close()
-            # #print("\n\n=== [ 02 ] =============================================================================\n")
-            # block = next(datasetIterator)
-            # print_function(block)
-            # f = open('input.02', 'w')
-            # f.write(format(tokenizer.decode(block["input_ids"], skip_special_tokens=False)))
-            # f.close()
-            # #print("\n\n=== [ 03 ] =============================================================================\n")
-            # block = next(datasetIterator)
-            # print_function(block)
-            # f = open('input.03', 'w')
-            # f.write(format(tokenizer.decode(block["input_ids"], skip_special_tokens=False)))
-            # f.close()
-            # #print("\n\n=== [ 04 ] =============================================================================\n")
-            # block = next(datasetIterator)
-            # print_function(block)
-            # f = open('input.04', 'w')
-            # f.write(format(tokenizer.decode(block["input_ids"], skip_special_tokens=False)))
-            # f.close()
-            #print("\n\n=== [ 05 ] =============================================================================\n")
-            #block = next(datasetIterator)
-            #print_function(block)
-            #f = open('input.05', 'w')
-            #f.write(format(tokenizer.decode(block["input_ids"], skip_special_tokens=False)))
-            #f.close()
-            #print("\n\n================================================================================\n\n")
-    #            except StopIteration:
-    #                raise RuntimeError("Cannot find valid samples, check `data/README.md` for the data format.")
-
         if training_args.should_log:
             try:
                 print_function(next(iter(dataset)))
@@ -265,5 +233,38 @@ def get_dataset(
                     raise RuntimeError("Cannot find sufficient samples, consider increasing dataset size.")
                 else:
                     raise RuntimeError("Cannot find valid samples, check `data/README.md` for the data format.")
+                
+        # datasetIterator = iter(dataset)
+        # #print("\n\n=== [ 01 ] =============================================================================\n")
+        # block = next(datasetIterator)
+        # print_function(block)
+        # f = open('input.01', 'w')
+        # f.write(format(tokenizer.decode(block["input_ids"], skip_special_tokens=False)))
+        # f.close()
+        # #print("\n\n=== [ 02 ] =============================================================================\n")
+        # block = next(datasetIterator)
+        # print_function(block)
+        # f = open('input.02', 'w')
+        # f.write(format(tokenizer.decode(block["input_ids"], skip_special_tokens=False)))
+        # f.close()
+        # #print("\n\n=== [ 03 ] =============================================================================\n")
+        # block = next(datasetIterator)
+        # print_function(block)
+        # f = open('input.03', 'w')
+        # f.write(format(tokenizer.decode(block["input_ids"], skip_special_tokens=False)))
+        # f.close()
+        # #print("\n\n=== [ 04 ] =============================================================================\n")
+        # block = next(datasetIterator)
+        # print_function(block)
+        # f = open('input.04', 'w')
+        # f.write(format(tokenizer.decode(block["input_ids"], skip_special_tokens=False)))
+        # f.close()
+        #print("\n\n=== [ 05 ] =============================================================================\n")
+        #block = next(datasetIterator)
+        #print_function(block)
+        #f = open('input.05', 'w')
+        #f.write(format(tokenizer.decode(block["input_ids"], skip_special_tokens=False)))
+        #f.close()
+        #print("\n\n================================================================================\n\n")
 
         return dataset

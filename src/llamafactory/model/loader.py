@@ -56,8 +56,10 @@ def load_tokenizer(model_args: "ModelArguments") -> "TokenizerModule":
             split_special_tokens=model_args.split_special_tokens,
             padding_side="right",
             **init_kwargs,
+            add_prefix_space = False, # FIXME: gotzmann - it's incompatible with fast tokenizer !!!
         )
     except ValueError:  # try the fast one
+        print("[ ERROR ] Exception while using tokenizer!"); exit(0) # gotzmann 
         tokenizer = AutoTokenizer.from_pretrained(
             model_args.model_name_or_path,
             use_fast=True,

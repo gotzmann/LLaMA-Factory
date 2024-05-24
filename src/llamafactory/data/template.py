@@ -901,6 +901,7 @@ _register_template(
     format_separator=EmptyFormatter(slots=["\n"]),
 )
 
+
 _register_template(
     name="solaris",
 

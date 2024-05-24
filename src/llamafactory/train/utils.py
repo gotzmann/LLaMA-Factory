@@ -169,7 +169,6 @@ def _create_galore_optimizer(
     model: "PreTrainedModel",
     training_args: "Seq2SeqTrainingArguments",
     finetuning_args: "FinetuningArguments",
-    max_steps: int,
 ) -> "torch.optim.Optimizer":
     if len(finetuning_args.galore_target) == 1 and finetuning_args.galore_target[0] == "all":
         galore_targets = find_all_linear_modules(model)

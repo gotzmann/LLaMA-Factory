@@ -205,32 +205,25 @@ def init_adapter(
                 "lora_dropout": finetuning_args.lora_dropout,
                 "use_rslora": finetuning_args.use_rslora,
                 "modules_to_save": finetuning_args.additional_target,
-
-                # "init_lora_weights": "loftq", # gotzmann
-                # "loftq_config": loftq_config, # gotzmann
             }
 
             if model_args.use_unsloth:
-
-                from unsloth import FastLanguageModel  # type: ignore
-
-                unsloth_peft_kwargs = {
-                    "model": model,
-                    "max_seq_length": model_args.model_max_length,
-                    "use_gradient_checkpointing": "unsloth",
-                }
-
-                # WAS
-                ##### model = FastLanguageModel.get_peft_model(**peft_kwargs, **unsloth_peft_kwargs)
-                # v3
                 model = get_unsloth_peft_model(model, model_args, peft_kwargs)
 
-                # gotzmann
+                # --- gotzmann
+
+                # from unsloth import FastLanguageModel  # type: ignore
+
+                # unsloth_peft_kwargs = {
+                #     "model": model,
+                #     "max_seq_length": model_args.model_max_length,
+                #     "use_gradient_checkpointing": "unsloth",
+                # }
+                # model = FastLanguageModel.get_peft_model(**peft_kwargs, **unsloth_peft_kwargs)
+
                 print("\n=== peft_kwargs === \n")
                 print(','.join('{0}={1!r}'.format(k,v) for k,v in peft_kwargs.items()))
-                # print("\n=== peft_kwargs === \n", **peft_kwargs)
                 print("\n=== unsloth_peft_kwargs === \n")
-                #print("\n=== unsloth_peft_kwargs === \n", **unsloth_peft_kwargs)
                 print(','.join('{0}={1!r}'.format(k,v) for k,v in unsloth_peft_kwargs.items()))
 
                 # === peft_kwargs ===
@@ -240,16 +233,6 @@ def init_adapter(
                 # lora_alpha=64,
                 # lora_dropout=0.0,
                 # use_rslora=True
-
-                # === unsloth_peft_kwargs ===
-
-                # model=LlamaForCausalLM(
-                # (model): LlamaModel(
-                # (embed_tokens): Embedding(32000, 8192)
-                # (layers): ModuleList(
-                # ...
-                # (lm_head): Linear(in_features=8192, out_features=32000, bias=False)
-                # ),max_seq_length=4096
 
             else:
                 lora_config = LoraConfig(

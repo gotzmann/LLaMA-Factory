@@ -3,8 +3,6 @@
 # Usage: python loftq_init.py --model_name_or_path path_to_model --save_dir output_dir
 # Inspired by: https://github.com/huggingface/peft/blob/main/examples/loftq_finetuning/quantize_save_load.py
 
-# python3 ./scripts/loftq_init.py --model_name_or_path gotzmann/uni --save_dir /home/loftq
-
 import os
 from typing import TYPE_CHECKING, Optional
 
@@ -46,21 +44,20 @@ def quantize_loftq(
     save_dir: str,
     loftq_bits: Optional[int] = 4,
     loftq_iter: Optional[int] = 1,
-    lora_alpha: Optional[int] = 32, # None,
-    lora_rank: Optional[int] = 32, # 16,
-    lora_target: Optional[str] = "q_proj,k_proj,v_proj,o_proj,gate_proj,up_proj,down_proj", # "gate_proj,up_proj,down_proj", # "q_proj,v_proj",
-    save_safetensors: Optional[bool] = True, # False,
+    lora_alpha: Optional[int] = None,
+    lora_rank: Optional[int] = 16,
+    lora_target: Optional[str] = "q_proj,v_proj",
+    save_safetensors: Optional[bool] = False,
 ):
     tokenizer = AutoTokenizer.from_pretrained(model_name_or_path, trust_remote_code=True)
     model = AutoModelForCausalLM.from_pretrained(model_name_or_path, trust_remote_code=True, torch_dtype="auto")
     loftq_config = LoftQConfig(loftq_bits=loftq_bits, loftq_iter=loftq_iter)
-    if lora_alpha is None: exit(0) # else: print("[ INFO ] lora_alpha = {lora_alpha}") #gotzmann
     lora_config = LoraConfig(
         task_type=TaskType.CAUSAL_LM,
         inference_mode=True,
         r=lora_rank,
-        lora_alpha=lora_alpha, # if lora_alpha is not None else lora_rank * 2,
-        lora_dropout=0.0, # 0.1, gotzmann
+        lora_alpha=lora_alpha if lora_alpha is not None else lora_rank * 2,
+        lora_dropout=0.1,
         target_modules=[name.strip() for name in lora_target.split(",")],
         init_lora_weights="loftq",
         loftq_config=loftq_config,

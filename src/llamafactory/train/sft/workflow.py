@@ -28,16 +28,9 @@ def run_sft(
     generating_args: "GeneratingArguments",
     callbacks: Optional[List["TrainerCallback"]] = None,
 ):
-
-    # WAS: tokenizer = load_tokenizer(model_args)
-    # WAS 
-    ##### tokenizer = load_tokenizer(model_args) # gotzmann
-    ##### dataset = get_dataset(tokenizer, model_args, data_args, training_args, stage="sft")
-    # v3
     tokenizer_module = load_tokenizer(model_args)
     tokenizer = tokenizer_module["tokenizer"]
     dataset = get_dataset(model_args, data_args, training_args, stage="sft", **tokenizer_module)
-
     model = load_model(tokenizer, model_args, finetuning_args, training_args.do_train)
 
     if training_args.predict_with_generate:
@@ -68,7 +61,6 @@ def run_sft(
         **tokenizer_module,
         **split_dataset(dataset, data_args, training_args),
     )
-    # trainer.optimizer = optimizer # FIXME
 
     # Keyword arguments for `model.generate`
     gen_kwargs = generating_args.to_dict()
