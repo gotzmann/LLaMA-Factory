@@ -223,8 +223,8 @@ def init_adapter(
 
                 print("\n=== peft_kwargs === \n")
                 print(','.join('{0}={1!r}'.format(k,v) for k,v in peft_kwargs.items()))
-                print("\n=== unsloth_peft_kwargs === \n")
-                print(','.join('{0}={1!r}'.format(k,v) for k,v in unsloth_peft_kwargs.items()))
+                # print("\n=== unsloth_peft_kwargs === \n")
+                # print(','.join('{0}={1!r}'.format(k,v) for k,v in unsloth_peft_kwargs.items()))
 
                 # === peft_kwargs ===
 

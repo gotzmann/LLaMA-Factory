@@ -22,7 +22,7 @@ class ModelArguments:
         metadata={"help": "Where to store the pre-trained models downloaded from huggingface.co or modelscope.cn."},
     )
     use_fast_tokenizer: bool = field(
-        default=True,
+        default=False, # gotzmann True, 
         metadata={"help": "Whether or not to use one of the fast tokenizer (backed by the tokenizers library)."},
     )
     resize_vocab: bool = field(

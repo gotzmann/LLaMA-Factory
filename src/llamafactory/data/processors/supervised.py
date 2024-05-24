@@ -104,7 +104,7 @@ def preprocess_packed_supervised_dataset(
     # print("\nDo Tokeinizer Fast? [ ", tokenizer.is_fast, " ]")
     if tokenizer.is_fast: # gotzmann
         print("[ ERROR ] Fast Tokenizer is ON - stopping here, please use Legacy!")
-        exit(0)
+        # exit(0)
 
     print("Preprocessing [ ", len(examples["prompt"]), " ] samples...")
 
