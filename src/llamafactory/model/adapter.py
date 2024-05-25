@@ -221,8 +221,8 @@ def init_adapter(
                 # }
                 # model = FastLanguageModel.get_peft_model(**peft_kwargs, **unsloth_peft_kwargs)
 
-                print("\n=== peft_kwargs === \n")
-                print(','.join('{0}={1!r}'.format(k,v) for k,v in peft_kwargs.items()))
+                print("\n=== peft_kwargs ===")
+                print(' | '.join('{0}={1!r}'.format(k,v) for k,v in peft_kwargs.items()))
                 # print("\n=== unsloth_peft_kwargs === \n")
                 # print(','.join('{0}={1!r}'.format(k,v) for k,v in unsloth_peft_kwargs.items()))
 

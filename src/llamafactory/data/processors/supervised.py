@@ -81,6 +81,7 @@ def preprocess_supervised_dataset(
 
     return model_inputs
 
+# gotzmann: FIXME: process LLaMA v2 and v3 EOS different
 
 def preprocess_packed_supervised_dataset(
     examples: Dict[str, List[Any]],
@@ -91,30 +92,23 @@ def preprocess_packed_supervised_dataset(
     # build inputs with format `<bos> X1 Y1 <eos> <bos> X2 Y2 <eos>`
     # and labels with format `<ignore> ... <ignore> Y1 <eos> <ignore> ... <ignore> Y2 <eos>`
     model_inputs = {"input_ids": [], "attention_mask": [], "labels": []}
-    input_ids, labels = [], []
     block_size = data_args.cutoff_len
-    skip_samples = []
-    all_source_ids = [ [] for i in range(len(examples["prompt"])) ]
-    #all_source_length = []
-    #print(all_source_ids)
-    all_target_ids = [ [] for i in range(len(examples["prompt"])) ]
-    total_tokens = [ 0 for i in range(len(examples["prompt"])) ]
-    #all_target_length = []
+    sampleCount = len(examples["prompt"])
+    input_ids, labels, skip_samples = [], [], []
+    all_source_ids = [ [] for i in range(sampleCount) ]
+    all_target_ids = [ [] for i in range(sampleCount) ]
+    total_tokens = [ 0 for i in range(sampleCount) ]
 
     # print("\nDo Tokeinizer Fast? [ ", tokenizer.is_fast, " ]")
     if tokenizer.is_fast: # gotzmann
         print("[ ERROR ] Fast Tokenizer is ON - stopping here, please use Legacy!")
         # exit(0)
 
-    print("Preprocessing [ ", len(examples["prompt"]), " ] samples...")
-
-    # -- set max allowed for debug or zero for production
-
-    MAX_ALLOWED = 0
-    sampleCount = len(examples["prompt"])
+    MAX_ALLOWED = 0 # 10 # -- set max allowed for debug or zero for production
 
     # -- pre-tokenize all dataset
 
+    print("Preprocessing [ ", len(examples["prompt"]), " ] samples...")
     for i in range(sampleCount):
 
         if len(examples["prompt"][i]) % 2 != 1 or len(examples["response"][i]) != 1:
@@ -123,35 +117,15 @@ def preprocess_packed_supervised_dataset(
 
         if MAX_ALLOWED != 0 and i >= MAX_ALLOWED: break
 
-        turn = 0
+        ##### turn = 0
 
-        # print("encode_multiturn") # DEBUG
-        # Special case of embedding PT style into SFT
-        #print(target_ids)
-        #exit(0)
-        #print(i)
-        #print(examples["system"][i])
+        # === PT | PRE-TRAIN MODE === NB! We expect only one GPT sample here, not conversations!
 
-        # === PT | PRE-TRAIN MODE ===
+        if examples["system"][i] == "":
 
-        # NB! We expect only one GPT sample here, not conversations!
-        #print(examples["system"][i])
-        #exit(0)
-        if examples["system"][i] == "": # and len(examples["prompt"][i]) == 0 and examples["prompt"][i][0] == "":
-
-            # print("[ PT ]") # DEBUG
-            # _, target_ids = template.encode_oneturn(tokenizer, examples["response"][i])
-            #_, target_ids = template.encode_multiturn(tokenizer, examples["response"][i])
-            gpt = examples["response"][i][0]['content']
-            # print(gpt)
-            # FIXME: need to manually add BOS when system prompt is empty [ 1 == BOS | 2 == EOS ]
-            # target_ids = [ 1 ] + tokenizer.encode(gpt, add_special_tokens=False) + [ 2 ]
-            target_ids = tokenizer.encode(gpt, add_special_tokens=False)
-            # print("=== [ target_ids ] ===") # DEBUG
-            # print(target_ids) # DEBUG
-            # print("=== [ source_ids ] ===") # DEBUG
             source_ids = []
-            # print(source_ids) # DEBUG
+            gpt = examples["response"][i][0]['content']
+            target_ids = tokenizer.encode(gpt, add_special_tokens=False)
 
             all_source_ids[i].append(source_ids)
             all_target_ids[i].append(target_ids)
@@ -161,120 +135,41 @@ def preprocess_packed_supervised_dataset(
 
         else:
 
+            ##### turn = 0
             for source_ids, target_ids in template.encode_multiturn(
                 tokenizer, examples["prompt"][i] + examples["response"][i], examples["system"][i], examples["tools"][i]
             ):
                 
-                # if source_ids[0] == 
-
-                ###if turn == 0:
-                    ###buffer_source_ids = [ source_ids ]
-                    #print("\n\n=== TURN = ", turn)
-                    #print("\n\n=== LEN = ", len(buffer_source_ids))
-                    #print("\n\n=== buffer_source_ids ===\n\n", buffer_source_ids)
-                    #all_source_length[i][z] = len(source_ids)
-                    ##### all_target_ids[i] += [ target_ids ] # .append(target_ids) 
-                    #####buffer_target_ids += target_ids
-                    #all_target_length[i][z] = len(target_ids)
-                ###else:
-                #########################buffer_source_ids += [ source_ids ]
-                #all_source_ids[i] += [ source_ids ]
                 all_source_ids[i].append(source_ids)
-                #print("\n\n=== TURN = ", turn)
-                #print("\n\n=== LEN = ", len(buffer_source_ids))
-                #print("\n\n=== buffer_source_ids ===\n\n", buffer_source_ids)
-                #all_source_length[i][z] = len(source_ids)
-                ##### all_target_ids[i] += [ target_ids ] # .append(target_ids) 
-                #######################################buffer_target_ids += [ target_ids ]
-                #####all_target_ids[i] += [ target_ids ]
-                # Dirty Fix: Remove EOS from the middle of nowhere
-                ###############print("\n\n=== I = {} | TURN = {} | LEN = {} ===\n\n".format(i, turn, len(examples["prompt"][i])))
-                ###########################if turn < len(examples["prompt"][i]) and target_ids[-1] == tokenizer.eos_token_id:
-            
-                ##### if target_ids[-1] == tokenizer.eos_token_id:
-                #####     target_ids.pop()
                 all_target_ids[i].append(target_ids)
                 total_tokens[i] += len(source_ids) + len(target_ids)
-                turn += 1      
+                ##### turn += 1      
 
-        ##### all_target_ids[i][turn-1] += [ tokenizer.eos_token_id ] # Dirty Fix again
-        ##### total_tokens[i] += 1
+                # print("\n\n=== sample #{} source_ids ===\n\n{}".format(i, source_ids))  
+                # print("\n\n=== sample #{} target_ids ===\n\n{}".format(i, target_ids))
 
-        ##################################all_source_ids[i] = buffer_source_ids
-        ########################################all_target_ids[i] = buffer_target_ids
-        ## print("\n\n=== all_source_ids {} ===\n\n{}".format(i, all_source_ids))
-        ## print("\n\n=== all_target_ids {} ===\n\n{}".format(i, all_target_ids))
-        #print("\n\n=== all_target_ids {} ===\n\n", i, all_target_ids)
-        #exit()
+        # all_target_ids[i][turn-1] += [ 128001, 128009 ] # v3 Dirty Fix again
+        # total_tokens[i] += 1 # v3
+
+        # print("\n\n=== all_source_ids #{} ===\n\n{}".format(i, all_source_ids[i]))
+        # print("\n\n=== all_target_ids #{} ===\n\n{}".format(i, all_target_ids[i]))
+        # print("\n\n=== all_target_ids #{} ===\n\n", i, all_target_ids[i])
+        # #print("\n\n=== DECODE ===\n", tokenizer.decode(all_source_ids, skip_special_tokens=False))
+        # #exit()
 
     # -- main loop
 
     for i in range(sampleCount):
 
         if MAX_ALLOWED != 0 and i >= MAX_ALLOWED: break
-
-        if i in skip_samples:
-            #print("\n\n=== SKIPPING # {}".format(i))
-            #print("\n\n=== SKIP SAMPLES ===", skip_samples)
-            continue
+        if i in skip_samples: continue
 
         #print("\n\n=== [ PROMPT + RESPONSE ] =======================================================================\n\n")
         #print(examples["prompt"][i])
         #print("\n\n")
         #print(examples["response"][i])
 
-        # TODO: Why there no such samples?
-        # if len(examples["prompt"][i]) > 1:
-        #    exit()
-
-        #if len(examples["prompt"][i]) % 2 != 1 or len(examples["response"][i]) != 1:
-            #print("\n\n=== len(examples[prompt][i]) % 2 != 1 or len(examples[response][i]) != 1 ===\n\n")
-            #print(examples["prompt"][i])
-            #print("\n\n")
-            #print(examples["response"][i])
-        #    continue
-
-        #messages = examples["prompt"][i] + examples["response"][i]
-        ##### for source_ids, target_ids in template.encode_multiturn(
-            #tokenizer, messages, examples["system"][i], examples["tools"][i]
-        #####     tokenizer, examples["prompt"][i] + examples["response"][i], examples["system"][i], examples["tools"][i]
-        ##### ):
-        ### for turn in range(len(all_source_ids[i])):
-
-            ### source_ids = all_source_ids[i][turn]
-            ### target_ids = all_target_ids[i][turn]
-        
-        #####source_ids  = []
-        #####target_ids  = []
-        #####source_mask = []
-
-        ## for turn in range(len(all_source_ids[i])):
-        
-            #####source_ids  += all_source_ids[i][turn]
-            #####target_ids  += all_target_ids[i][turn]
-            #####source_mask += [IGNORE_INDEX] * len(all_source_ids[i][turn])
-
-            ### if turn > 0:
-            ###     print("\n\n=== TURN2 = ", turn)
-
-            # DEBUG | skip_special_tokens=True
-            ## print("\n\n=== [ SAMPLE # {} | TURN # {} ] ============================================\n\n{}\n\n".
-            ##    format(i, turn, tokenizer.decode(all_source_ids[i][turn] + all_target_ids[i][turn], skip_special_tokens=False)))    
- 
-            # if data_args.train_on_prompt:
-            #     source_mask += all_source_ids[i][turn]
-            # elif len(input_ids) != 0 and template.efficient_eos:
-            #     source_mask += [tokenizer.eos_token_id] + [IGNORE_INDEX] * (len(all_source_ids[i][turn]) - 1)
-            # else:
-            #     source_mask += [IGNORE_INDEX] * len(all_source_ids[i][turn])
-
-        ##### sample_length = len(source_ids) + len(target_ids)
-        ##### expected_length = len(input_ids) + sample_length
         expected_length = len(input_ids) + total_tokens[i]
-        #print("===    TOTAL LENGTH = ", len(input_ids))
-        #print("=== + SAMPLE LENGTH = ", sample_length)
-        #print("=== = BECOME LENGTH = ", expected_length)
-        #total_length = len(input_ids)
         total_blocks = len(input_ids) // block_size
         expected_blocks = expected_length // block_size
 
@@ -282,17 +177,16 @@ def preprocess_packed_supervised_dataset(
 
         # easy flow, just add new sample
         if total_blocks == expected_blocks:
+
             for turn in range(len(all_source_ids[i])):
                 source_mask = [IGNORE_INDEX] * len(all_source_ids[i][turn])
-                ##### input_ids += source_ids + target_ids
                 input_ids += all_source_ids[i][turn] + all_target_ids[i][turn]
-                ##### labels += source_mask + target_ids
                 labels += source_mask + all_target_ids[i][turn]
-                #padding_length = (total_blocks + 1) * block_size - len(input_ids)
-                ## print("=== SAMPLE ADDED EASY # ", i)
-                ## print("\n\n=== [ INPUT AFTER ] ============================================\n\n{}\n\n".
-                ##     format(tokenizer.decode(input_ids, skip_special_tokens=False)))
+                # print("=== SAMPLE ADDED EASY # ", i)
+                # print("\n\n=== [ INPUT AFTER ] ============================================\n\n{}\n\n".
+                #      format(tokenizer.decode(input_ids, skip_special_tokens=False)))
             
+            # TODO: Thing twice again
             # go to the next sample
             continue
 
@@ -321,46 +215,16 @@ def preprocess_packed_supervised_dataset(
                     source_mask = [IGNORE_INDEX] * len(all_source_ids[short][turn])
                     input_ids += all_source_ids[short][turn] + all_target_ids[short][turn]
                     labels += source_mask + all_target_ids[short][turn]
-                    
+                    # print("\n\n === [ SHORT SAMPLE # {} OF LEN {} WAS ADDED ] ===".format(short, total_tokens[short]))
                     # print("\n\n=== [ INPUT AFTER ] ============================================\n\n{}\n\n".
                     #     format(tokenizer.decode(input_ids, skip_special_tokens=False)))
 
-                ## print("\n\n === [ SHORT SAMPLE # {} OF LEN {} WAS ADDED ] ===".format(short, total_tokens[short]))
                 padding_length = (total_blocks + 1) * block_size - len(input_ids)
                 skip_samples += [ short ]
-
-            # FIXME: Is it possible to fill more input_ids than padding space allowed? Check for multi-turn conversations
-            ##### for short_source_ids, short_target_ids in template.encode_multiturn(
-            #####     tokenizer, examples["prompt"][j] + examples["response"][j], examples["system"][j], examples["tools"][j]
-            ##### ):
-
-            # TODO: Not sure how it works when [ z ] is more than one turn interation
-            ### for z in range(len(all_source_ids[j])):
-
-                ### short_source_ids = all_source_ids[j][z]
-                ### short_target_ids = all_target_ids[j][z]
-            
-            #####short_source_ids = all_source_ids[j]
-            #####short_target_ids = all_target_ids[j]
-
-            #####if len(input_ids) != 0 and template.efficient_eos:
-            #####    short_source_mask = [tokenizer.eos_token_id] + [IGNORE_INDEX] * (len(short_source_ids) - 1)
-            #####else:
-            #####    short_source_mask = [IGNORE_INDEX] * len(short_source_ids)
-
-            #####skip_samples += [ j ]
-            #####input_ids += short_source_ids + short_target_ids
-            #####labels += short_source_mask + short_target_ids
-            #####padding_length = (total_blocks + 1) * block_size - len(input_ids)
-            #print("=== SAMPLE FOUND HARD # ", j)
-            #print("=== ADD SKIP # ", j)
             
             # -- then fill remaining space with padding
 
             # add right padding to the current block
-            #print("\n\n=== [ !!! PADDING !!! ] ===")
-            #padding_length = (total_blocks + 1) * block_size - len(input_ids)
-            #print("\n\n=== [ PADDING LENGTH = ", padding_length, " ] ===\n\n")
             input_ids += padding_length * [ tokenizer.eos_token_id ]
             labels += padding_length * [ -100 ]
 
@@ -379,51 +243,51 @@ def preprocess_packed_supervised_dataset(
                     target_ids = target_ids[:block_size]
                 else:       
 
-                    allow_length = block_size - len(source_ids) - 1
+                    allow_length = block_size - len(source_ids) - 1 # v2
+                    # allow_length = block_size - len(source_ids) - 2 # v3
 
                     # it's not expected for longer samples but who knows
                     if allow_length < 100 or allow_length > len(target_ids):
                         print("[ ERROR ] allow_length is less than 100 or bigger than target length")
                         continue
 
-                    for tail in range(allow_length, 0, -1):
-                        # print (target_ids[i], " ?==? ", tokenizer.eos_token_id, " || ", target_ids[i] == tokenizer.eos_token_id)
-                        if target_ids[tail] == 13:
-                            if tail > 0 and target_ids[tail-1] == 13:
-                                tail -= 1
-                            allow_length = tail # replace last 0x13 or double 0x13 with EOS
+                    # v2 for tail in range(allow_length, 0, -1):
+                    for tail in range(allow_length, 2, -1): # v3
+                        # v2 if target_ids[tail] == 13:
+                        if len(target_ids) > tail and target_ids[tail] == 271: # /n/n
+                        # v2    if tail > 0 and target_ids[tail-1] == 13:
+                        # v2        tail -= 1
+                        # v2    allow_length = tail # replace last 0x13 or double 0x13 with EOS
+                            allow_length = tail - 1 # replace last 0x13 or double 0x13 with EOS
                             break
                     #print("\n\n=== [ CUT LENGTH = ", cut_length, " ] ===\n\n")
                     target_ids = target_ids[:allow_length] + [ tokenizer.eos_token_id ]
-                    #print("\n\n=== [ SAMPLE # {} LENGTH = ".format(i), total_tokens[i], " || REFRAMED LENGTH = ", len(source_ids) + len(target_ids), " ] ===\n\n")
-                    #print("=== SAMPLE SHRUNK # ", j)  
+                    # print("\n\n=== tokenizer.eos_token_id ===\n", tokenizer.eos_token_id)
+                    # print("\n")
+                    # v3 target_ids = target_ids[:allow_length] + [ 128001, 128009 ] 
 
             # -- add long sample -> it opens a new block
-
-            # NB! Multi-turn code, need some attention later    
-            # for turn in range(len(all_source_ids[i])):
-            #    source_mask = [IGNORE_INDEX] * len(all_source_ids[i][turn])
-            #    input_ids += all_source_ids[i][turn] + all_target_ids[i][turn]
-            #    labels += source_mask + all_target_ids[i][turn]
                 
             # NB! Just ignore multi-turns for now    
             source_mask = [IGNORE_INDEX] * len(source_ids)
             input_ids += source_ids + target_ids
             labels += source_mask + target_ids
+            
             # print("\n\n=== SAMPLE ADDED LONG # {}".format(i))
-            ##### padding_length = (total_blocks + 1) * block_size - len(input_ids)
             # print("\n\n=== [ INPUT AFTER ] ============================================\n\n{}\n\n".
-            #    format(tokenizer.decode(input_ids, skip_special_tokens=False)))
+            #     format(tokenizer.decode(input_ids, skip_special_tokens=False)))
+            
+            continue
 
-        if MAX_ALLOWED !=0:
+        # if MAX_ALLOWED !=0:
 
-            print("\n\n=== [ INPUTS ] =======================================================================\n\n")
-            print(format(tokenizer.decode(input_ids, skip_special_tokens=False)))
-            print("\n\n=== [ IDS ] =======================================================================\n\n")
-            print(input_ids)
-            print("\n\n=== [ LABELS ] =======================================================================\n\n")
-            print(labels)
-            # exit()
+            # print("\n\n=== [ INPUTS ] =======================================================================\n\n")
+            # print(format(tokenizer.decode(input_ids, skip_special_tokens=False)))
+            # print("\n\n=== [ IDS ] =======================================================================\n\n")
+            # print(input_ids)
+            # print("\n\n=== [ LABELS ] =======================================================================\n\n")
+            # print(labels)
+            # # exit()
             
         # DEBUG
         #print("\n\n=== [ INPUT AFTER ] ============================================\n\n{}".format(tokenizer.decode(input_ids, skip_special_tokens=False)))    
@@ -459,8 +323,10 @@ def preprocess_packed_supervised_dataset(
 
 
     if template.efficient_eos:
-        input_ids += [tokenizer.eos_token_id]
-        labels += [tokenizer.eos_token_id]
+        input_ids += [tokenizer.eos_token_id] # v2
+        # v3 input_ids += [ 128001, 128009 ]
+        labels += [tokenizer.eos_token_id] # v2
+        # v3 labels += [ 128001, 128009 ]
 
     total_length = len(input_ids)
     block_size = data_args.cutoff_len
@@ -477,6 +343,7 @@ def preprocess_packed_supervised_dataset(
 
 
 def print_supervised_dataset_example(example: Dict[str, List[int]], tokenizer: "PreTrainedTokenizer") -> None:
+    return # gotzmann
     valid_labels = list(filter(lambda x: x != IGNORE_INDEX, example["labels"]))
     print("input_ids:\n{}".format(example["input_ids"]))
     print("inputs:\n{}".format(tokenizer.decode(example["input_ids"], skip_special_tokens=False)))

@@ -160,39 +160,30 @@ def get_dataset(
                 desc="Running tokenizer on dataset",
             )
 
+        # DEBUG gotzmann
+        # dataset = dataset.filter(lambda sample, indice: indice < 10, with_indices=True)
+
         # TODO: Compute batch_size depending on --preprocessing_num_workers parameter
-        # WAS: dataset = dataset.map(preprocess_func, batched=True, remove_columns=column_names, **kwargs)
-        # dataset = dataset.map(preprocess_func, batched=True, batch_size=2000, remove_columns=column_names, **kwargs)
-        #print("=== COLUMN NAMES = ", column_names, " ===")    
-        # NOW: dataset = preprocess_func(dataset[:100]) # DEBUG
-        # dataset = dataset[:100] # DEBUG
-        #dataset = dataset.filter(lambda sample, indice: indice < 30, with_indices=True) # DEBUG
-
-        # NEW
-        # dataset = dataset.map(preprocess_func, batched=True, remove_columns=column_names, **kwargs)
-
         dataset = dataset.map(preprocess_func, batched=True, remove_columns=column_names, **kwargs, batch_size=5000)
 
-        # DEBUG
+        # DEBUG gotzmann
         print ("\n\n=== Writing [ 10 ] blocks to disk... ===\n\n")
-        if True: # training_args.should_log:
-            num = 0
-            for block in iter(dataset):
-                if num >= 10:
-                    break
-                # block = next(datasetIterator)
-                sample = format(tokenizer.decode(block["input_ids"], skip_special_tokens=False))
+        # if True: # training_args.should_log:
+        num = 0
+        for block in iter(dataset):
+            if num >= 10: break
 
-                f = open('inputs.' + str(num), 'w')
-                f.write(sample)
-                f.close()
+            sample = format(tokenizer.decode(block["input_ids"], skip_special_tokens=False))
+            f = open('inputs.' + str(num), 'w')
+            f.write(sample)
+            f.close()
 
-                labels = ', ' . join(map(str, block["labels"]))
-                f = open('labels.' + str(num), 'w')
-                f.write(labels)
-                f.close()
+            labels = ', ' . join(map(str, block["labels"]))
+            f = open('labels.' + str(num), 'w')
+            f.write(labels)
+            f.close()
 
-                num += 1  
+            num += 1  
 
         # DEBUG
         # print ("\n\n=== SEARCHING FOR DUBS... ===\n\n")
@@ -233,38 +224,5 @@ def get_dataset(
                     raise RuntimeError("Cannot find sufficient samples, consider increasing dataset size.")
                 else:
                     raise RuntimeError("Cannot find valid samples, check `data/README.md` for the data format.")
-                
-        # datasetIterator = iter(dataset)
-        # #print("\n\n=== [ 01 ] =============================================================================\n")
-        # block = next(datasetIterator)
-        # print_function(block)
-        # f = open('input.01', 'w')
-        # f.write(format(tokenizer.decode(block["input_ids"], skip_special_tokens=False)))
-        # f.close()
-        # #print("\n\n=== [ 02 ] =============================================================================\n")
-        # block = next(datasetIterator)
-        # print_function(block)
-        # f = open('input.02', 'w')
-        # f.write(format(tokenizer.decode(block["input_ids"], skip_special_tokens=False)))
-        # f.close()
-        # #print("\n\n=== [ 03 ] =============================================================================\n")
-        # block = next(datasetIterator)
-        # print_function(block)
-        # f = open('input.03', 'w')
-        # f.write(format(tokenizer.decode(block["input_ids"], skip_special_tokens=False)))
-        # f.close()
-        # #print("\n\n=== [ 04 ] =============================================================================\n")
-        # block = next(datasetIterator)
-        # print_function(block)
-        # f = open('input.04', 'w')
-        # f.write(format(tokenizer.decode(block["input_ids"], skip_special_tokens=False)))
-        # f.close()
-        #print("\n\n=== [ 05 ] =============================================================================\n")
-        #block = next(datasetIterator)
-        #print_function(block)
-        #f = open('input.05', 'w')
-        #f.write(format(tokenizer.decode(block["input_ids"], skip_special_tokens=False)))
-        #f.close()
-        #print("\n\n================================================================================\n\n")
 
         return dataset
