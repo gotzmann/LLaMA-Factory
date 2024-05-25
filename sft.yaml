@@ -29,6 +29,7 @@ dataset: final
 template: llama3
 packing: true
 cutoff_len: 2048 # 4096 # 8192 # 1024
+max_seq_len: 2048
 # max_samples: 100000 # 1000
 overwrite_cache: true
 preprocessing_num_workers: 12
