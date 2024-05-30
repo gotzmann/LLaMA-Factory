@@ -28,7 +28,7 @@ ddp_timeout: 180000000
 dataset: final
 template: llama3
 packing: true
-cutoff_len: 2048 # 8192 # 6144 # 8192 # 1024 # 2048 # 4096 # 8192 # 1024
+cutoff_len: 1024 # 2048 # 8192 # 6144 # 8192 # 1024 # 2048 # 4096 # 8192 # 1024
 overwrite_cache: true
 preprocessing_num_workers: 10
 
