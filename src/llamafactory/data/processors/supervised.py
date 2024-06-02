@@ -100,8 +100,8 @@ def preprocess_packed_supervised_dataset(
     total_tokens = [ 0 for i in range(sampleCount) ]
 
     # print("\nDo Tokeinizer Fast? [ ", tokenizer.is_fast, " ]")
-    if tokenizer.is_fast: # gotzmann
-        print("[ ERROR ] Fast Tokenizer is ON - stopping here, please use Legacy!")
+    # if tokenizer.is_fast: # gotzmann
+        # print("[ ERROR ] Fast Tokenizer is ON - stopping here, please use Legacy!")
         # exit(0)
 
     MAX_ALLOWED = 0 # 10 # -- set max allowed for debug or zero for production
