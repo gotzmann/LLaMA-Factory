@@ -177,7 +177,7 @@ def get_dataset(
         # dataset = dataset.filter(lambda sample, indice: indice < 10, with_indices=True)
 
         # TODO: Compute batch_size depending on --preprocessing_num_workers parameter
-        dataset = dataset.map(preprocess_func, batched=True, remove_columns=column_names, **kwargs, batch_size=5000)
+        dataset = dataset.map(preprocess_func, batched=True, remove_columns=column_names, **kwargs, batch_size=10000)
 
         # DEBUG gotzmann
         print ("\n\n=== Writing [ 10 ] blocks to disk... ===\n\n")
