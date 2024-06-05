@@ -132,6 +132,7 @@ class Runner:
             pure_bf16=(get("train.compute_type") == "pure_bf16"),
             plot_loss=True,
             ddp_timeout=180000000,
+            include_num_input_tokens_seen=True,
         )
 
         # checkpoints
@@ -200,7 +201,7 @@ class Runner:
         # eval config
         if get("train.val_size") > 1e-6 and args["stage"] != "ppo":
             args["val_size"] = get("train.val_size")
-            args["evaluation_strategy"] = "steps"
+            args["eval_strategy"] = "steps"
             args["eval_steps"] = args["save_steps"]
             args["per_device_eval_batch_size"] = args["per_device_train_batch_size"]
 
