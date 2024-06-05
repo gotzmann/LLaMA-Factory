@@ -50,11 +50,9 @@ def load_tokenizer(model_args: "ModelArguments") -> "TokenizerModule":
     """
     init_kwargs = _get_init_kwargs(model_args)
     try:
-        print("\n=== model_args.use_fast_tokenizer = ", model_args.use_fast_tokenizer) # gotzmann 
         tokenizer = AutoTokenizer.from_pretrained(
             model_args.model_name_or_path,
-            # use_fast=model_args.use_fast_tokenizer,
-            use_fast=False, # gotzmann
+            use_fast=model_args.use_fast_tokenizer,
             split_special_tokens=model_args.split_special_tokens,
             padding_side="right",
             **init_kwargs,
