@@ -1,14 +1,27 @@
+# Copyright 2024 the LlamaFactory team.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 from collections import defaultdict
 from typing import TYPE_CHECKING, Any, Dict, List, Optional, Sequence, Tuple
 
 from ...extras.constants import IGNORE_INDEX
 from ...extras.logging import get_logger
-from .processor_utils import get_paligemma_token_type_ids, get_pixel_values, greedy_knapsack
+from .processor_utils import get_paligemma_token_type_ids, get_pixel_values, greedy_knapsack, infer_seqlen
 
 
 if TYPE_CHECKING:
-    from transformers import ProcessorMixin
-    from transformers.tokenization_utils import PreTrainedTokenizer
+    from transformers import PreTrainedTokenizer, ProcessorMixin
 
     from ...hparams import DataArguments
     from ..template import Template
@@ -38,16 +51,27 @@ def _encode_supervised_example(
         input_ids += [image_token_id] * getattr(processor, "image_seq_length")
         labels += [IGNORE_INDEX] * getattr(processor, "image_seq_length")
 
-    encoded_pairs = template.encode_multiturn(
-        tokenizer, messages, system, tools, data_args.cutoff_len, data_args.reserved_label_len
-    )
+#    encoded_pairs = template.encode_multiturn(
+#        tokenizer, messages, system, tools, data_args.cutoff_len, data_args.reserved_label_len
+#    )
+    encoded_pairs = template.encode_multiturn(tokenizer, messages, system, tools)
+    total_length = 1 if template.efficient_eos else 0
     for turn_idx, (source_ids, target_ids) in enumerate(encoded_pairs):
+#        if total_length >= data_args.cutoff_len:
+#            break
+        source_len, target_len = infer_seqlen(len(source_ids), len(target_ids), data_args.cutoff_len - total_length)
+        source_ids = source_ids[:source_len]
+        target_ids = target_ids[:target_len]
+        total_length += source_len + target_len
+		
         if data_args.train_on_prompt:
             source_mask = source_ids
         elif turn_idx != 0 and template.efficient_eos:
-            source_mask = [tokenizer.eos_token_id] + [IGNORE_INDEX] * (len(source_ids) - 1)
+            source_mask = [tokenizer.eos_token_id] + [IGNORE_INDEX] * (source_len - 1)
+#            source_mask = [tokenizer.eos_token_id] + [IGNORE_INDEX] * (len(source_ids) - 1)
         else:
-            source_mask = [IGNORE_INDEX] * len(source_ids)
+            source_mask = [IGNORE_INDEX] * source_len
+#            source_mask = [IGNORE_INDEX] * len(source_ids)			
 
         input_ids += source_ids + target_ids
         labels += source_mask + target_ids
@@ -110,6 +134,7 @@ def preprocess_packed_supervised_dataset(
     # build inputs with format `<bos> X1 Y1 <eos> <bos> X2 Y2 <eos>`
     # and labels with format `<ignore> ... <ignore> Y1 <eos> <ignore> ... <ignore> Y2 <eos>`
 
+	# -- gotzmann
     model_inputs = {"input_ids": [], "attention_mask": [], "labels": []}
     block_size = data_args.cutoff_len
     sampleCount = len(examples["prompt"])
@@ -123,7 +148,7 @@ def preprocess_packed_supervised_dataset(
         # print("[ ERROR ] Fast Tokenizer is ON - stopping here, please use Legacy!")
         # exit(0)
 
-    MAX_ALLOWED = 0 # 10 # -- set max allowed for debug or zero for production
+    MAX_ALLOWED = 0 # 10 # gotzmann -- set max allowed for debug or zero for production
 
     # -- pre-tokenize all dataset
 
@@ -141,39 +166,51 @@ def preprocess_packed_supervised_dataset(
 
     # NEWER KNAPSAKS
 
-    #     input_ids, labels = _encode_supervised_example(
-    #         prompt=examples["prompt"][i],
-    #         response=examples["response"][i],
-    #         system=examples["system"][i],
-    #         tools=examples["tools"][i],
-    #         template=template,
-    #         tokenizer=tokenizer,
-    #         processor=None,
-    #         data_args=data_args,
-    #     )
-    #     length = len(input_ids)
-    #     if length > data_args.cutoff_len:
-    #         logger.warning("Dropped lengthy example with length {} > {}.".format(length, data_args.cutoff_len))
-    #     else:
-    #         lengths.append(length)
-    #         length2indexes[length].append(valid_num)
-    #         batch_input_ids.append(input_ids)
-    #         batch_labels.append(labels)
-    #         valid_num += 1
+#        input_ids, labels = _encode_supervised_example(
+#            prompt=examples["prompt"][i],
+#            response=examples["response"][i],
+#            system=examples["system"][i],
+#            tools=examples["tools"][i],
+#            template=template,
+#            tokenizer=tokenizer,
+#            processor=None,
+#            data_args=data_args,
+#        )
+#        length = len(input_ids)
+#        if length > data_args.cutoff_len:
+#            logger.warning("Dropped lengthy example with length {} > {}.".format(length, data_args.cutoff_len))
+#        else:
+#            lengths.append(length)
+#            length2indexes[length].append(valid_num)
+#            batch_input_ids.append(input_ids)
+#            batch_labels.append(labels)
+#            valid_num += 1
 
-    # model_inputs = {"input_ids": [], "attention_mask": [], "labels": []}
-    # knapsacks = greedy_knapsack(lengths, data_args.cutoff_len)
-    # for knapsack in knapsacks:
-    #     packed_input_ids, packed_labels = [], []
-    #     for length in knapsack:
-    #         index = length2indexes[length].pop()
-    #         packed_input_ids += batch_input_ids[index]
-    #         packed_labels += batch_labels[index]
+#    model_inputs = {"input_ids": [], "attention_mask": [], "labels": []}
+#    knapsacks = greedy_knapsack(lengths, data_args.cutoff_len)
+#    for knapsack in knapsacks:
+#        packed_input_ids, packed_attention_masks, packed_labels = [], [], []
+#        for i, length in enumerate(knapsack):
+#            index = length2indexes[length].pop()
+#            packed_input_ids += batch_input_ids[index]
+#            packed_labels += batch_labels[index]
+#            if data_args.neat_packing:
+#                packed_attention_masks += [i + 1] * len(batch_input_ids[index])  # start from 1   
+#            else:
+#                packed_attention_masks += [1] * len(batch_input_ids[index])
 
-    #     if len(packed_input_ids) < data_args.cutoff_len:
-    #         pad_length = data_args.cutoff_len - len(packed_input_ids)
-    #         packed_input_ids += [tokenizer.pad_token_id] * pad_length
-    #         packed_labels += [IGNORE_INDEX] * pad_length    
+#        if len(packed_input_ids) < data_args.cutoff_len:
+#            pad_length = data_args.cutoff_len - len(packed_input_ids)
+#            packed_input_ids += [tokenizer.pad_token_id] * pad_length
+#            packed_labels += [IGNORE_INDEX] * pad_length
+#            if data_args.neat_packing:
+#                packed_attention_masks += [0] * pad_length
+#            else:
+#                packed_attention_masks += [1] * pad_length  # more efficient flash_attn
+
+
+		# GOTZMANN Packing
+		# TODO: Investigate about ^^^ more efficient flash_attn
 
         if MAX_ALLOWED != 0 and i >= MAX_ALLOWED: break
 
@@ -356,32 +393,6 @@ def preprocess_packed_supervised_dataset(
         #f.close()            
 
 
-    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    # # build inputs with format `<bos> X1 Y1 <eos> <bos> X2 Y2 <eos>`
-    # # and labels with format `<ignore> ... <ignore> Y1 <eos> <ignore> ... <ignore> Y2 <eos>`
-    # model_inputs = {"input_ids": [], "attention_mask": [], "labels": []}
-    # input_ids, labels = [], []
-    # for i in range(len(examples["prompt"])):
-    #     if len(examples["prompt"][i]) % 2 != 1 or len(examples["response"][i]) != 1:
-    #         logger.warning("Dropped invalid example: {}".format(examples["prompt"][i] + examples["response"][i]))
-    #         continue
-
-    #     messages = examples["prompt"][i] + examples["response"][i]
-    #     for source_ids, target_ids in template.encode_multiturn(
-    #         tokenizer, messages, examples["system"][i], examples["tools"][i]
-    #     ):
-    #         if data_args.train_on_prompt:
-    #             source_mask = source_ids
-    #         elif len(input_ids) != 0 and template.efficient_eos:
-    #             source_mask = [tokenizer.eos_token_id] + [IGNORE_INDEX] * (len(source_ids) - 1)
-    #         else:
-    #             source_mask = [IGNORE_INDEX] * len(source_ids)
-
-    #         input_ids += source_ids + target_ids
-    #         labels += source_mask + target_ids
-    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-
     if template.efficient_eos:
         input_ids += [tokenizer.eos_token_id] # v2
         # v3 input_ids += [ 128001, 128009 ]
@@ -392,7 +403,8 @@ def preprocess_packed_supervised_dataset(
             raise ValueError("The length of packed example should be identical to the cutoff length.")
 
         model_inputs["input_ids"].append(packed_input_ids)
-        model_inputs["attention_mask"].append([1] * data_args.cutoff_len)
+		# NEW: model_inputs["attention_mask"].append(packed_attention_masks)
+		model_inputs["attention_mask"].append([1] * data_args.cutoff_len)
         model_inputs["labels"].append(packed_labels)
 
     return model_inputs
