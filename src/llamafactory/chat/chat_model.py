@@ -1,4 +1,22 @@
+# Copyright 2024 THUDM and the LlamaFactory team.
+#
+# This code is inspired by the THUDM's ChatGLM implementation.
+# https://github.com/THUDM/ChatGLM-6B/blob/main/cli_demo.py
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 import asyncio
+import os
 from threading import Thread
 from typing import TYPE_CHECKING, Any, AsyncGenerator, Dict, Generator, List, Optional, Sequence
 
@@ -14,7 +32,7 @@ if TYPE_CHECKING:
     from .base_engine import BaseEngine, Response
 
 
-def _start_background_loop(loop: asyncio.AbstractEventLoop) -> None:
+def _start_background_loop(loop: "asyncio.AbstractEventLoop") -> None:
     asyncio.set_event_loop(loop)
     loop.run_forever()
 
@@ -32,7 +50,6 @@ class ChatModel:
         self._loop = asyncio.new_event_loop()
         self._thread = Thread(target=_start_background_loop, args=(self._loop,), daemon=True)
         self._thread.start()
-        asyncio.run_coroutine_threadsafe(self.engine.start(), self._loop)
 
     def chat(
         self,
@@ -99,13 +116,11 @@ class ChatModel:
 
 
 def run_chat() -> None:
-    try:
-        import platform
-
-        if platform.system() != "Windows":
+    if os.name != "nt":
+        try:
             import readline  # noqa: F401
-    except ImportError:
-        print("Install `readline` for a better experience.")
+        except ImportError:
+            print("Install `readline` for a better experience.")
 
     chat_model = ChatModel()
     messages = []

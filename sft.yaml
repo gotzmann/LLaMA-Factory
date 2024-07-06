@@ -1,13 +1,14 @@
 ### gotzmann
-# use_unsloth: true # works only for ONE card
-ddp_find_unused_parameters: false # needs to be set as False for LoRA in DDP training
+use_unsloth: true # works only for ONE card
+# ddp_find_unused_parameters: false # needs to be set as False for LoRA in DDP training
 
 ### model
 # meta-llama/Meta-Llama-3-8B-Instruct
-model_name_or_path: NousResearch/Meta-Llama-3-70B-Instruct
+# model_name_or_path: NousResearch/Meta-Llama-3-70B-Instruct
+model_name_or_path: NousResearch/Meta-Llama-3.1-8B-Instruct
 quantization_bit: 4
 double_quantization: false
-use_fast_tokenizer: false
+# use_fast_tokenizer: false
 
 ### method
 stage: sft
@@ -15,47 +16,47 @@ do_train: true
 finetuning_type: lora
 # q_proj,k_proj,v_proj,o_proj,gate_proj,up_proj,down_proj
 lora_target: all
-lora_rank: 16 # 64
+lora_rank: 256 # 64
 lora_alpha: 16 # 64
 lora_dropout: 0.0
-# use_rslora: true
+use_rslora: true
 # loraplus_lr_ratio: 4.0
-
-### ddp
-ddp_timeout: 180000000
 
 ### dataset
 dataset: final
 template: llama3
 packing: true
-cutoff_len: 1024 # 2048 # 8192 # 6144 # 8192 # 1024 # 2048 # 4096 # 8192 # 1024
+cutoff_len: 8192 # 1024 # 2048
 overwrite_cache: true
-preprocessing_num_workers: 10
+preprocessing_num_workers: 16
 
 ### output
 output_dir: /home/exported
 logging_steps: 1 # 10
-save_steps: 50 # 500
+save_steps: 1000 # 500
 plot_loss: false # true
 overwrite_output_dir: true
 
 ### train
+gradient_checkpointing: true
 per_device_train_batch_size: 1
-gradient_accumulation_steps: 8
+gradient_accumulation_steps: 1
 gradient_checkpointing: true
 max_grad_norm: 1.0
-learning_rate: 0.00001
+learning_rate: 0.0001
 lr_scheduler_type: cosine
-num_train_epochs: 3.0
-optim: adamw_torch
-warmup_steps: 0.03
-upcast_layernorm: false # Must flatten tensors with uniform dtype but got torch.float16 and torch.float32
+num_train_epochs: 1.0
+optim: adamw_8bit # adamw_torch
+warmup_steps: 100
+upcast_layernorm: true # Must flatten tensors with uniform dtype but got torch.float16 and torch.float32
 flash_attn: fa2
-# fp16: true
-bf16: true
+bf16: true # fp16: true
 
 ### eval
 # val_size: 0 # 0.1
 # per_device_eval_batch_size: 1
 # evaluation_strategy: steps
 # eval_steps: 0 # 500
+
+### etc
+ddp_timeout: 180000000

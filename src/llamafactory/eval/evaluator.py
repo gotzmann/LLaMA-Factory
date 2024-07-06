@@ -1,6 +1,42 @@
-# Inspired by: https://github.com/hendrycks/test/blob/master/evaluate_flan.py
+# Copyright 2024 the LlamaFactory team.
+#
+# This code is inspired by the Dan's test library.
+# https://github.com/hendrycks/test/blob/master/evaluate_flan.py
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+# MIT License
+#
+# Copyright (c) 2020 Dan Hendrycks
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
 
-import inspect
 import json
 import os
 from typing import Any, Dict, List, Optional
@@ -37,8 +73,11 @@ class Evaluator:
         return [chr(ord("A") + offset.item()) for offset in torch.argmax(choice_probs, dim=-1)]
 
     def eval(self) -> None:
+        eval_task = self.eval_args.task.split("_")[0]
+        eval_split = self.eval_args.task.split("_")[1]
+
         mapping = cached_file(
-            path_or_repo_id=os.path.join(self.eval_args.task_dir, self.eval_args.task),
+            path_or_repo_id=os.path.join(self.eval_args.task_dir, eval_task),
             filename="mapping.json",
             cache_dir=self.model_args.cache_dir,
             token=self.model_args.hf_hub_token,
@@ -51,27 +90,22 @@ class Evaluator:
         pbar = tqdm(categorys.keys(), desc="Processing subjects", position=0)
         results = {}
         for subject in pbar:
-            if "trust_remote_code" in inspect.signature(load_dataset).parameters:  # for datasets==2.16.0
-                kwargs = {"trust_remote_code": True}
-            else:
-                kwargs = {}
-
             dataset = load_dataset(
-                path=os.path.join(self.eval_args.task_dir, self.eval_args.task),
+                path=os.path.join(self.eval_args.task_dir, eval_task),
                 name=subject,
                 cache_dir=self.model_args.cache_dir,
                 download_mode=self.eval_args.download_mode,
                 token=self.model_args.hf_hub_token,
-                **kwargs,
+                trust_remote_code=True,
             )
             pbar.set_postfix_str(categorys[subject]["name"])
             inputs, outputs, labels = [], [], []
-            for i in trange(len(dataset[self.data_args.split]), desc="Formatting batches", position=1, leave=False):
+            for i in trange(len(dataset[eval_split]), desc="Formatting batches", position=1, leave=False):
                 support_set = (
                     dataset["train"].shuffle().select(range(min(self.eval_args.n_shot, len(dataset["train"]))))
                 )
                 messages = self.eval_template.format_example(
-                    target_data=dataset[self.data_args.split][i],
+                    target_data=dataset[eval_split][i],
                     support_set=support_set,
                     subject_name=categorys[subject]["name"],
                 )
