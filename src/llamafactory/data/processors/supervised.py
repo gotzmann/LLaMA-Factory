@@ -404,7 +404,7 @@ def preprocess_packed_supervised_dataset(
 
         model_inputs["input_ids"].append(packed_input_ids)
 		# NEW: model_inputs["attention_mask"].append(packed_attention_masks)
-		model_inputs["attention_mask"].append([1] * data_args.cutoff_len)
+        model_inputs["attention_mask"].append([1] * data_args.cutoff_len)
         model_inputs["labels"].append(packed_labels)
 
     return model_inputs
