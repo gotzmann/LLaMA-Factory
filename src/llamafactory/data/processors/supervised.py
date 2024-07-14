@@ -77,6 +77,8 @@ def _encode_supervised_example(
         # input_ids, labels = [], []
         print("\n\n === PROMPT ===\n\n")
         print(prompt)
+        print("\n\n === RESPONSE ===\n\n")
+        print(response)
         input_ids = tokenizer.encode(prompt, add_special_tokens=False) # FIXME: prompt VS examples["response"][i][0]['content']
         #total_length = 1 if template.efficient_eos else 0
         special_tokens_length = 1 if template.efficient_eos else 0
