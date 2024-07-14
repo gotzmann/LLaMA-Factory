@@ -199,15 +199,15 @@ def get_dataset(
         # if True: # training_args.should_log:
         num = 0
         for block in iter(dataset):
-            if num >= 10: break
+            # if num >= 10: break
 
             sample = format(tokenizer.decode(block["input_ids"], skip_special_tokens=False))
-            f = open('inputs.' + str(num), 'w')
+            f = open('./batches/inputs.' + str(num), 'w')
             f.write(sample)
             f.close()
 
             labels = ', ' . join(map(str, block["labels"]))
-            f = open('labels.' + str(num), 'w')
+            f = open('./batches/labels.' + str(num), 'w')
             f.write(labels)
             f.close()
 
