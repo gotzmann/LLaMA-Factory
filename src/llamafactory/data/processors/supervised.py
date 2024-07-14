@@ -172,10 +172,14 @@ def preprocess_packed_supervised_dataset(
         print("\n\n=== [ INPUTS ] =======================================================================\n\n")
         print(format(tokenizer.decode(input_ids, skip_special_tokens=False)))
         print("\n\n=== [ IDS ] =======================================================================\n\n")
+        print("\n\n=== [ LEN = ", len(input_ids))
+        print("\n\n")
         print(input_ids)
         print("\n\n=== [ LABELS ] =======================================================================\n\n")
+        print("\n\n=== [ LEN = ", len(labels))
+        print("\n\n")
         print(labels)
-        if i > 20: exit() # gotzmann DEBUG
+        # if i > 20: exit() # gotzmann DEBUG
 
         length = len(input_ids)
         if length > data_args.cutoff_len:
