@@ -75,10 +75,10 @@ def _encode_supervised_example(
     # -- gotzmann TRINITY - ignore previous code, we need no special tokens for PRETRAIN examples
     if system == "":
         # input_ids, labels = [], []
-        print("\n\n === PROMPT ===\n\n")
-        print(prompt)
-        print("\n\n === RESPONSE ===\n\n")
-        print(response)
+        # print("\n\n === PROMPT ===\n\n")
+        # print(prompt)
+        # print("\n\n === RESPONSE ===\n\n")
+        # print(response)
         # [{'role': 'assistant', 'content': '...'}]
         input_ids = tokenizer.encode(response[0]['content'], add_special_tokens=False) # FIXME: prompt VS examples["response"][i][0]['content']
         #total_length = 1 if template.efficient_eos else 0
