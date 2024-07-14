@@ -80,7 +80,7 @@ def _encode_supervised_example(
         print("\n\n === RESPONSE ===\n\n")
         print(response)
         # [{'role': 'assistant', 'content': '...'}]
-        input_ids = tokenizer.encode(response['content'], add_special_tokens=False) # FIXME: prompt VS examples["response"][i][0]['content']
+        input_ids = tokenizer.encode(response[0]['content'], add_special_tokens=False) # FIXME: prompt VS examples["response"][i][0]['content']
         #total_length = 1 if template.efficient_eos else 0
         special_tokens_length = 1 if template.efficient_eos else 0
         if len(input_ids) >= data_args.cutoff_len + special_tokens_length:
