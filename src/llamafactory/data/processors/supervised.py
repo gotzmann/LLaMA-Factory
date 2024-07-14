@@ -72,6 +72,22 @@ def _encode_supervised_example(
         input_ids += source_ids + target_ids
         labels += source_mask + target_ids
 
+    # -- gotzmann TRINITY - ignore previous code, we need no special tokens for PRETRAIN examples
+    if system == "":
+        # input_ids, labels = [], []
+        input_ids = tokenizer.encode(prompt, add_special_tokens=False) # FIXME: prompt VS examples["response"][i][0]['content']
+        #total_length = 1 if template.efficient_eos else 0
+        special_tokens_length = 1 if template.efficient_eos else 0
+        if len(input_ids) >= data_args.cutoff_len + special_tokens_length:
+            input_ids = input_ids[:data_args.cutoff_len - special_tokens_length]
+        # source_mask = source_ids
+        # if template.efficient_eos:
+        #    source_mask = [tokenizer.eos_token_id]
+        # input_ids += source_ids + target_ids
+        # labels += source_mask + target_ids
+        labels = input_ids
+    # --    
+
     if template.efficient_eos:
         input_ids += [tokenizer.eos_token_id]
         labels += [tokenizer.eos_token_id]
