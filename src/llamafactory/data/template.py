@@ -128,18 +128,24 @@ class Template:
         Converts elements to token ids.
         """
         token_ids = []
+        print("\n[ 1 ] ") # gotzmann
         for elem in elements:
             if isinstance(elem, str):
+                print("\n[ 2 ] ") # gotzmann
                 if len(elem) != 0:
+                    print("\n[ 3 ] ") # gotzmann
                     token_ids += tokenizer.encode(elem, add_special_tokens=False)
             elif isinstance(elem, dict):
+                print("\n[ 4 ] ") # gotzmann
                 token_ids += [tokenizer.convert_tokens_to_ids(elem.get("token"))]
             elif isinstance(elem, set):
+                print("\n[ 5 ] ") # gotzmann
                 if "bos_token" in elem and tokenizer.bos_token_id is not None:
                     token_ids += [tokenizer.bos_token_id]
                 elif "eos_token" in elem and tokenizer.eos_token_id is not None:
                     token_ids += [tokenizer.eos_token_id]
             else:
+                print("\n[ 6 ] ") # gotzmann
                 raise ValueError("Input must be string, set[str] or dict[str, str], got {}".format(type(elem)))
 
         return token_ids
