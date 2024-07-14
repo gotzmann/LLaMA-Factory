@@ -164,51 +164,6 @@ def preprocess_packed_supervised_dataset(
             logger.warning("Dropped invalid example: {}".format(examples["prompt"][i] + examples["response"][i]))
             continue
 
-    # NEWER KNAPSAKS
-
-#        input_ids, labels = _encode_supervised_example(
-#            prompt=examples["prompt"][i],
-#            response=examples["response"][i],
-#            system=examples["system"][i],
-#            tools=examples["tools"][i],
-#            template=template,
-#            tokenizer=tokenizer,
-#            processor=None,
-#            data_args=data_args,
-#        )
-#        length = len(input_ids)
-#        if length > data_args.cutoff_len:
-#            logger.warning("Dropped lengthy example with length {} > {}.".format(length, data_args.cutoff_len))
-#        else:
-#            lengths.append(length)
-#            length2indexes[length].append(valid_num)
-#            batch_input_ids.append(input_ids)
-#            batch_labels.append(labels)
-#            valid_num += 1
-
-#    model_inputs = {"input_ids": [], "attention_mask": [], "labels": []}
-#    knapsacks = greedy_knapsack(lengths, data_args.cutoff_len)
-#    for knapsack in knapsacks:
-#        packed_input_ids, packed_attention_masks, packed_labels = [], [], []
-#        for i, length in enumerate(knapsack):
-#            index = length2indexes[length].pop()
-#            packed_input_ids += batch_input_ids[index]
-#            packed_labels += batch_labels[index]
-#            if data_args.neat_packing:
-#                packed_attention_masks += [i + 1] * len(batch_input_ids[index])  # start from 1   
-#            else:
-#                packed_attention_masks += [1] * len(batch_input_ids[index])
-
-#        if len(packed_input_ids) < data_args.cutoff_len:
-#            pad_length = data_args.cutoff_len - len(packed_input_ids)
-#            packed_input_ids += [tokenizer.pad_token_id] * pad_length
-#            packed_labels += [IGNORE_INDEX] * pad_length
-#            if data_args.neat_packing:
-#                packed_attention_masks += [0] * pad_length
-#            else:
-#                packed_attention_masks += [1] * pad_length  # more efficient flash_attn
-
-
 		# GOTZMANN Packing
 		# TODO: Investigate about ^^^ more efficient flash_attn
 

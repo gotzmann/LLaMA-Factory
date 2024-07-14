@@ -147,6 +147,15 @@ def preprocess_packed_supervised_dataset(
             processor=None,
             data_args=data_args,
         )
+
+        print("\n\n=== [ INPUTS ] =======================================================================\n\n")
+        print(format(tokenizer.decode(input_ids, skip_special_tokens=False)))
+        print("\n\n=== [ IDS ] =======================================================================\n\n")
+        print(input_ids)
+        print("\n\n=== [ LABELS ] =======================================================================\n\n")
+        print(labels)
+        if i > 10: exit()
+
         length = len(input_ids)
         if length > data_args.cutoff_len:
             logger.warning("Dropped lengthy example with length {} > {}.".format(length, data_args.cutoff_len))

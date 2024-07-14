@@ -199,7 +199,7 @@ def get_dataset(
         # if True: # training_args.should_log:
         num = 0
         for block in iter(dataset):
-            # if num >= 10: break
+            if num >= 10: break
 
             sample = format(tokenizer.decode(block["input_ids"], skip_special_tokens=False))
             f = open('./batches/inputs.' + str(num), 'w')
