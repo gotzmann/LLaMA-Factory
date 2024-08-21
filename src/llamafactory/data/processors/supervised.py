@@ -169,12 +169,14 @@ def preprocess_packed_supervised_dataset(
 ) -> Dict[str, List[List[int]]]:
     # build inputs with format `<bos> X1 Y1 <eos> <bos> X2 Y2 <eos>`
     # and labels with format `<ignore> ... <ignore> Y1 <eos> <ignore> ... <ignore> Y2 <eos>`
-    print("preprocess_packed_supervised_dataset [ " + len(examples["prompt"]) + " ] BEFORE...\n\n") # DEBUG
+    #print("-> preprocess_packed_supervised_dataset [ " + str(len(examples["prompt"])) + " ] BEFORE...") # DEBUG
     valid_num = 0
     batch_input_ids, batch_labels = [], []
     lengths = []
     length2indexes = defaultdict(list)
+    lll = str(len(examples["prompt"])) # DEBUG
     for i in range(len(examples["prompt"])):
+        #print("===> ### " + str(i) + " OF " + lll) # DEBUG
         if len(examples["prompt"][i]) % 2 != 1 or len(examples["response"][i]) != 1:
             logger.warning("Dropped invalid example: {}".format(examples["prompt"][i] + examples["response"][i]))
             continue
@@ -194,7 +196,7 @@ def preprocess_packed_supervised_dataset(
 
         # === NEW DEBUG | gotzmann
         # NB! ^^^ _encode_supervised_example ^^^ already knows how to process PRE-TRAIN samples correct
-        # if i < 2:
+        # if i < 3:
         #     print("\n\n=== [ INPUTS ] =======================================================================\n\n")
         #     print(format(tokenizer.decode(input_ids, skip_special_tokens=False)))
         #     print("\n\n=== [ IDS : " + str(len(input_ids)) + " ] =======================================================================\n\n")
@@ -220,7 +222,7 @@ def preprocess_packed_supervised_dataset(
     used_samples = []
     remaining_capacity = data_args.cutoff_len
     for index, length in enumerate(lengths):
-        #print("===> #" + str(index) + " OF " + str(len(lengths)))
+        #print("===> # " + str(index) + " OF " + str(len(lengths))) # DEBUG
         if index in used_samples: continue
         # -- just fit current sample into knapsack
         if length <= remaining_capacity:
@@ -293,7 +295,8 @@ def preprocess_packed_supervised_dataset(
         #model_inputs["input_ids"].append(packed_input_ids)
         #model_inputs["attention_mask"].append(packed_attention_masks)
         #model_inputs["labels"].append(packed_labels)
-    print("AFTER | preprocess_packed_supervised_dataset [ " + len(examples["prompt"]) + " ] ...\n\n") # DEBUG    
+    # TODO: Check out all used_sampled are really used!    
+    #print("<- AFTER | preprocess_packed_supervised_dataset [ " + str(len(examples["prompt"])) + " ] ...") # DEBUG    
     return model_inputs
     # gotzmann | KNAPSACKS ===
 

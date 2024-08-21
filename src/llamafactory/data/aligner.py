@@ -107,6 +107,7 @@ def convert_sharegpt(
     r"""
     Converts sharegpt format dataset to the standard format.
     """
+    #print("<- BEFORE | convert_sharegpt [ " + str(len(examples[dataset_attr.messages])) + " ] ...") # DEBUG 
     outputs = {"prompt": [], "response": [], "system": [], "tools": [], "images": []}
     convert_images = partial(_convert_images, dataset_attr=dataset_attr, data_args=data_args)
     tag_mapping = {
@@ -186,6 +187,7 @@ def convert_sharegpt(
         outputs["tools"].append(examples[dataset_attr.tools][i] if dataset_attr.tools else "")
         outputs["images"].append(convert_images(examples[dataset_attr.images][i]) if dataset_attr.images else [])
 
+    #print("<- AFTER | convert_sharegpt [ - ] ...") # DEBUG  
     return outputs
 
 
@@ -230,10 +232,16 @@ def align_dataset(
             desc="Converting format of dataset",
         )
 
-    return dataset.map(
+    #print("\n\n===> ALIGNER dataset.map | BEFORE...") # DEBUG
+    #import multiprocessing
+    #multiprocessing.set_start_method('spawn', force=True)
+    result = dataset.map(
         convert_func,
         batched=True,
         remove_columns=column_names,
         features=features,
         **kwargs,
+        batch_size=10000, # gotzmann
     )
+    #print("\n\n====> ALIGNER dataset.map | AFTER") # DEBUG
+    return result
