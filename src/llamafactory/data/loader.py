@@ -181,14 +181,14 @@ def _get_preprocessed_dataset(
         )
 
     # TODO | gotzmann | batch_size as function of [ preprocessing_num_workers ] and [ dataset size ]
-    print("\n\n=> dataset.map | BEFORE...") # DEBUG
+    #print("\n\n=> dataset.map | BEFORE...") # DEBUG
     #import multiprocessing
     #multiprocessing.set_start_method('forkserver', force=True)
-    dataset = dataset.map(preprocess_func, batched=True, remove_columns=column_names, **kwargs, batch_size=500)
+    dataset = dataset.map(preprocess_func, batched=True, remove_columns=column_names, **kwargs, batch_size=200)
     #print("\n\n=== column_names ===\n\n", column_names)
     #print("\n\n=== **kwargs ===\n\n", kwargs)
     #dataset = preprocess_func(dataset)
-    print("\n\n<= dataset.map AFTER...\n\n") # DEBUG
+    #print("\n\n<= dataset.map AFTER...\n\n") # DEBUG
 
     if training_args.should_log:
         try:
