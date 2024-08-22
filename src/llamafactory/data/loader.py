@@ -243,12 +243,12 @@ def get_dataset(
     print("\n\n===> load dataset...") # DEBUG
     import multiprocessing
     multiprocessing.set_start_method('spawn', force=True)
-    with training_args.main_process_first(desc="load dataset"):
-        print("\n\n===> [1] load dataset...") # DEBUG
-        dataset = _get_merged_dataset(data_args.dataset, model_args, data_args, training_args, stage)
-        print("\n\n===> [2] load dataset...") # DEBUG
-        eval_dataset = _get_merged_dataset(data_args.eval_dataset, model_args, data_args, training_args, stage)
-        print("\n\n===> [2] DONE...") # DEBUG
+    #with training_args.main_process_first(desc="load dataset"):
+    print("\n\n===> [1] load dataset...") # DEBUG
+    dataset = _get_merged_dataset(data_args.dataset, model_args, data_args, training_args, stage)
+    print("\n\n===> [2] load dataset...") # DEBUG
+    eval_dataset = _get_merged_dataset(data_args.eval_dataset, model_args, data_args, training_args, stage)
+    print("\n\n===> [2] DONE...") # DEBUG
 
     print("\n\n===> pre-process dataset...") # DEBUG
     with training_args.main_process_first(desc="pre-process dataset"):
