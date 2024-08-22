@@ -183,14 +183,14 @@ def _get_preprocessed_dataset(
         )
 
     # TODO | gotzmann | batch_size as function of [ preprocessing_num_workers ] and [ dataset size ]
-    #print("\n\n=> dataset.map | BEFORE...") # DEBUG
+    print("\n\n=> dataset.map | BEFORE...") # DEBUG
     #import multiprocessing
     #multiprocessing.set_start_method('forkserver', force=True)
     dataset = dataset.map(preprocess_func, batched=True, remove_columns=column_names, **kwargs, batch_size=200)
     #print("\n\n=== column_names ===\n\n", column_names)
     #print("\n\n=== **kwargs ===\n\n", kwargs)
     #dataset = preprocess_func(dataset)
-    #print("\n\n<= dataset.map AFTER...\n\n") # DEBUG
+    print("\n\n<= dataset.map AFTER...\n\n") # DEBUG
 
     if training_args.should_log:
         try:
@@ -241,7 +241,9 @@ def get_dataset(
     # Load and preprocess dataset
     print("\n\n===> load dataset...") # DEBUG
     with training_args.main_process_first(desc="load dataset"):
+        print("\n\n===> [1] load dataset...") # DEBUG
         dataset = _get_merged_dataset(data_args.dataset, model_args, data_args, training_args, stage)
+        print("\n\n===> [2] load dataset...") # DEBUG
         eval_dataset = _get_merged_dataset(data_args.eval_dataset, model_args, data_args, training_args, stage)
 
     print("\n\n===> pre-process dataset...") # DEBUG
