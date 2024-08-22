@@ -258,7 +258,7 @@ def get_dataset(
     eval_dataset = _get_preprocessed_dataset(
         eval_dataset, data_args, training_args, stage, template, tokenizer, processor, is_eval=True
     )
-    
+		
     # NEW DEBUG | gotzmann --
 
     print ("\n\n=== Writing [ 10 ] blocks to disk... ===\n\n")
@@ -279,32 +279,32 @@ def get_dataset(
         f.close()
 
         num += 1  
-    
-    # print ("\n\n=== SEARCHING FOR DUBS... ===\n\n")
+		
+        # print ("\n\n=== SEARCHING FOR DUBS... ===\n\n")
 
-    # hashes = []
-    # samples = []
+        # hashes = []
+        # samples = []
 
-    # num = 0
-    # for block in iter(dataset):
-    #     sample = format(tokenizer.decode(block["input_ids"], skip_special_tokens=False))
-    #     sampleHash = hash(sample)
-    #     #print("\n\n=== SAMPLE # {} ===\n\n".format(num), sample)
-    #     #print("\n\n=== HASH # {} ===\n\n".format(num), sampleHash)
-    #     samples += [ sample ]
-    #     hashes += [ sampleHash ]
-    #     num += 1
-    #     if num > 100:
-    #         break
+        # num = 0
+        # for block in iter(dataset):
+        #     sample = format(tokenizer.decode(block["input_ids"], skip_special_tokens=False))
+        #     sampleHash = hash(sample)
+        #     #print("\n\n=== SAMPLE # {} ===\n\n".format(num), sample)
+        #     #print("\n\n=== HASH # {} ===\n\n".format(num), sampleHash)
+        #     samples += [ sample ]
+        #     hashes += [ sampleHash ]
+        #     num += 1
+        #     if num > 100:
+        #         break
 
-    # for z in range(len(samples)):
-    #     for dub in range(z+1, len(samples)):
-    #         if hashes[z] == hashes[dub]:
-    #             print("\n\n=== DUB FOUND !!! {} == {} === \n\n".format(z, dub))
-    #             print(samples[dub])
-    #             #exit()
-    
-    # -- NEW DEBUG
+        # for z in range(len(samples)):
+        #     for dub in range(z+1, len(samples)):
+        #         if hashes[z] == hashes[dub]:
+        #             print("\n\n=== DUB FOUND !!! {} == {} === \n\n".format(z, dub))
+        #             print(samples[dub])
+        #             #exit()
+		
+		# -- NEW DEBUG
 
     if data_args.val_size > 1e-6:
         dataset_dict = split_dataset(dataset, data_args, seed=training_args.seed)
