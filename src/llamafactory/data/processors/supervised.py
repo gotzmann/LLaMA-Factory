@@ -176,7 +176,7 @@ def preprocess_packed_supervised_dataset(
     length2indexes = defaultdict(list)
     lll = str(len(examples["prompt"])) # DEBUG
     for i in range(len(examples["prompt"])):
-        print("===> ### " + str(i) + " OF " + lll) # DEBUG
+        #print("===> ### " + str(i) + " OF " + lll) # DEBUG
         if len(examples["prompt"][i]) % 2 != 1 or len(examples["response"][i]) != 1:
             logger.warning("Dropped invalid example: {}".format(examples["prompt"][i] + examples["response"][i]))
             continue
