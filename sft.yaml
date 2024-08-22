@@ -48,7 +48,7 @@ lr_scheduler_type: cosine
 num_train_epochs: 1.0
 optim: adamw_8bit # adamw_torch
 warmup_steps: 300
-upcast_layernorm: true # Must flatten tensors with uniform dtype but got torch.float16 and torch.float32
+upcast_layernorm: false # true # FSDP: Must flatten tensors with uniform dtype but got torch.float16 and torch.float32
 flash_attn: fa2
 bf16: true # fp16: true
 #fp16: true
