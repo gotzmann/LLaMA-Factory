@@ -49,7 +49,7 @@ def _load_single_dataset(
     data_args: "DataArguments",
     training_args: "Seq2SeqTrainingArguments",
 ) -> Union["Dataset", "IterableDataset"]:
-    logger.info("Loading dataset {}...".format(dataset_attr))
+    #logger.info("Loading dataset {}...".format(dataset_attr))
     data_path, data_name, data_dir, data_files = None, None, None, None
     if dataset_attr.load_from in ["hf_hub", "ms_hub"]:
         data_path = dataset_attr.dataset_name
@@ -132,7 +132,7 @@ def _load_single_dataset(
         max_samples = min(data_args.max_samples, len(dataset))
         dataset = dataset.select(range(max_samples))
 
-    print("\n\n===> return align_dataset...") # DEBUG
+    #print("\n\n===> return align_dataset...") # DEBUG
     return align_dataset(dataset, dataset_attr, data_args, training_args)
 
 
@@ -143,18 +143,18 @@ def _get_merged_dataset(
     training_args: "Seq2SeqTrainingArguments",
     stage: Literal["pt", "sft", "rm", "ppo", "kto"],
 ) -> Optional[Union["Dataset", "IterableDataset"]]:
-    print("\n\n===> [A] _get_merged_dataset...") # DEBUG
+    #print("\n\n===> [A] _get_merged_dataset...") # DEBUG
     if dataset_names is None:
         return None
-    print("\n\n===> [B] _get_merged_dataset...") # DEBUG
+    #print("\n\n===> [B] _get_merged_dataset...") # DEBUG
     datasets = []
     for dataset_attr in get_dataset_list(dataset_names, data_args.dataset_dir):
         if (stage == "rm" and dataset_attr.ranking is False) or (stage != "rm" and dataset_attr.ranking is True):
             raise ValueError("The dataset is not applicable in the current training stage.")
-        print("\n\n===> [C] _get_merged_dataset...") # DEBUG
+        #print("\n\n===> [C] _get_merged_dataset...") # DEBUG
         datasets.append(_load_single_dataset(dataset_attr, model_args, data_args, training_args))
 
-    print("\n\n===> return merge_dataset...") # DEBUG
+    #print("\n\n===> return merge_dataset...") # DEBUG
     return merge_dataset(datasets, data_args, seed=training_args.seed)
 
 
