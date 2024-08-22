@@ -233,8 +233,8 @@ def align_dataset(
         )
 
     print("\n\n===> ALIGNER dataset.map | BEFORE...") # DEBUG
-    #import multiprocessing
-    #multiprocessing.set_start_method('spawn', force=True)
+    import multiprocessing
+    multiprocessing.set_start_method('spawn', force=True)
     result = dataset.map(
         convert_func,
         batched=True,
