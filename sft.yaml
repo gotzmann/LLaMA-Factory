@@ -28,7 +28,7 @@ template: llama3
 packing: true
 cutoff_len: 16384 # 8192 # 1024 # 16384 # 8192 # 32768 # 8192 # 1024 # 2048
 overwrite_cache: true
-preprocessing_num_workers: 8
+preprocessing_num_workers: 16
 
 ### output
 output_dir: /home/exported
