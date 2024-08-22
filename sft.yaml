@@ -50,8 +50,8 @@ optim: adamw_8bit # adamw_torch
 warmup_steps: 300
 upcast_layernorm: true # Must flatten tensors with uniform dtype but got torch.float16 and torch.float32
 flash_attn: fa2
-#bf16: true # fp16: true
-fp16: true
+bf16: true # fp16: true
+#fp16: true
 
 ### eval
 # val_size: 0 # 0.1
