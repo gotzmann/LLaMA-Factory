@@ -1,5 +1,5 @@
 ### gotzmann
-use_unsloth: true # works only for ONE card
+#use_unsloth: true # works only for ONE card
 # ddp_find_unused_parameters: false # needs to be set as False for LoRA in DDP training
 
 ### model
