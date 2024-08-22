@@ -240,45 +240,45 @@ def get_dataset(
             raise ValueError("Turn off `streaming` when saving dataset to disk.")
 
     # Load and preprocess dataset
-    print("\n\n===> load dataset...") # DEBUG
-    import multiprocessing
-    multiprocessing.set_start_method('spawn', force=True)
-    #with training_args.main_process_first(desc="load dataset"):
-    print("\n\n===> [1] load dataset...") # DEBUG
-    dataset = _get_merged_dataset(data_args.dataset, model_args, data_args, training_args, stage)
-    print("\n\n===> [2] load dataset...") # DEBUG
-    eval_dataset = _get_merged_dataset(data_args.eval_dataset, model_args, data_args, training_args, stage)
-    print("\n\n===> [2] DONE...") # DEBUG
+    #print("\n\n===> load dataset...") # DEBUG
+    #import multiprocessing
+    #multiprocessing.set_start_method('spawn', force=True)
+    with training_args.main_process_first(desc="load dataset"):
+        #print("\n\n===> [1] load dataset...") # DEBUG
+        dataset = _get_merged_dataset(data_args.dataset, model_args, data_args, training_args, stage)
+        #print("\n\n===> [2] load dataset...") # DEBUG
+        eval_dataset = _get_merged_dataset(data_args.eval_dataset, model_args, data_args, training_args, stage)
+        #print("\n\n===> [2] DONE...") # DEBUG
 
     print("\n\n===> pre-process dataset...") # DEBUG
-    #with training_args.main_process_first(desc="pre-process dataset"):
-    dataset = _get_preprocessed_dataset(
-        dataset, data_args, training_args, stage, template, tokenizer, processor, is_eval=False
-    )
-    eval_dataset = _get_preprocessed_dataset(
-        eval_dataset, data_args, training_args, stage, template, tokenizer, processor, is_eval=True
-    )
+    with training_args.main_process_first(desc="pre-process dataset"):
+        dataset = _get_preprocessed_dataset(
+            dataset, data_args, training_args, stage, template, tokenizer, processor, is_eval=False
+        )
+        eval_dataset = _get_preprocessed_dataset(
+            eval_dataset, data_args, training_args, stage, template, tokenizer, processor, is_eval=True
+        )
 		
-    # NEW DEBUG | gotzmann --
+        # NEW DEBUG | gotzmann --
 
-    print ("\n\n=== Writing [ 10 ] blocks to disk... ===\n\n")
+        print ("\n\n=== Writing [ 10 ] blocks to disk... ===\n\n")
 
-    num = 0
-    for block in iter(dataset):
+        num = 0
+        for block in iter(dataset):
 
-        if num >= 10: break
+            if num >= 10: break
 
-        sample = format(tokenizer.decode(block["input_ids"], skip_special_tokens=False))
-        f = open('./batches/inputs.' + str(num), 'w')
-        f.write(sample)
-        f.close()
+            sample = format(tokenizer.decode(block["input_ids"], skip_special_tokens=False))
+            f = open('./batches/inputs.' + str(num), 'w')
+            f.write(sample)
+            f.close()
 
-        labels = ', ' . join(map(str, block["labels"]))
-        f = open('./batches/labels.' + str(num), 'w')
-        f.write(labels)
-        f.close()
+            labels = ', ' . join(map(str, block["labels"]))
+            f = open('./batches/labels.' + str(num), 'w')
+            f.write(labels)
+            f.close()
 
-        num += 1  
+            num += 1  
 		
         # print ("\n\n=== SEARCHING FOR DUBS... ===\n\n")
 
@@ -306,36 +306,36 @@ def get_dataset(
 		
 		# -- NEW DEBUG
 
-    if data_args.val_size > 1e-6:
-        dataset_dict = split_dataset(dataset, data_args, seed=training_args.seed)
-    else:
-        dataset_dict = {}
-        if dataset is not None:
-            if data_args.streaming:
-                dataset = dataset.shuffle(buffer_size=data_args.buffer_size, seed=training_args.seed)
+        if data_args.val_size > 1e-6:
+            dataset_dict = split_dataset(dataset, data_args, seed=training_args.seed)
+        else:
+            dataset_dict = {}
+            if dataset is not None:
+                if data_args.streaming:
+                    dataset = dataset.shuffle(buffer_size=data_args.buffer_size, seed=training_args.seed)
 
-            dataset_dict["train"] = dataset
+                dataset_dict["train"] = dataset
 
-        if eval_dataset is not None:
-            if data_args.streaming:
-                eval_dataset = eval_dataset.shuffle(buffer_size=data_args.buffer_size, seed=training_args.seed)
+            if eval_dataset is not None:
+                if data_args.streaming:
+                    eval_dataset = eval_dataset.shuffle(buffer_size=data_args.buffer_size, seed=training_args.seed)
 
-            dataset_dict["validation"] = eval_dataset
+                dataset_dict["validation"] = eval_dataset
 
-        dataset_dict = DatasetDict(dataset_dict)
+            dataset_dict = DatasetDict(dataset_dict)
 
-    if data_args.tokenized_path is not None:
-        if training_args.should_save:
-            dataset_dict.save_to_disk(data_args.tokenized_path)
-            logger.info("Tokenized dataset saved at {}.".format(data_args.tokenized_path))
-            logger.info("Please restart the training with `tokenized_path: {}`.".format(data_args.tokenized_path))
+        if data_args.tokenized_path is not None:
+            if training_args.should_save:
+                dataset_dict.save_to_disk(data_args.tokenized_path)
+                logger.info("Tokenized dataset saved at {}.".format(data_args.tokenized_path))
+                logger.info("Please restart the training with `tokenized_path: {}`.".format(data_args.tokenized_path))
 
-        sys.exit(0)
+            sys.exit(0)
 
-    dataset_module = {}
-    if "train" in dataset_dict:
-        dataset_module["train_dataset"] = dataset_dict["train"]
-    if "validation" in dataset_dict:
-        dataset_module["eval_dataset"] = dataset_dict["validation"]
+        dataset_module = {}
+        if "train" in dataset_dict:
+            dataset_module["train_dataset"] = dataset_dict["train"]
+        if "validation" in dataset_dict:
+            dataset_module["eval_dataset"] = dataset_dict["validation"]
 
-    return dataset_module
+        return dataset_module
