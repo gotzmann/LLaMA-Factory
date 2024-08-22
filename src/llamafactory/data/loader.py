@@ -143,14 +143,15 @@ def _get_merged_dataset(
     training_args: "Seq2SeqTrainingArguments",
     stage: Literal["pt", "sft", "rm", "ppo", "kto"],
 ) -> Optional[Union["Dataset", "IterableDataset"]]:
+    print("\n\n===> [A] _get_merged_dataset...") # DEBUG
     if dataset_names is None:
         return None
-
+    print("\n\n===> [B] _get_merged_dataset...") # DEBUG
     datasets = []
     for dataset_attr in get_dataset_list(dataset_names, data_args.dataset_dir):
         if (stage == "rm" and dataset_attr.ranking is False) or (stage != "rm" and dataset_attr.ranking is True):
             raise ValueError("The dataset is not applicable in the current training stage.")
-
+        print("\n\n===> [C] _get_merged_dataset...") # DEBUG
         datasets.append(_load_single_dataset(dataset_attr, model_args, data_args, training_args))
 
     print("\n\n===> return merge_dataset...") # DEBUG
@@ -245,6 +246,7 @@ def get_dataset(
         dataset = _get_merged_dataset(data_args.dataset, model_args, data_args, training_args, stage)
         print("\n\n===> [2] load dataset...") # DEBUG
         eval_dataset = _get_merged_dataset(data_args.eval_dataset, model_args, data_args, training_args, stage)
+        print("\n\n===> [2] DONE...") # DEBUG
 
     print("\n\n===> pre-process dataset...") # DEBUG
     with training_args.main_process_first(desc="pre-process dataset"):
