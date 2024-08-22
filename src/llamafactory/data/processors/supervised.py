@@ -169,14 +169,14 @@ def preprocess_packed_supervised_dataset(
 ) -> Dict[str, List[List[int]]]:
     # build inputs with format `<bos> X1 Y1 <eos> <bos> X2 Y2 <eos>`
     # and labels with format `<ignore> ... <ignore> Y1 <eos> <ignore> ... <ignore> Y2 <eos>`
-    #print("-> preprocess_packed_supervised_dataset [ " + str(len(examples["prompt"])) + " ] BEFORE...") # DEBUG
+    print("-> preprocess_packed_supervised_dataset [ " + str(len(examples["prompt"])) + " ] BEFORE...") # DEBUG
     valid_num = 0
     batch_input_ids, batch_labels = [], []
     lengths = []
     length2indexes = defaultdict(list)
     lll = str(len(examples["prompt"])) # DEBUG
     for i in range(len(examples["prompt"])):
-        #print("===> ### " + str(i) + " OF " + lll) # DEBUG
+        print("===> ### " + str(i) + " OF " + lll) # DEBUG
         if len(examples["prompt"][i]) % 2 != 1 or len(examples["response"][i]) != 1:
             logger.warning("Dropped invalid example: {}".format(examples["prompt"][i] + examples["response"][i]))
             continue

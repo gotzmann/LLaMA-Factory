@@ -132,6 +132,7 @@ def _load_single_dataset(
         max_samples = min(data_args.max_samples, len(dataset))
         dataset = dataset.select(range(max_samples))
 
+    print("\n\n===> return align_dataset...") # DEBUG
     return align_dataset(dataset, dataset_attr, data_args, training_args)
 
 
@@ -152,6 +153,7 @@ def _get_merged_dataset(
 
         datasets.append(_load_single_dataset(dataset_attr, model_args, data_args, training_args))
 
+    print("\n\n===> return merge_dataset...") # DEBUG
     return merge_dataset(datasets, data_args, seed=training_args.seed)
 
 
@@ -237,10 +239,12 @@ def get_dataset(
             raise ValueError("Turn off `streaming` when saving dataset to disk.")
 
     # Load and preprocess dataset
+    print("\n\n===> load dataset...") # DEBUG
     with training_args.main_process_first(desc="load dataset"):
         dataset = _get_merged_dataset(data_args.dataset, model_args, data_args, training_args, stage)
         eval_dataset = _get_merged_dataset(data_args.eval_dataset, model_args, data_args, training_args, stage)
 
+    print("\n\n===> pre-process dataset...") # DEBUG
     with training_args.main_process_first(desc="pre-process dataset"):
         dataset = _get_preprocessed_dataset(
             dataset, data_args, training_args, stage, template, tokenizer, processor, is_eval=False
