@@ -6,12 +6,12 @@ fsdp_config:
   fsdp_auto_wrap_policy: TRANSFORMER_BASED_WRAP
   fsdp_backward_prefetch: BACKWARD_PRE
   fsdp_forward_prefetch: false
-  fsdp_cpu_ram_efficient_loading: false # true
+  fsdp_cpu_ram_efficient_loading: true # false # true
   fsdp_offload_params: false # true # offload may affect training speed
   fsdp_sharding_strategy: FULL_SHARD
   fsdp_state_dict_type: SHARDED_STATE_DICT # SHARDED_STATE_DICT | FULL_STATE_DICT
-  fsdp_sync_module_states: false # true
-  fsdp_use_orig_params: false # true # For FSDP, when using torch.compile please set fsdp_use_orig_params: True.
+  fsdp_sync_module_states: true # false # true
+  fsdp_use_orig_params: true # false # true # For FSDP, when using torch.compile please set fsdp_use_orig_params: True.
 machine_rank: 0
 main_training_function: main
 mixed_precision: bf16 # fp16 # or bf16
