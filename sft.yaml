@@ -19,9 +19,9 @@ finetuning_type: lora
 # q_proj,k_proj,v_proj,o_proj,gate_proj,up_proj,down_proj
 lora_target: all
 lora_rank: 64 # 64
-lora_alpha: 16 # 64
+lora_alpha: 32 # 16 # 64
 lora_dropout: 0.0
-use_rslora: true
+use_rslora: false # true
 # loraplus_lr_ratio: 4.0
 
 ### dataset
@@ -45,7 +45,7 @@ per_device_train_batch_size: 1
 gradient_accumulation_steps: 1
 gradient_checkpointing: true
 max_grad_norm: 1.0
-learning_rate: 0.00008
+learning_rate: 0.0001
 lr_scheduler_type: cosine
 num_train_epochs: 1.0
 optim: adamw_torch # adamw_8bit # adamw_torch
