@@ -1,6 +1,8 @@
 ### gotzmann
 # use_unsloth: true # works only for ONE card
 ddp_find_unused_parameters: false # needs to be set as False for LoRA in DDP training
+upcast_layernorm: false # true # FSDP: Must flatten tensors with uniform dtype but got torch.float16 and torch.float32
+
 
 ### model
 # meta-llama/Meta-Llama-3-8B-Instruct
@@ -48,7 +50,6 @@ lr_scheduler_type: cosine
 num_train_epochs: 1.0
 optim: adamw_torch # adamw_8bit # adamw_torch
 warmup_steps: 300
-upcast_layernorm: true # false # true # FSDP: Must flatten tensors with uniform dtype but got torch.float16 and torch.float32
 flash_attn: fa2
 #bf16: true # fp16: true
 fp16: true
