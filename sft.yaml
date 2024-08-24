@@ -26,14 +26,14 @@ use_rslora: true
 dataset: final
 template: llama3
 packing: true
-cutoff_len:  8192 # 16384 # 1024 # 16384 # 8192 # 32768 # 8192 # 1024 # 2048
+cutoff_len: 12288 # 8192 # 16384 # 1024 # 16384 # 8192 # 32768 # 8192 # 1024 # 2048
 overwrite_cache: true
 preprocessing_num_workers: 16
 
 ### output
 output_dir: /home/exported
 logging_steps: 1 # 10
-save_steps: 300 # 500
+save_steps: 500
 plot_loss: false # true
 overwrite_output_dir: true
 
@@ -46,8 +46,8 @@ max_grad_norm: 1.0
 learning_rate: 0.00008
 lr_scheduler_type: constant # cosine
 num_train_epochs: 1.0
-optim: adamw_8bit # adamw_torch
-warmup_steps: 300
+optim: adamw_torch # adamw_8bit # adamw_torch
+#warmup_steps: 300
 flash_attn: fa2
 #bf16: true # fp16: true
 fp16: true
