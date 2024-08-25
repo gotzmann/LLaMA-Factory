@@ -1,56 +1,53 @@
 ### gotzmann
 use_unsloth: true # works only for ONE card
-ddp_find_unused_parameters: false # needs to be set as False for LoRA in DDP training
 upcast_layernorm: true # FSDP: Must flatten tensors with uniform dtype but got torch.float16 and torch.float32
 
+### resume if needed ?
+ignore_data_skip: true
+resume_from_checkpoint: /home/exported/checkpoint-4115
+
 ### model
-# model_name_or_path: NousResearch/Meta-Llama-3-70B-Instruct
 model_name_or_path: NousResearch/Meta-Llama-3.1-8B-Instruct
 quantization_bit: 4
 double_quantization: false
-# use_fast_tokenizer: false
 
 ### method
+### all == q_proj,k_proj,v_proj,o_proj,gate_proj,up_proj,down_proj
 stage: sft
 do_train: true
 finetuning_type: lora
-# q_proj,k_proj,v_proj,o_proj,gate_proj,up_proj,down_proj
 lora_target: all
-lora_rank: 96 # 64
-lora_alpha: 32 # 16 # 64
+lora_rank: 96
+lora_alpha: 32
 lora_dropout: 0.0
 use_rslora: true
-# loraplus_lr_ratio: 4.0
 
 ### dataset
 dataset: final
 template: llama3
 packing: true
-cutoff_len: 10240 # 8192 # 16384 # 1024 # 16384 # 8192 # 32768 # 8192 # 1024 # 2048
+cutoff_len: 10240 # 16384 # 8192 # 32768
 overwrite_cache: true
 preprocessing_num_workers: 16
 
-### output
-output_dir: /home/exported
-logging_steps: 1 # 10
-save_steps: 500
-plot_loss: false # true
-overwrite_output_dir: true
-
 ### train
-gradient_checkpointing: true
+num_train_epochs: 2.0
 per_device_train_batch_size: 1
 gradient_accumulation_steps: 4
-gradient_checkpointing: true
-max_grad_norm: 1.0
 learning_rate: 0.00008
 lr_scheduler_type: constant # cosine
-num_train_epochs: 1.0
 optim: adamw_torch # adamw_8bit # adamw_torch
 #warmup_steps: 300
 flash_attn: fa2
 #bf16: true # fp16: true
 fp16: true
+
+### output
+output_dir: /home/exported
+logging_steps: 1
+save_steps: 500
+plot_loss: false
+overwrite_output_dir: true
 
 ### eval
 # val_size: 0 # 0.1
@@ -59,4 +56,9 @@ fp16: true
 # eval_steps: 0 # 500
 
 ### etc
+gradient_checkpointing: true
+max_grad_norm: 1.0
 ddp_timeout: 180000000
+ddp_find_unused_parameters: false # needs to be set as False for LoRA in DDP training
+# use_fast_tokenizer: false
+# loraplus_lr_ratio: 4.0
