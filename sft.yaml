@@ -3,8 +3,8 @@ use_unsloth: true # works only for ONE card
 upcast_layernorm: true # FSDP: Must flatten tensors with uniform dtype but got torch.float16 and torch.float32
 
 ### resume if needed ?
-ignore_data_skip: true
-resume_from_checkpoint: /home/exported/checkpoint-4115
+# ignore_data_skip: true
+# resume_from_checkpoint: /home/exported/checkpoint-4115
 
 ### model
 model_name_or_path: NousResearch/Meta-Llama-3.1-8B-Instruct
@@ -18,7 +18,7 @@ do_train: true
 finetuning_type: lora
 lora_target: all
 lora_rank: 96
-lora_alpha: 32
+lora_alpha: 96
 lora_dropout: 0.0
 use_rslora: true
 
@@ -33,14 +33,14 @@ preprocessing_num_workers: 16
 ### train
 num_train_epochs: 2.0
 per_device_train_batch_size: 1
-gradient_accumulation_steps: 4
+gradient_accumulation_steps: 8
 learning_rate: 0.00008
 lr_scheduler_type: constant # cosine
 optim: adamw_torch # adamw_8bit # adamw_torch
 #warmup_steps: 300
 flash_attn: fa2
-#bf16: true # fp16: true
-fp16: true
+bf16: true
+#fp16: true
 
 ### output
 output_dir: /home/exported
