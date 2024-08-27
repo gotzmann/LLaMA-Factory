@@ -101,7 +101,7 @@ def _encode_supervised_example(
             return [], [] 
         # print("\n\n === TEXT | PRE-TRAIN ===\n\n", text)
         ##### input_ids = tokenizer.encode(text, add_special_tokens=False)
-        input_ids = [ tokenizer.eos_token_id ] + tokenizer.encode(text, add_special_tokens=False)
+        input_ids = [ tokenizer.bos_token_id ] + tokenizer.encode(text, add_special_tokens=False)
         # total_length = 1 if template.efficient_eos else 0
         # special_tokens_length = 1 if template.efficient_eos else 0
         # if len(input_ids) >= data_args.cutoff_len + special_tokens_length:
