@@ -17,8 +17,8 @@ stage: sft
 do_train: true
 finetuning_type: lora
 lora_target: all
-lora_rank: 128
-lora_alpha: 64
+lora_rank: 96 # 128
+lora_alpha: 32 # 64
 lora_dropout: 0.0
 use_rslora: true
 
@@ -33,14 +33,14 @@ preprocessing_num_workers: 16
 ### train
 num_train_epochs: 1.0
 per_device_train_batch_size: 1
-gradient_accumulation_steps: 4
-learning_rate: 0.0001
+gradient_accumulation_steps: 2
+learning_rate: 0.00008
 lr_scheduler_type: constant # cosine
 optim: adamw_torch # adamw_8bit # adamw_torch
 #warmup_steps: 300
 flash_attn: fa2
-#bf16: true
-fp16: true
+bf16: true
+#fp16: true
 
 ### output
 output_dir: /home/exported
