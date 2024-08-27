@@ -49,7 +49,7 @@ def _load_single_dataset(
     data_args: "DataArguments",
     training_args: "Seq2SeqTrainingArguments",
 ) -> Union["Dataset", "IterableDataset"]:
-    #logger.info("Loading dataset {}...".format(dataset_attr))
+    logger.info("Loading dataset {}...".format(dataset_attr))
     data_path, data_name, data_dir, data_files = None, None, None, None
     if dataset_attr.load_from in ["hf_hub", "ms_hub"]:
         data_path = dataset_attr.dataset_name
@@ -187,7 +187,7 @@ def _get_preprocessed_dataset(
     #print("\n\n=> dataset.map | BEFORE...") # DEBUG
     import multiprocessing
     multiprocessing.set_start_method('spawn', force=True)
-    dataset = dataset.map(preprocess_func, batched=True, remove_columns=column_names, **kwargs, batch_size=200)
+    dataset = dataset.map(preprocess_func, batched=True, remove_columns=column_names, **kwargs, batch_size=300)
     #print("\n\n=== column_names ===\n\n", column_names)
     #print("\n\n=== **kwargs ===\n\n", kwargs)
     #dataset = preprocess_func(dataset)
