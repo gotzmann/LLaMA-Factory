@@ -41,6 +41,7 @@ def _encode_supervised_example(
     cutoff_len: int,
     train_on_prompt: bool,
     mask_history: bool,
+    neat_packing: bool = True, # gotzmann
 ) -> Tuple[List[int], List[int]]:
     messages = prompt + response
     input_ids, labels = [], []
@@ -91,28 +92,19 @@ def _encode_supervised_example(
         if prompt[0]['content'] != "":
             text = prompt[0]['content']
         if text == "":
-            return [], [] 
-        # print("\n\n === TEXT | PRE-TRAIN ===\n\n", text)
-        ##### input_ids = tokenizer.encode(text, add_special_tokens=False)
-        #input_ids = tokenizer.encode(text, add_special_tokens=False)
-        input_ids = [ tokenizer.bos_token_id ] + tokenizer.encode(text, add_special_tokens=False)
-        labels = [ IGNORE_INDEX ] + input_ids[1:]
-        if len(input_ids) >= cutoff_len:
-            input_ids = input_ids[:cutoff_len]
-            labels = labels[:cutoff_len]
-        # total_length = 1 if template.efficient_eos else 0
-        # special_tokens_length = 1 if template.efficient_eos else 0
-        # if len(input_ids) >= data_args.cutoff_len + special_tokens_length:
-        #     input_ids = input_ids[:data_args.cutoff_len - special_tokens_length]
-        # source_mask = source_ids
-        # if template.efficient_eos:
-        #    source_mask = [tokenizer.eos_token_id]
-        # input_ids += source_ids + target_ids
-        # labels += source_mask + target_ids
-        ##### if len(input_ids) >= cutoff_len:
-        #####     input_ids = input_ids[:cutoff_len]
-        ##### labels = input_ids
-        #labels = input_ids
+            return [], []
+        # Use BOS token to split PT samples by default, otherwise split them with cross-contamination attention
+        if neat_packing:
+            input_ids = tokenizer.encode(text, add_special_tokens=False)
+            if len(input_ids) >= cutoff_len:
+                input_ids = input_ids[:cutoff_len]
+            labels = input_ids
+        else:
+            input_ids = [ tokenizer.bos_token_id ] + tokenizer.encode(text, add_special_tokens=False)
+            labels = [ IGNORE_INDEX ] + input_ids[1:]
+            if len(input_ids) >= cutoff_len:
+                input_ids = input_ids[:cutoff_len]
+                labels = labels[:cutoff_len]
     # gotzmann | TRINITY ===		
 
     return input_ids, labels
@@ -190,6 +182,7 @@ def preprocess_packed_supervised_dataset(
             cutoff_len=data_args.cutoff_len - 1,  # reserved for the padding token
             train_on_prompt=data_args.train_on_prompt,
             mask_history=data_args.mask_history,
+            neat_packing=data_args.neat_packing, # gotzmann
         )
 
         # === NEW DEBUG | gotzmann
@@ -214,28 +207,27 @@ def preprocess_packed_supervised_dataset(
             valid_num += 1
 
     # === KNAPSACKS | gotzmann
-    model_inputs = {"input_ids": [], "attention_mask": [], "labels": []}
+    model_inputs = { "input_ids": [], "attention_mask": [], "labels": [] }
     packed_input_ids, packed_attention_masks, packed_labels = [], [], []
-    # packed_labels = []
     used_samples = []
     remaining_capacity = data_args.cutoff_len
+    i = 0 # number of sample within knapsack for cross-contamination attention
     for index, length in enumerate(lengths):
         #print("===> # " + str(index) + " OF " + str(len(lengths))) # DEBUG
         if index in used_samples: continue
         # -- just fit current sample into knapsack
         if length <= remaining_capacity:
             #print("\n\nremaining == " + str(remaining_capacity))
-            #print("1 DO) " + str(index) + ": [ " + str(len(packed_input_ids)) + " ] + " + str(len(batch_input_ids[index])))
             packed_input_ids += batch_input_ids[index]
-            #print("1 POSLE) " + str(index) + ": [ " + str(len(packed_input_ids)) + " ]")
             packed_labels += batch_labels[index]
             remaining_capacity -= length
             used_samples.append(index)
             #print("remaining == " + str(remaining_capacity))
-            # if data_args.neat_packing:
-            #     packed_attention_masks += [i + 1] * len(batch_input_ids[index])  # start from 1
-            # else:
-            packed_attention_masks += [1] * len(batch_input_ids[index]) # TODO: neat_packing
+            if data_args.neat_packing:
+                packed_attention_masks += [i + 1] * len(batch_input_ids[index]) # start from 1
+            else:
+                packed_attention_masks += [1] * len(batch_input_ids[index])
+            i += 1
             continue
         else:
             # -- looking for samples fitting into knapsack
@@ -244,32 +236,31 @@ def preprocess_packed_supervised_dataset(
                 # -- filling current knapsack with padding + starting new one
                 if remaining_capacity < 100 or current == len(lengths)-1:
                     #print("\n\n BREAK !!!")
-                    #print("\n\n +) padding: " + str(remaining_capacity))
-                    # pad_length = data_args.cutoff_len - len(packed_input_ids)
-                    #packed_input_ids += [tokenizer.pad_token_id] * remaining_capacity
-                    #packed_labels += [IGNORE_INDEX] * remaining_capacity
-                    #remaining_capacity = 0
-                    #print("\n\nremaining == " + str(remaining_capacity))
-                    #if len(packed_input_ids) > 8192: # DEBUG
-                    #    print("\n\n TROUBLES 2 !!! > 8192\n\n")
                     break
                 # -- else skipping or adding current sample into knapsack
                 if current in used_samples: continue
                 if lengths[current] > remaining_capacity: continue
                 #print("\n\nremaining == " + str(remaining_capacity))
-                #print("2 DO ) " + str(current) + ": [ " + str(len(packed_input_ids)) + " ] + " + str(len(batch_input_ids[current])))
                 packed_input_ids += batch_input_ids[current]
                 packed_labels += batch_labels[current]
                 remaining_capacity -= lengths[current]
                 #print("remaining == " + str(remaining_capacity))
                 used_samples.append(current)
-                packed_attention_masks += [1] * len(batch_input_ids[current]) # TODO: neat_packing
+                if data_args.neat_packing:
+                    packed_attention_masks += [i + 1] * len(batch_input_ids[index]) # start from 1
+                else:
+                    packed_attention_masks += [1] * len(batch_input_ids[current])
+                i += 1
                 continue
         #print("\n\nPADDING: " + str(remaining_capacity))    
         packed_input_ids += [tokenizer.pad_token_id] * remaining_capacity
         packed_labels += [IGNORE_INDEX] * remaining_capacity
-        packed_attention_masks += [1] * remaining_capacity # TODO: neat_packing
-        remaining_capacity = 0  
+        if data_args.neat_packing:
+            packed_attention_masks += [i + 1] * remaining_capacity # start from 1
+        else:
+            packed_attention_masks += [1] * remaining_capacity
+        remaining_capacity = 0
+        i = 0
         # -- sanity check
         if len(packed_input_ids) != data_args.cutoff_len:
             print("\n\n=== packed_input_ids " + str(len(packed_input_ids)) + " === \n\n")
@@ -281,12 +272,10 @@ def preprocess_packed_supervised_dataset(
         packed_input_ids, packed_labels = [], []
         remaining_capacity = data_args.cutoff_len
         if index not in used_samples:
-            #print("\n\n3 DO) " + str(index) + ": [ " + str(len(packed_input_ids)) + " ] + " + str(len(batch_input_ids[index])))
+            print("[ WARNING ] Sample not in used samples") # DEBUG
             packed_input_ids += batch_input_ids[index]
             packed_labels += batch_labels[index]
             remaining_capacity -= length
-            #print("3 POSLE) " + str(index) + ": [ " + str(len(packed_input_ids)) + " ]")
-            #print("remaining == " + str(remaining_capacity))
             used_samples.append(index)
             packed_attention_masks += [1] * len(batch_input_ids[index]) # TODO: neat_packing
         # FIXME: Last samples migh be not added into final output        
