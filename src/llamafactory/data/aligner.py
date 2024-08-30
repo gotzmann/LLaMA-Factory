@@ -241,7 +241,7 @@ def align_dataset(
         remove_columns=column_names,
         features=features,
         **kwargs,
-        batch_size=10000, # gotzmann
+        #batch_size=10000, # gotzmann
     )
     #print("\n\n====> ALIGNER dataset.map | AFTER") # DEBUG
     return result
