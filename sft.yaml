@@ -17,8 +17,8 @@ stage: sft
 do_train: true
 finetuning_type: lora
 lora_target: all
-lora_rank: 96 # 128
-lora_alpha: 32 # 32 # 64
+lora_rank: 96
+lora_alpha: 16
 lora_dropout: 0.0
 use_rslora: true
 
@@ -27,7 +27,7 @@ dataset: final
 template: llama3
 packing: true
 neat_packing: true
-cutoff_len: 16384 # 24576 # 32768 # 16384 # 32768 # 10240 # 32768 # 10240 # 16384 # 8192 # 32768
+cutoff_len: 32768 # 16384 # 24576 # 32768 # 16384 # 32768 # 10240 # 32768 # 10240 # 16384 # 8192 # 32768
 overwrite_cache: true
 preprocessing_num_workers: 24
 
