@@ -261,12 +261,12 @@ def get_dataset(
 		
         # NEW DEBUG | gotzmann --
 
-        print ("\n\n=== Writing [ 10 ] blocks to disk... ===\n\n")
+        print ("\n\n=== Writing [ 20 ] blocks to disk... ===\n\n")
 
         num = 0
         for block in iter(dataset):
 
-            if num >= 10: break
+            if num >= 20: break
 
             sample = format(tokenizer.decode(block["input_ids"], skip_special_tokens=False))
             f = open('./batches/inputs.' + str(num), 'w')
