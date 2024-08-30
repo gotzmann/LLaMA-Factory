@@ -27,7 +27,7 @@ dataset: final
 template: llama3
 packing: true
 neat_packing: true
-cutoff_len: 32768 # 16384 # 32768 # 10240 # 32768 # 10240 # 16384 # 8192 # 32768
+cutoff_len: 24576 # 32768 # 16384 # 32768 # 10240 # 32768 # 10240 # 16384 # 8192 # 32768
 overwrite_cache: true
 preprocessing_num_workers: 16
 
