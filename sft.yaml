@@ -17,8 +17,8 @@ stage: sft
 do_train: true
 finetuning_type: lora
 lora_target: all
-lora_rank: 96 # 64 # 96
-lora_alpha: 96 # 16
+lora_rank: 64 # 64 # 96
+lora_alpha: 64 # 16
 lora_dropout: 0.0
 #use_rslora: true
 
