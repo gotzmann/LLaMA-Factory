@@ -8,8 +8,8 @@ upcast_layernorm: false # true # FSDP: Must flatten tensors with uniform dtype b
 
 ### model
 model_name_or_path: NousResearch/Meta-Llama-3.1-8B-Instruct
-#quantization_bit: 4
-#double_quantization: false
+quantization_bit: 4
+double_quantization: false
 
 ### method
 ### all == q_proj,k_proj,v_proj,o_proj,gate_proj,up_proj,down_proj
@@ -18,16 +18,16 @@ do_train: true
 finetuning_type: lora
 lora_target: all
 lora_rank: 64 # 64 # 96
-lora_alpha: 64 # 16
+lora_alpha: 16
 lora_dropout: 0.0
-#use_rslora: true
+use_rslora: true
 
 ### dataset
 dataset: final
 template: llama3
 packing: true
 neat_packing: true
-cutoff_len: 8192 # 32768 # 16384 # 24576 # 32768 # 16384 # 32768 # 10240 # 32768 # 10240 # 16384 # 8192 # 32768
+cutoff_len: 32768 # 16384 # 24576 # 32768 # 16384 # 32768 # 10240 # 32768 # 10240 # 16384 # 8192 # 32768
 overwrite_cache: true
 preprocessing_num_workers: 16
 
@@ -37,7 +37,7 @@ per_device_train_batch_size: 1
 gradient_accumulation_steps: 1
 learning_rate: 0.0001
 lr_scheduler_type: constant # cosine
-optim: adamw_torch # adamw_8bit # adamw_torch
+optim: adamw_8bit # adamw_torch | adamw_8bit
 #warmup_steps: 300
 flash_attn: fa2
 bf16: true

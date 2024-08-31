@@ -269,12 +269,17 @@ def get_dataset(
             if num >= 20: break
 
             sample = format(tokenizer.decode(block["input_ids"], skip_special_tokens=False))
-            f = open('./batches/inputs.' + str(num), 'w')
+            f = open('./batches/input_ids.' + str(num), 'w')
             f.write(sample)
             f.close()
 
             labels = ', ' . join(map(str, block["labels"]))
             f = open('./batches/labels.' + str(num), 'w')
+            f.write(labels)
+            f.close()
+
+            labels = ', ' . join(map(str, block["attention_mask"]))
+            f = open('./batches/attention_mask.' + str(num), 'w')
             f.write(labels)
             f.close()
 
