@@ -1,5 +1,5 @@
 ### gotzmann
-use_unsloth: true # works only for ONE card
+use_unsloth: false # true # works only for ONE card
 upcast_layernorm: false # true # FSDP: Must flatten tensors with uniform dtype but got torch.float16 and torch.float32
 
 ### resume if needed ?
