@@ -18,9 +18,9 @@ do_train: true
 finetuning_type: lora
 lora_target: all
 lora_rank: 96 # 64 # 96
-lora_alpha: 16
+lora_alpha: 96 # 16
 lora_dropout: 0.0
-use_rslora: true
+#use_rslora: true
 
 ### dataset
 dataset: final
@@ -40,8 +40,8 @@ lr_scheduler_type: constant # cosine
 optim: adamw_torch # adamw_8bit # adamw_torch
 #warmup_steps: 300
 flash_attn: fa2
-#bf16: true
-fp16: true
+bf16: true
+#fp16: true
 
 ### output
 output_dir: /home/exported
