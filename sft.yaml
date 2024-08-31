@@ -17,7 +17,7 @@ stage: sft
 do_train: true
 finetuning_type: lora
 lora_target: all
-lora_rank: 128 # 64 # 96
+lora_rank: 96 # 64 # 96
 lora_alpha: 16
 lora_dropout: 0.0
 use_rslora: true
@@ -40,13 +40,13 @@ lr_scheduler_type: constant # cosine
 optim: adamw_torch # adamw_8bit # adamw_torch
 #warmup_steps: 300
 flash_attn: fa2
-bf16: true
-#fp16: true
+#bf16: true
+fp16: true
 
 ### output
 output_dir: /home/exported
 logging_steps: 1
-save_steps: 500
+save_steps: 300
 plot_loss: false
 overwrite_output_dir: true
 
