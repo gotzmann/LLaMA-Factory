@@ -37,7 +37,7 @@ per_device_train_batch_size: 1
 gradient_accumulation_steps: 1
 learning_rate: 0.0001
 lr_scheduler_type: constant # cosine
-optim: adamw_8bit # adamw_torch | adamw_8bit
+optim: adamw_torch # adamw_torch | adamw_8bit
 #warmup_steps: 300
 flash_attn: fa2
 bf16: true
