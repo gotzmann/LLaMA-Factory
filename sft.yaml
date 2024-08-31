@@ -8,8 +8,8 @@ upcast_layernorm: false # true # FSDP: Must flatten tensors with uniform dtype b
 
 ### model
 model_name_or_path: NousResearch/Meta-Llama-3.1-8B-Instruct
-quantization_bit: 4
-double_quantization: false
+#quantization_bit: 4
+#double_quantization: false
 
 ### method
 ### all == q_proj,k_proj,v_proj,o_proj,gate_proj,up_proj,down_proj
