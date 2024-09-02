@@ -1,6 +1,6 @@
 ### gotzmann
 #use_unsloth: false # true # works only for ONE card
-upcast_layernorm: true # false # true # FSDP: Must flatten tensors with uniform dtype but got torch.float16 and torch.float32
+upcast_layernorm: false # true # FSDP: Must flatten tensors with uniform dtype but got torch.float16 and torch.float32
 #use_reentrant: true
 enable_liger_kernel: true
 
@@ -20,7 +20,7 @@ do_train: true
 finetuning_type: lora
 lora_target: all
 lora_rank: 96 # 64 # 64 # 96
-lora_alpha: 16 # 32
+lora_alpha: 32 # 16 # 32
 lora_dropout: 0.0
 use_rslora: true
 
@@ -37,7 +37,7 @@ preprocessing_num_workers: 24
 num_train_epochs: 1.0
 per_device_train_batch_size: 1
 gradient_accumulation_steps: 2
-learning_rate: 0.00002
+learning_rate: 0.00003
 lr_scheduler_type: constant # cosine
 optim: adamw_torch # adamw_torch | adamw_8bit
 #warmup_steps: 300
