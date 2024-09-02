@@ -184,7 +184,8 @@ def _get_preprocessed_dataset(
     #print("\n\n=> dataset.map | BEFORE...") # DEBUG
     #import multiprocessing
     #multiprocessing.set_start_method('spawn', force=True)
-    dataset = dataset.map(preprocess_func, batched=True, remove_columns=column_names, **kwargs, batch_size=500) # gotzmann
+    #dataset = dataset.map(preprocess_func, batched=True, remove_columns=column_names, **kwargs, batch_size=500) # gotzmann
+    dataset = dataset.map(preprocess_func, batched=True, remove_columns=column_names, **kwargs)
     #print("\n\n=== column_names ===\n\n", column_names)
     #print("\n\n=== **kwargs ===\n\n", kwargs)
     #dataset = preprocess_func(dataset)
