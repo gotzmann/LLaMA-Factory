@@ -28,9 +28,7 @@ def greedy_knapsack(numbers: List[int], capacity: int) -> List[List[int]]:
     r"""
     An efficient greedy algorithm with binary search for the knapsack problem.
     """
-    # print("\n\n=== NUMBERS BEFORE ===\n\n", numbers) # DEBUG | gotzmann
     numbers.sort()  # sort numbers in ascending order for binary search
-    # print("\n\n=== NUMBERS SORTED ===\n\n", numbers) # DEBUG | gotzmann
     knapsacks = []
 
     while numbers:

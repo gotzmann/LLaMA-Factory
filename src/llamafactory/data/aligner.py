@@ -14,7 +14,7 @@
 
 import os
 from functools import partial
-from typing import TYPE_CHECKING, Any, Dict, List, Union
+from typing import TYPE_CHECKING, Any, Dict, List, Sequence, Union
 
 from datasets import Features
 
@@ -33,19 +33,17 @@ if TYPE_CHECKING:
 logger = get_logger(__name__)
 
 
-def _convert_images(images: List[Any], dataset_attr: "DatasetAttr", data_args: "DataArguments") -> List[Any]:
+def _convert_images(images: Sequence[Any], dataset_attr: "DatasetAttr", data_args: "DataArguments") -> List[Any]:
     r"""
     Optionally concatenates image path to dataset dir when loading from local disk.
     """
-    outputs = []
+    images = images[:]
     if dataset_attr.load_from in ["script", "file"]:
-        for image in images:
-            if isinstance(image, str) and os.path.isfile(os.path.join(data_args.dataset_dir, image)):
-                outputs.append(os.path.join(data_args.dataset_dir, image))
-            else:
-                outputs.append(image)
+        for i in range(len(images)):
+            if isinstance(images[i], str) and os.path.isfile(os.path.join(data_args.dataset_dir, images[i])):
+                images[i] = os.path.join(data_args.dataset_dir, images[i])
 
-    return outputs
+    return images
 
 
 def convert_alpaca(
@@ -107,7 +105,6 @@ def convert_sharegpt(
     r"""
     Converts sharegpt format dataset to the standard format.
     """
-    #print("<- BEFORE | convert_sharegpt [ " + str(len(examples[dataset_attr.messages])) + " ] ...") # DEBUG 
     outputs = {"prompt": [], "response": [], "system": [], "tools": [], "images": []}
     convert_images = partial(_convert_images, dataset_attr=dataset_attr, data_args=data_args)
     tag_mapping = {
@@ -187,7 +184,6 @@ def convert_sharegpt(
         outputs["tools"].append(examples[dataset_attr.tools][i] if dataset_attr.tools else "")
         outputs["images"].append(convert_images(examples[dataset_attr.images][i]) if dataset_attr.images else [])
 
-    #print("<- AFTER | convert_sharegpt [ - ] ...") # DEBUG  
     return outputs
 
 
@@ -232,16 +228,10 @@ def align_dataset(
             desc="Converting format of dataset",
         )
 
-    #print("\n\n===> ALIGNER dataset.map | BEFORE...") # DEBUG
-    #import multiprocessing
-    #multiprocessing.set_start_method('spawn', force=True)
-    result = dataset.map(
+    return dataset.map(
         convert_func,
         batched=True,
         remove_columns=column_names,
         features=features,
         **kwargs,
-        #batch_size=10000, # gotzmann
     )
-    #print("\n\n====> ALIGNER dataset.map | AFTER") # DEBUG
-    return result

@@ -39,7 +39,7 @@ if is_vllm_available():
 
 
 if TYPE_CHECKING:
-    from numpy.typing import NDArray
+    from PIL.Image import Image
     from transformers.image_processing_utils import BaseImageProcessor
 
     from ..hparams import DataArguments, FinetuningArguments, GeneratingArguments, ModelArguments
@@ -111,7 +111,7 @@ class VllmEngine(BaseEngine):
         messages: Sequence[Dict[str, str]],
         system: Optional[str] = None,
         tools: Optional[str] = None,
-        image: Optional["NDArray"] = None,
+        image: Optional["Image"] = None,
         **input_kwargs,
     ) -> AsyncIterator["RequestOutput"]:
         request_id = "chatcmpl-{}".format(uuid.uuid4().hex)
@@ -124,9 +124,7 @@ class VllmEngine(BaseEngine):
 
         paired_messages = messages + [{"role": "assistant", "content": ""}]
         system = system or self.generating_args["default_system"]
-        prompt_ids, _ = self.template.encode_oneturn(
-            tokenizer=self.tokenizer, messages=paired_messages, system=system, tools=tools
-        )
+        prompt_ids, _ = self.template.encode_oneturn(self.tokenizer, paired_messages, system, tools)
 
         if self.processor is not None and image is not None:  # add image features
             image_processor: "BaseImageProcessor" = getattr(self.processor, "image_processor")
@@ -197,7 +195,7 @@ class VllmEngine(BaseEngine):
         messages: Sequence[Dict[str, str]],
         system: Optional[str] = None,
         tools: Optional[str] = None,
-        image: Optional["NDArray"] = None,
+        image: Optional["Image"] = None,
         **input_kwargs,
     ) -> List["Response"]:
         final_output = None
@@ -223,7 +221,7 @@ class VllmEngine(BaseEngine):
         messages: Sequence[Dict[str, str]],
         system: Optional[str] = None,
         tools: Optional[str] = None,
-        image: Optional["NDArray"] = None,
+        image: Optional["Image"] = None,
         **input_kwargs,
     ) -> AsyncGenerator[str, None]:
         generated_text = ""

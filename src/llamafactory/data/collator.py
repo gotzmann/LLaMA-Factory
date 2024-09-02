@@ -62,44 +62,49 @@ def prepare_4d_attention_mask(attention_mask_with_indices: "torch.Tensor", dtype
 
 
 @dataclass
-class CustomDataCollatorForSeq2Seq(DataCollatorForSeq2Seq):
+class MultiModalDataCollatorForSeq2Seq(DataCollatorForSeq2Seq):
     r"""
-    Data collator for custom models (like Qwen2-VL).
+    Data collator that supports VLMs.
     """
 
     def __call__(self, features: Sequence[Dict[str, Any]]) -> Dict[str, "torch.Tensor"]:
-        image_grid_thw = None  # TODO: better handle various VLMs
-        if "image_grid_thw" in features[0]:
-            image_grid_thw_list = [
-                torch.Tensor(feature["image_grid_thw"]).long()
-                for feature in features
-                if feature["image_grid_thw"][0][0] > 0
-            ]
-            pixel_values_list = [
-                torch.Tensor(feature["pixel_values"]) for feature in features if feature["image_grid_thw"][0][0] > 0
-            ]
-            if image_grid_thw_list:
-                image_grid_thw = torch.cat(image_grid_thw_list, dim=0)
-                pixel_values = torch.cat(pixel_values_list, dim=0)
-            else:
-                image_grid_thw = None
-                pixel_values = None
+        if "token_type_ids" in features[0].keys():
+            for feature in features:
+                feature["token_type_ids"] = feature["token_type_ids"][0]
 
-            features = [
-                {key: feature[key] for key in feature if key not in ["image_grid_thw", "pixel_values"]}
-                for feature in features
-            ]
+        extra_features = {}
+        if "pixel_values" in features[0].keys():
+            pixel_values = []
+            for feature in features:
+                if feature["pixel_values"] is None:
+                    pixel_values.append(torch.zeros(0, dtype=torch.float))
+                else:
+                    pixel_values.append(torch.tensor(feature["pixel_values"], dtype=torch.float))
 
-        features = super().__call__(features)
-        if image_grid_thw is not None:
-            features["image_grid_thw"] = image_grid_thw
-            features["pixel_values"] = pixel_values
+            extra_features["pixel_values"] = torch.cat(pixel_values, dim=0)
+            if extra_features["pixel_values"].numel() == 0:
+                extra_features["pixel_values"] = None
 
+        if "image_grid_thw" in features[0].keys():
+            image_grid_thw = []
+            for feature in features:
+                if feature["image_grid_thw"] is None:
+                    image_grid_thw.append(torch.zeros(0, dtype=torch.long))
+                else:
+                    image_grid_thw.append(torch.tensor(feature["image_grid_thw"], dtype=torch.long))
+
+            extra_features["image_grid_thw"] = torch.cat(image_grid_thw, dim=0)
+            if extra_features["image_grid_thw"].numel() == 0:
+                extra_features["image_grid_thw"] = None
+
+        features = [{key: feature[key] for key in feature if key not in extra_features.keys()} for feature in features]
+        features: Dict[str, "torch.Tensor"] = super().__call__(features)
+        features.update({key: value for key, value in extra_features.items() if value is not None})
         return features
 
 
 @dataclass
-class SFTDataCollatorWith4DAttentionMask(CustomDataCollatorForSeq2Seq):
+class SFTDataCollatorWith4DAttentionMask(MultiModalDataCollatorForSeq2Seq):
     r"""
     Data collator for 4d attention mask.
     """
@@ -117,7 +122,7 @@ class SFTDataCollatorWith4DAttentionMask(CustomDataCollatorForSeq2Seq):
 
 
 @dataclass
-class PairwiseDataCollatorWithPadding(CustomDataCollatorForSeq2Seq):
+class PairwiseDataCollatorWithPadding(MultiModalDataCollatorForSeq2Seq):
     r"""
     Data collator for pairwise data.
     """
@@ -137,14 +142,14 @@ class PairwiseDataCollatorWithPadding(CustomDataCollatorForSeq2Seq):
                     "attention_mask": feature["{}_attention_mask".format(key)],
                     "labels": feature["{}_labels".format(key)],
                 }
+                if "{}_token_type_ids".format(key) in feature:
+                    target_feature["token_type_ids"] = feature["{}_token_type_ids".format(key)]
+
                 if "pixel_values" in feature:  # image data are same for chosen and rejected
                     target_feature["pixel_values"] = feature["pixel_values"]
 
                 if "image_grid_thw" in feature:
                     target_feature["image_grid_thw"] = feature["image_grid_thw"]
-
-                if "{}_token_type_ids".format(key) in feature:
-                    target_feature["token_type_ids"] = feature["{}_token_type_ids".format(key)]
 
                 concatenated_features.append(target_feature)
 
@@ -152,7 +157,7 @@ class PairwiseDataCollatorWithPadding(CustomDataCollatorForSeq2Seq):
 
 
 @dataclass
-class KTODataCollatorWithPadding(CustomDataCollatorForSeq2Seq):
+class KTODataCollatorWithPadding(MultiModalDataCollatorForSeq2Seq):
     r"""
     Data collator for KTO data.
     """
@@ -172,15 +177,15 @@ class KTODataCollatorWithPadding(CustomDataCollatorForSeq2Seq):
                 "attention_mask": feature["kl_attention_mask"],
                 "labels": feature["kl_labels"],
             }
+            if "token_type_ids" in feature:
+                target_feature["token_type_ids"] = feature["token_type_ids"]
+                kl_feature["token_type_ids"] = feature["kl_token_type_ids"]
+
             if "pixel_values" in feature:
                 target_feature["pixel_values"] = feature["pixel_values"]
 
             if "image_grid_thw" in feature:
                 target_feature["image_grid_thw"] = feature["image_grid_thw"]
-
-            if "token_type_ids" in feature:
-                target_feature["token_type_ids"] = feature["token_type_ids"]
-                kl_feature["token_type_ids"] = feature["kl_token_type_ids"]
 
             target_features.append(target_feature)
             kl_features.append(kl_feature)

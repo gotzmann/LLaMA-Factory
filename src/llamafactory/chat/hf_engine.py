@@ -30,7 +30,7 @@ from .base_engine import BaseEngine, Response
 
 
 if TYPE_CHECKING:
-    from numpy.typing import NDArray
+    from PIL.Image import Image
     from transformers import PreTrainedModel, PreTrainedTokenizer, ProcessorMixin
     from trl import PreTrainedModelWrapper
 
@@ -78,7 +78,7 @@ class HuggingfaceEngine(BaseEngine):
         messages: Sequence[Dict[str, str]],
         system: Optional[str] = None,
         tools: Optional[str] = None,
-        image: Optional["NDArray"] = None,
+        image: Optional["Image"] = None,
         input_kwargs: Optional[Dict[str, Any]] = {},
     ) -> Tuple[Dict[str, Any], int]:
         if image is not None:
@@ -89,11 +89,9 @@ class HuggingfaceEngine(BaseEngine):
 
         paired_messages = messages + [{"role": "assistant", "content": ""}]
         system = system or generating_args["default_system"]
-        prompt_ids, _ = template.encode_oneturn(
-            tokenizer=tokenizer, messages=paired_messages, system=system, tools=tools
-        )
+        prompt_ids, _ = template.encode_oneturn(tokenizer, paired_messages, system, tools)
         if image is not None:
-            prompt_ids, _ = template.mm_plugin.process_token_ids(prompt_ids, None, tokenizer, processor)
+            prompt_ids, _ = template.mm_plugin.process_token_ids(prompt_ids, None, [image], tokenizer, processor)
 
         prompt_length = len(prompt_ids)
         inputs = torch.tensor([prompt_ids], device=model.device)
@@ -177,7 +175,7 @@ class HuggingfaceEngine(BaseEngine):
         messages: Sequence[Dict[str, str]],
         system: Optional[str] = None,
         tools: Optional[str] = None,
-        image: Optional["NDArray"] = None,
+        image: Optional["Image"] = None,
         input_kwargs: Optional[Dict[str, Any]] = {},
     ) -> List["Response"]:
         gen_kwargs, prompt_length = HuggingfaceEngine._process_args(
@@ -212,7 +210,7 @@ class HuggingfaceEngine(BaseEngine):
         messages: Sequence[Dict[str, str]],
         system: Optional[str] = None,
         tools: Optional[str] = None,
-        image: Optional["NDArray"] = None,
+        image: Optional["Image"] = None,
         input_kwargs: Optional[Dict[str, Any]] = {},
     ) -> Callable[[], str]:
         gen_kwargs, _ = HuggingfaceEngine._process_args(
@@ -269,7 +267,7 @@ class HuggingfaceEngine(BaseEngine):
         messages: Sequence[Dict[str, str]],
         system: Optional[str] = None,
         tools: Optional[str] = None,
-        image: Optional["NDArray"] = None,
+        image: Optional["Image"] = None,
         **input_kwargs,
     ) -> List["Response"]:
         if not self.can_generate:
@@ -297,7 +295,7 @@ class HuggingfaceEngine(BaseEngine):
         messages: Sequence[Dict[str, str]],
         system: Optional[str] = None,
         tools: Optional[str] = None,
-        image: Optional["NDArray"] = None,
+        image: Optional["Image"] = None,
         **input_kwargs,
     ) -> AsyncGenerator[str, None]:
         if not self.can_generate:
