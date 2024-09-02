@@ -1,0 +1,47 @@
+id: pod
+host: 0.0.0.0
+port: 8888
+log: booster.log
+deadline: 180
+debug:
+
+pods:
+
+  gpu:
+    model: model
+    prompt: llama3
+    sampling: janus
+    threads: 1
+    gpus: [ 100 ]
+    batch: 512
+
+models:
+
+  model:
+    name: Mira
+    path: Meta-Llama-3-8B-Instruct-Q4_K_M.gguf # Mira-70B-v1.0.q4km.gguf
+    context: 8K
+    predict: 1K
+
+prompts:
+
+  llama3:
+    locale: ru
+    prompt: "Сегодня {DATE}. Ты виртуальная ассистентка по имени Мира и создана российской компанией SuperMachina. Подумай над заданием и дай развернутый ответ."
+    system: "<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n\n{PROMPT}<|eot_id|>"
+    user: "<|start_header_id|>user<|end_header_id|>\n\n{USER}<|eot_id|>"
+    assistant: "<|start_header_id|>assistant<|end_header_id|>\n\n{ASSISTANT}<|eot_id|>"
+
+#      system: "<|im_start|>system\n{SYSTEM}<|im_end|>"
+#      user: "<|im_start|>user\n{USER}<|im_end|>"
+#      assistant: "<|im_start|>assistant\n{ASSISTANT}<|im_end|>"      
+
+samplings:
+
+  janus:
+    janus: 1
+    depth: 300
+    scale: 0.97
+    hi: 0.99
+    lo: 0.96
+    temp: 1.0
