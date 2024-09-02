@@ -36,11 +36,12 @@ preprocessing_num_workers: 24
 ### train
 num_train_epochs: 1.0
 per_device_train_batch_size: 1
-gradient_accumulation_steps: 2
-learning_rate: 0.00002
-lr_scheduler_type: constant # cosine
+gradient_accumulation_steps: 1
+learning_rate: 0.00003
+lr_scheduler_type: constant_with_warmup # constant # cosine # constant_with_warmup
 optim: adamw_torch # adamw_torch | adamw_8bit
 warmup_steps: 100
+# warmup_ratio: 0.1
 flash_attn: fa2
 #bf16: true
 fp16: true
