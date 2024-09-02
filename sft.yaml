@@ -20,7 +20,7 @@ do_train: true
 finetuning_type: lora
 lora_target: all
 lora_rank: 64 # 64 # 96
-lora_alpha: 32
+lora_alpha: 16 # 32
 lora_dropout: 0.0
 use_rslora: true
 
@@ -29,17 +29,17 @@ dataset: final
 template: llama3
 packing: true
 neat_packing: true
-cutoff_len: 8192 # 32768 # 16384 # 24576 # 32768 # 16384 # 32768 # 10240 # 32768 # 10240 # 16384 # 8192 # 32768
+cutoff_len: 16384 # 8192 # 32768 # 16384 # 24576 # 32768 # 16384 # 32768 # 10240 # 32768 # 10240 # 16384 # 8192 # 32768
 overwrite_cache: true
 preprocessing_num_workers: 24
 
 ### train
 num_train_epochs: 1.0
 per_device_train_batch_size: 1
-gradient_accumulation_steps: 8
+gradient_accumulation_steps: 4
 learning_rate: 0.00003
 lr_scheduler_type: constant # cosine
-optim: adamw_8bit # adamw_torch | adamw_8bit
+optim: adamw_torch # adamw_torch | adamw_8bit
 #warmup_steps: 300
 flash_attn: fa2
 bf16: true
