@@ -1,6 +1,6 @@
 ### gotzmann
-use_unsloth: false # true # works only for ONE card
-upcast_layernorm: false # true # FSDP: Must flatten tensors with uniform dtype but got torch.float16 and torch.float32
+#use_unsloth: false # true # works only for ONE card
+#upcast_layernorm: false # true # FSDP: Must flatten tensors with uniform dtype but got torch.float16 and torch.float32
 use_reentrant: true
 
 ### resume if needed ?
@@ -19,7 +19,7 @@ do_train: true
 finetuning_type: lora
 lora_target: all
 lora_rank: 64 # 64 # 96
-lora_alpha: 16
+lora_alpha: 32
 lora_dropout: 0.0
 use_rslora: true
 
@@ -28,17 +28,17 @@ dataset: final
 template: llama3
 packing: true
 neat_packing: true
-cutoff_len: 32768 # 16384 # 24576 # 32768 # 16384 # 32768 # 10240 # 32768 # 10240 # 16384 # 8192 # 32768
+cutoff_len: 8192 # 32768 # 16384 # 24576 # 32768 # 16384 # 32768 # 10240 # 32768 # 10240 # 16384 # 8192 # 32768
 overwrite_cache: true
 preprocessing_num_workers: 16
 
 ### train
 num_train_epochs: 1.0
 per_device_train_batch_size: 1
-gradient_accumulation_steps: 1
-learning_rate: 0.0001
+gradient_accumulation_steps: 8
+learning_rate: 0.0002
 lr_scheduler_type: constant # cosine
-optim: adamw_torch # adamw_torch | adamw_8bit
+optim: adamw_8bit # adamw_torch | adamw_8bit
 #warmup_steps: 300
 flash_attn: fa2
 bf16: true
@@ -47,7 +47,7 @@ bf16: true
 ### output
 output_dir: /home/exported
 logging_steps: 1
-save_steps: 300
+save_steps: 200
 plot_loss: false
 overwrite_output_dir: true
 
