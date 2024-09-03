@@ -9,12 +9,12 @@ fsdp_config:
   fsdp_cpu_ram_efficient_loading: true
   fsdp_offload_params: false # true # offload may affect training speed
   fsdp_sharding_strategy: FULL_SHARD
-  fsdp_state_dict_type: SHARDED_STATE_DICT # FULL_STATE_DICT # SHARDED_STATE_DICT | FULL_STATE_DICT
+  fsdp_state_dict_type: FULL_STATE_DICT # FULL_STATE_DICT # SHARDED_STATE_DICT | FULL_STATE_DICT
   fsdp_sync_module_states: true
   fsdp_use_orig_params: true # For FSDP, when using torch.compile please set True
 machine_rank: 0
 main_training_function: main
-mixed_precision: fp16 # bf16 # fp16 or bf16
+mixed_precision: bf16 # fp16 or bf16
 num_machines: 1 # the number of nodes
 num_processes: 8 # the number of GPUs in all nodes
 rdzv_backend: static

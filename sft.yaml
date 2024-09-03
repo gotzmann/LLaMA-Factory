@@ -1,8 +1,7 @@
 ### gotzmann
-#use_unsloth: false # true # works only for ONE card
+#use_unsloth: false # true # just for ONE card
 upcast_layernorm: false # true # FSDP: Must flatten tensors with uniform dtype but got torch.float16 and torch.float32
-#use_reentrant: true
-enable_liger_kernel: true
+enable_liger_kernel: true # works with FSDP
 
 ### resume if needed ?
 # ignore_data_skip: true
@@ -29,8 +28,7 @@ dataset: final
 template: llama3
 packing: true
 neat_packing: true
-cutoff_len: 16384 # 8192 # 32768 # 16384 # 24576 # 32768 # 16384 # 32768 # 10240 # 32768 # 10240 # 16384 # 8192 # 32768
-overwrite_cache: true
+cutoff_len: 32768 # 16384 # 8192 # 32768 # 16384 # 24576 # 32768 # 16384 # 32768 # 10240 # 32768 # 10240 # 16384 # 8192 # 32768
 preprocessing_num_workers: 24
 
 ### train
@@ -39,19 +37,17 @@ per_device_train_batch_size: 1
 gradient_accumulation_steps: 1
 learning_rate: 0.00003
 lr_scheduler_type: constant_with_warmup # constant # cosine # constant_with_warmup
-optim: adamw_torch # adamw_torch | adamw_8bit
-warmup_steps: 300
+optim: adamw_8bit # adamw_torch # adamw_torch | adamw_8bit
+warmup_steps: 100
 # warmup_ratio: 0.1
 flash_attn: fa2
-#bf16: true
-fp16: true
+bf16: true
+#fp16: true
 
 ### output
 output_dir: /home/exported
 logging_steps: 1
 save_steps: 300
-plot_loss: false
-overwrite_output_dir: true
 
 ### eval
 # val_size: 0 # 0.1
@@ -64,5 +60,9 @@ gradient_checkpointing: true
 max_grad_norm: 1.0
 ddp_timeout: 180000000
 ddp_find_unused_parameters: false # needs to be set as False for LoRA in DDP training
+overwrite_cache: true
+overwrite_output_dir: true
+plot_loss: false
 # use_fast_tokenizer: false
 # loraplus_lr_ratio: 4.0
+# use_reentrant: true
