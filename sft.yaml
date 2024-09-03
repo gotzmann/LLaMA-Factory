@@ -43,8 +43,8 @@ optim: adamw_torch # adamw_torch | adamw_8bit
 warmup_steps: 300
 # warmup_ratio: 0.1
 flash_attn: fa2
-bf16: true
-#fp16: true
+#bf16: true
+fp16: true
 
 ### output
 output_dir: /home/exported
