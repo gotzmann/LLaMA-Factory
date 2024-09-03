@@ -1,14 +1,10 @@
 {
-  "final": {
+  "x2": {
     "file_name": "/home/git/final/final-x2.jsonl",
     "formatting": "sharegpt"
   },
-  "final-lenta": {
-    "file_name": "/home/git/lenta/final-v1.0max.jsonl",
-    "formatting": "sharegpt"
-  },
-  "test": {
-    "file_name": "/home/git/lenta/test.jsonl",
+  "x3": {
+    "file_name": "/home/git/final/final-x3.jsonl",
     "formatting": "sharegpt"
   },
   "identity": {

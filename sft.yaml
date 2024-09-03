@@ -24,7 +24,7 @@ lora_dropout: 0.0
 #use_rslora: true
 
 ### dataset
-dataset: final
+dataset: x3
 template: llama3
 packing: true
 neat_packing: true
