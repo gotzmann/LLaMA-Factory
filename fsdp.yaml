@@ -14,9 +14,9 @@ fsdp_config:
   fsdp_use_orig_params: true # For FSDP, when using torch.compile please set True
 machine_rank: 0
 main_training_function: main
-mixed_precision: fp16 # fp16 or bf16
+mixed_precision: bf16 # fp16 or bf16
 num_machines: 1 # the number of nodes
-num_processes: 4 # the number of GPUs in all nodes
+num_processes: 8 # the number of GPUs in all nodes
 rdzv_backend: static
 same_network: true
 tpu_env: []
