@@ -18,7 +18,7 @@ do_train: true
 finetuning_type: lora
 lora_target: all # all == q_proj,k_proj,v_proj,o_proj,gate_proj,up_proj,down_proj
 # https://www.reddit.com/r/LocalLLaMA/comments/1d86k5y/continued_pretraining_2x_faster_notebook_to/
-lora_target: [ "q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj", "down_proj", "embed_tokens", "lm_head" ]
+lora_target: "q_proj,k_proj,v_proj,o_proj,gate_proj,up_proj,down_proj,embed_tokens,lm_head"
 lora_rank: 128
 lora_alpha: 32
 lora_dropout: 0.0
