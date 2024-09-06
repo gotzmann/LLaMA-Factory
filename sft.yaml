@@ -1,7 +1,7 @@
 ### gotzmann
-#use_unsloth: false # true # just for ONE card
-upcast_layernorm: false # true # FSDP: Must flatten tensors with uniform dtype but got torch.float16 and torch.float32
+# use_unsloth: false # true # just for ONE card
 enable_liger_kernel: true # works with FSDP
+# upcast_layernorm: false # true # FSDP: Must flatten tensors with uniform dtype
 
 ### resume if needed ?
 # ignore_data_skip: true
@@ -13,56 +13,58 @@ quantization_bit: 4
 double_quantization: false
 
 ### method
-### all == q_proj,k_proj,v_proj,o_proj,gate_proj,up_proj,down_proj
 stage: sft
 do_train: true
 finetuning_type: lora
-lora_target: all
+lora_target: all # all == q_proj,k_proj,v_proj,o_proj,gate_proj,up_proj,down_proj
+# https://www.reddit.com/r/LocalLLaMA/comments/1d86k5y/continued_pretraining_2x_faster_notebook_to/
+lora_target: [ "q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj", "down_proj", "embed_tokens", "lm_head" ]
 lora_rank: 128
-lora_alpha: 16
+lora_alpha: 32
 lora_dropout: 0.0
 use_rslora: true
 
 ### dataset
-dataset: x2
+dataset: x3
 template: llama3
 packing: true
 neat_packing: true
-cutoff_len: 16384 # 8192 # 16384 # 24576 # 10240 # 32768 
-preprocessing_num_workers: 24
+cutoff_len: 16384 # 8192 | 10240 | 16384 | 24576 | 32768 
+preprocessing_num_workers: 48
 
 ### train
 num_train_epochs: 1.0
 per_device_train_batch_size: 1
-gradient_accumulation_steps: 1
+gradient_accumulation_steps: 2
 learning_rate: 0.00005
-lr_scheduler_type: constant_with_warmup # constant | cosine | constant_with_warmup
-optim: adamw_torch # adamw_torch | adamw_8bit
-warmup_steps: 200
-# warmup_ratio: 0.1
+weight_decay: 0.001
+lr_scheduler_type: linear # constant | linear | cosine | constant_with_warmup
+optim: adamw_torch_fused # adamw_torch | adamw_8bit | adamw_torch_fused
+warmup_steps: 100
 flash_attn: fa2
-bf16: true
-#fp16: true
+bf16: true # fp16 | bf16
 
 ### output
 output_dir: /home/exported
 logging_steps: 1
-save_steps: 500
+save_steps: 300
+
+### etc
+gradient_checkpointing: true
+max_grad_norm: 1.0
+ddp_timeout: 180000000
+ddp_find_unused_parameters: false # False for LoRA in DDP training
+overwrite_cache: true
+overwrite_output_dir: true
+plot_loss: false
+
+# use_fast_tokenizer: false
+# loraplus_lr_ratio: 4.0
+# use_reentrant: true
+# warmup_ratio: 0.1
 
 ### eval
 # val_size: 0 # 0.1
 # per_device_eval_batch_size: 1
 # evaluation_strategy: steps
 # eval_steps: 0 # 500
-
-### etc
-gradient_checkpointing: true
-max_grad_norm: 1.0
-ddp_timeout: 180000000
-ddp_find_unused_parameters: false # needs to be set as False for LoRA in DDP training
-overwrite_cache: true
-overwrite_output_dir: true
-plot_loss: false
-# use_fast_tokenizer: false
-# loraplus_lr_ratio: 4.0
-# use_reentrant: true
