@@ -413,7 +413,8 @@ def create_custom_optimizer(
         return _create_adam_mini_optimizer(model, training_args)
     
     # gotzmann
-    if finetuning_args.use_unsloth:
+    # if finetuning_args.use_unsloth:
+    if 'embed_tokens' in finetuning_args.lora_target or 'lm_head' in finetuning_args.lora_target:
         from trl import SFTTrainer
         print("=== [ 1 ] === if finetuning_args.use_unsloth")
         embedding_learning_rate = 5e-6 # getattr(self.args, "embedding_learning_rate", None)
