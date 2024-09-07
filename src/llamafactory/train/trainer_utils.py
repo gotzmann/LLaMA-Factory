@@ -408,6 +408,67 @@ def create_custom_optimizer(
 
     if finetuning_args.use_adam_mini:
         return _create_adam_mini_optimizer(model, training_args)
+    
+    # gotzmann
+    if finetuning_args.use_unsloth:
+        from trl import SFTTrainer
+        print("=== [ 1 ] === if finetuning_args.use_unsloth")
+        embedding_learning_rate = 5e-6 # getattr(self.args, "embedding_learning_rate", None)
+        print("=== [ 2 ] === if finetuning_args.use_unsloth")
+        optimizer_cls, optimizer_kwargs = SFTTrainer.get_optimizer_cls_and_kwargs(training_args)
+        print("=== [ 3 ] === if finetuning_args.use_unsloth")
+        optimizer = _create_unsloth_optimizer(
+            model,
+            optimizer_cls,
+            optimizer_kwargs,
+            embedding_learning_rate,
+        )
+        print("=== [ 8 ] === if finetuning_args.use_unsloth")
+        return optimizer
+    
+#gotzmann    
+def _create_unsloth_optimizer(
+    model,
+    optimizer_cls,
+    optimizer_kwargs,
+    embedding_lr = 5e-5,
+):
+    print("=== [ 4 ] === _create_unsloth_optimizer")
+    lr = optimizer_kwargs["lr"]
+    weight_decay = optimizer_kwargs.get("weight_decay", 0.0)
+
+    param_groups = \
+    {
+        "non_embeddings" : {},
+        "embeddings"     : {},
+    }
+
+    for name, param in model.named_parameters():
+        if not param.requires_grad: continue
+        if name.endswith("modules_to_save.default.weight"):
+            partial_name = name[:-len(".modules_to_save.default.weight")]
+            partial_name = partial_name[partial_name.rfind(".")+1:]
+            print(f"Unsloth: Setting lr = {embedding_lr:.2e} instead of {lr:.2e} for {partial_name}.")
+            param_groups["embeddings"]    [name] = param
+        else:
+            param_groups["non_embeddings"][name] = param
+        pass
+    pass
+
+    optimizer_grouped_parameters = [
+        {
+            "params"       : list(param_groups["non_embeddings"].values()),
+            "weight_decay" : weight_decay,
+            "lr"           : lr,
+        },
+        {
+            "params"       : list(param_groups["embeddings"].values()),
+            "weight_decay" : weight_decay,
+            "lr"           : embedding_lr,
+        },
+    ]
+    optimizer = optimizer_cls(optimizer_grouped_parameters, **optimizer_kwargs)
+    return optimizer
 
 
 def create_custom_scheduler(
