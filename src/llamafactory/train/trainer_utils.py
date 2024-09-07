@@ -451,21 +451,21 @@ def create_custom_optimizer(
         # print("=== lr = ", training_args.lr)
         # print("=== embedding_learning_rate = ", embedding_learning_rate)
         #print("=== [ 2 ] === if finetuning_args.use_unsloth")
-        optimizer_cls, optimizer_kwargs = SFTTrainer.get_optimizer_cls_and_kwargs(training_args)
+        optimizer_class, optimizer_kwargs = SFTTrainer.get_optimizer_cls_and_kwargs(training_args)
         # TODO: Better heuristics for lr/2 .. lr/10
-        embedding_learning_rate = optimizer_kwargs["lr"] / 10 # 8e-6 # getattr(self.args, "embedding_learning_rate", None)
+        embedding_learning_rate = optimizer_kwargs["lr"] / 5 # 8e-6 # getattr(self.args, "embedding_learning_rate", None)
         optimizer_kwargs["weight_decay"] = training_args.weight_decay
-        print("=== [ training_args ] ===")
-        print(training_args)
-        print("=== [ optimizer_cls ] ===")
-        print(optimizer_cls)
-        print("=== [ optimizer_kwargs ] ===")
-        print(optimizer_kwargs)
+        #print("=== [ training_args ] ===")
+        #print(training_args)
+        #print("=== [ optimizer_cls ] ===")
+        #print(optimizer_cls)
+        #print("=== [ optimizer_kwargs ] ===")
+        #print(optimizer_kwargs)
         #exit()
         #print("=== [ 3 ] === if finetuning_args.use_unsloth")
         optimizer = _create_unsloth_optimizer(
             model,
-            optimizer_cls,
+            optimizer_class,
             optimizer_kwargs,
             embedding_learning_rate,
         )
@@ -475,7 +475,7 @@ def create_custom_optimizer(
 #gotzmann    
 def _create_unsloth_optimizer(
     model,
-    optimizer_cls,
+    optimizer_class,
     optimizer_kwargs,
     embedding_lr = 5e-5,
 ):
@@ -483,25 +483,20 @@ def _create_unsloth_optimizer(
     lr = optimizer_kwargs["lr"]
     print("=== lr = ", lr, " ===")
     weight_decay = optimizer_kwargs.get("weight_decay", 0.0)
+    print("=== embedding_lr = ", embedding_lr, " ===")
     print("=== weight_decay = ", weight_decay, " ===")
 
-    param_groups = \
-    {
-        "non_embeddings" : {},
-        "embeddings"     : {},
-    }
+    param_groups = { "non_embeddings": {}, "embeddings": {} }
 
     for name, param in model.named_parameters():
         if not param.requires_grad: continue
         if name.endswith("modules_to_save.default.weight"):
             partial_name = name[:-len(".modules_to_save.default.weight")]
             partial_name = partial_name[partial_name.rfind(".")+1:]
-            print(f"Unsloth: Setting lr = {embedding_lr:.2e} instead of {lr:.2e} for {partial_name}.")
+            print(f"=== Unsloth: Setting lr = {embedding_lr:.2e} instead of {lr:.2e} for {partial_name}.")
             param_groups["embeddings"]    [name] = param
         else:
             param_groups["non_embeddings"][name] = param
-        pass
-    pass
 
     optimizer_grouped_parameters = [
         {
@@ -515,7 +510,7 @@ def _create_unsloth_optimizer(
             "lr"           : embedding_lr,
         },
     ]
-    optimizer = optimizer_cls(optimizer_grouped_parameters, **optimizer_kwargs)
+    optimizer = optimizer_class(optimizer_grouped_parameters, **optimizer_kwargs)
     return optimizer
 
 
