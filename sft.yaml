@@ -7,7 +7,7 @@
 #enable_liger_kernel: true # works with FSDP
 use_unsloth: true # just for ONE card
 upcast_layernorm: true # FSDP: Must flatten tensors with uniform dtype
-upcast_lmhead_output: true
+#upcast_lmhead_output: true
 
 ### resume if needed ?
 # ignore_data_skip: true
@@ -24,7 +24,7 @@ do_train: true
 finetuning_type: lora
 lora_target: all
 additional_target: embed_tokens,lm_head
-lora_rank: 96
+lora_rank: 64
 lora_alpha: 16
 lora_dropout: 0.0
 use_rslora: true
