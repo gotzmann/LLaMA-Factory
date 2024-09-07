@@ -1,3 +1,6 @@
+# Train with Continuous PreTraining [ embed_tokens + lm_head ]
+# https://www.reddit.com/r/LocalLLaMA/comments/1d86k5y/continued_pretraining_2x_faster_notebook_to/
+
 ### gotzmann
 use_unsloth: true # just for ONE card
 #enable_liger_kernel: true # works with FSDP
@@ -16,8 +19,7 @@ double_quantization: false
 stage: sft
 do_train: true
 finetuning_type: lora
-lora_target: all # all == q_proj,k_proj,v_proj,o_proj,gate_proj,up_proj,down_proj
-# https://www.reddit.com/r/LocalLLaMA/comments/1d86k5y/continued_pretraining_2x_faster_notebook_to/
+# lora_target: all # all == q_proj,k_proj,v_proj,o_proj,gate_proj,up_proj,down_proj
 lora_target: "q_proj,k_proj,v_proj,o_proj,gate_proj,up_proj,down_proj,embed_tokens,lm_head"
 lora_rank: 96
 lora_alpha: 32
@@ -40,9 +42,9 @@ lr_scheduler_type: cosine_with_min_lr # constant | constant_with_warmup | linear
 learning_rate: 0.00008
 #min_lr: 0.00002
 optim: adamw_torch_fused # adamw_torch | adamw_8bit | adamw_torch_fused
-#weight_decay: 0.001
+weight_decay: 0.00001 # FIXME
 warmup_steps: 100
-bf16: true # fp16 | bf16
+#bf16: true # fp16 | bf16
 
 ### output
 output_dir: /home/exported
