@@ -4,8 +4,8 @@
 ### gotzmann
 enable_liger_kernel: true # works with FSDP
 #use_unsloth: true # just for ONE card
-upcast_layernorm: true # FSDP: Must flatten tensors with uniform dtype
-upcast_lmhead_output: true
+#upcast_layernorm: true # FSDP: Must flatten tensors with uniform dtype
+#upcast_lmhead_output: true
 
 ### resume if needed ?
 # ignore_data_skip: true
