@@ -5,6 +5,7 @@
 enable_liger_kernel: true # works with FSDP
 #use_unsloth: true # just for ONE card
 #upcast_layernorm: true # FSDP: Must flatten tensors with uniform dtype
+upcast_lmhead_output: true
 
 ### resume if needed ?
 # ignore_data_skip: true
@@ -20,7 +21,7 @@ stage: sft
 do_train: true
 finetuning_type: lora
 # lora_target: all # all == q_proj,k_proj,v_proj,o_proj,gate_proj,up_proj,down_proj
-lora_target: "q_proj,k_proj,v_proj,o_proj,gate_proj,up_proj,down_proj,embed_tokens,lm_head"
+lora_target: "q_proj,k_proj,v_proj,o_proj,gate_proj,up_proj,down_proj,lm_head" # ,embed_tokens
 lora_rank: 96
 lora_alpha: 16
 lora_dropout: 0.0
@@ -44,7 +45,7 @@ learning_rate: 0.00008
 optim: adamw_torch_fused # adamw_torch | adamw_8bit | adamw_torch_fused
 weight_decay: 0.00001 # FIXME
 warmup_steps: 100
-#bf16: true # fp16 | bf16
+bf16: true # fp16 | bf16
 
 ### output
 output_dir: /home/exported
