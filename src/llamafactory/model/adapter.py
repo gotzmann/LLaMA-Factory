@@ -253,6 +253,14 @@ def _setup_lora_tuning(
         for param in filter(lambda p: p.requires_grad, model.parameters()):
             param.data = param.data.to(torch.float32)
 
+    # gotzmann Unsloth
+    print("=== Upcasting embed_tokens to float32")
+    print("\n\n=== MODEL ===\n\n")
+    print(model)
+    model.embed_tokens.modules_to_save.default\
+        .to(device = "cuda:0", dtype = torch.float32, non_blocking = True)
+    model.embed_tokens.modules_to_save.default.requires_grad_(True)       
+
     return model
 
 
