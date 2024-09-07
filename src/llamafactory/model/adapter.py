@@ -255,6 +255,9 @@ def _setup_lora_tuning(
 
     # gotzmann Unsloth
     print("=== Upcasting embed_tokens to float32")
+    for param in model.parameters():
+        print("=== PARAM ===")
+        print(param)
     print("\n\n=== MODEL 1 ===\n\n")
     print(model)
     print("\n\n=== MODEL 2 ===\n\n")
