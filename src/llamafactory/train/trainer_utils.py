@@ -398,7 +398,21 @@ def create_custom_optimizer(
     finetuning_args: "FinetuningArguments",
 ) -> Optional["torch.optim.Optimizer"]:
     
-    print(finetuning_args) # gotzmann
+    # print(finetuning_args) # gotzmann
+
+    # FinetuningArguments(use_badam=False, badam_mode='layer', badam_start_block=None, badam_switch_mode='ascending', 
+    # badam_switch_interval=50, badam_update_ratio=0.05, badam_mask_mode='adjacent', badam_verbose=0, 
+    # use_galore=False, galore_target=['all'], galore_rank=16, galore_update_interval=200, galore_scale=0.25, galore_proj_type='std', 
+    # galore_layerwise=False, pref_beta=0.1, pref_ftx=0.0, pref_loss='sigmoid', dpo_label_smoothing=0.0, kto_chosen_weight=1.0, 
+    # kto_rejected_weight=1.0, simpo_gamma=0.5, ppo_buffer_size=1, ppo_epochs=4, ppo_score_norm=False, ppo_target=6.0, 
+    # ppo_whiten_rewards=False, ref_model=None, ref_model_adapters=None, ref_model_quantization_bit=None, reward_model=None, 
+    # reward_model_adapters=None, reward_model_quantization_bit=None, reward_model_type='lora', additional_target=None, 
+    # lora_alpha=32, lora_dropout=0.0, lora_rank=96, 
+    # lora_target=['q_proj', 'k_proj', 'v_proj', 'o_proj', 'gate_proj', 'up_proj', 'down_proj', 'embed_tokens', 'lm_head'], 
+    # loraplus_lr_ratio=None, loraplus_lr_embedding=1e-06, use_rslora=True, use_dora=False, pissa_init=False, pissa_iter=16, 
+    # pissa_convert=False, create_new_adapter=False, freeze_trainable_layers=2, freeze_trainable_modules=['all'], 
+    # freeze_extra_modules=None, pure_bf16=False, stage='sft', finetuning_type='lora', use_llama_pro=False, use_adam_mini=False, 
+    # freeze_vision_tower=True, train_mm_proj_only=False, compute_accuracy=False, plot_loss=False)
 
     if finetuning_args.use_galore:
         return _create_galore_optimizer(model, training_args, finetuning_args)
@@ -417,7 +431,7 @@ def create_custom_optimizer(
     if 'embed_tokens' in finetuning_args.lora_target or 'lm_head' in finetuning_args.lora_target:
         from trl import SFTTrainer
         print("=== [ 1 ] === if finetuning_args.use_unsloth")
-        embedding_learning_rate = 5e-6 # getattr(self.args, "embedding_learning_rate", None)
+        embedding_learning_rate = 8e-6 # getattr(self.args, "embedding_learning_rate", None)
         print("=== [ 2 ] === if finetuning_args.use_unsloth")
         optimizer_cls, optimizer_kwargs = SFTTrainer.get_optimizer_cls_and_kwargs(training_args)
         print("=== [ 3 ] === if finetuning_args.use_unsloth")
@@ -439,7 +453,9 @@ def _create_unsloth_optimizer(
 ):
     print("=== [ 4 ] === _create_unsloth_optimizer")
     lr = optimizer_kwargs["lr"]
+    print("=== [ lr = ", lr)
     weight_decay = optimizer_kwargs.get("weight_decay", 0.0)
+    print("=== [ weight_decay = ", weight_decay)
 
     param_groups = \
     {
