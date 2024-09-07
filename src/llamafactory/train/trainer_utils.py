@@ -449,8 +449,8 @@ def create_custom_optimizer(
         from trl import SFTTrainer
         #print("=== [ 1 ] === if finetuning_args.use_unsloth")
         # TODO: Better heuristics for lr/2 .. lr/10
-        embedding_learning_rate = training_args.lr / 10 # 8e-6 # getattr(self.args, "embedding_learning_rate", None)
-        print("=== lr = ", training_args.lr)
+        embedding_learning_rate = training_args["lr"] / 10 # 8e-6 # getattr(self.args, "embedding_learning_rate", None)
+        print("=== lr = ", training_args["lr"])
         print("=== embedding_learning_rate = ", embedding_learning_rate)
         #print("=== [ 2 ] === if finetuning_args.use_unsloth")
         optimizer_cls, optimizer_kwargs = SFTTrainer.get_optimizer_cls_and_kwargs(training_args)
