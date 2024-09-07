@@ -2,6 +2,7 @@
 # https://www.reddit.com/r/LocalLLaMA/comments/1d86k5y/continued_pretraining_2x_faster_notebook_to/
 # all == q_proj,k_proj,v_proj,o_proj,gate_proj,up_proj,down_proj
 # additional_target: lm_head,embed_tokens
+# [ lm_head ] with [ liger_kernel ] RuntimeError: size mismatch, got input (1), mat (1x4096), vec (65667072)
 
 ### gotzmann
 #enable_liger_kernel: true # works with FSDP
@@ -23,7 +24,7 @@ stage: sft
 do_train: true
 finetuning_type: lora
 lora_target: all
-additional_target: embed_tokens,lm_head
+additional_target: embed_tokens
 lora_rank: 64
 lora_alpha: 16
 lora_dropout: 0.0
