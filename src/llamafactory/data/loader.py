@@ -27,7 +27,6 @@ from .aligner import align_dataset
 from .data_utils import merge_dataset, split_dataset
 from .parser import get_dataset_list
 from .preprocess import get_preprocess_and_print_func
-from .template import get_template_and_fix_tokenizer
 
 
 if TYPE_CHECKING:
@@ -180,16 +179,14 @@ def _get_preprocessed_dataset(
             desc="Running tokenizer on dataset",
         )
 
-    # TODO | gotzmann | batch_size as function of [ preprocessing_num_workers ] and [ dataset size ]
-    #print("\n\n=> dataset.map | BEFORE...") # DEBUG
-    #import multiprocessing
-    #multiprocessing.set_start_method('spawn', force=True)
-    #dataset = dataset.map(preprocess_func, batched=True, remove_columns=column_names, **kwargs, batch_size=500) # gotzmann
-    dataset = dataset.map(preprocess_func, batched=True, remove_columns=column_names, **kwargs)
-    #print("\n\n=== column_names ===\n\n", column_names)
-    #print("\n\n=== **kwargs ===\n\n", kwargs)
-    #dataset = preprocess_func(dataset)
-    #print("\n\n<= dataset.map AFTER...\n\n") # DEBUG
+    dataset = dataset.map(
+        preprocess_func,
+        batched=True,
+        batch_size=data_args.preprocessing_batch_size,
+        remove_columns=column_names,
+        **kwargs,
+		# batch_size=500, # gotzmann
+    )
 
     if training_args.should_log:
         try:
@@ -205,6 +202,7 @@ def _get_preprocessed_dataset(
 
 
 def get_dataset(
+    template: "Template",
     model_args: "ModelArguments",
     data_args: "DataArguments",
     training_args: "Seq2SeqTrainingArguments",
@@ -212,10 +210,6 @@ def get_dataset(
     tokenizer: "PreTrainedTokenizer",
     processor: Optional["ProcessorMixin"] = None,
 ) -> "DatasetModule":
-    template = get_template_and_fix_tokenizer(tokenizer, data_args.template, data_args.tool_format)
-    if data_args.train_on_prompt and template.efficient_eos:
-        raise ValueError("Current template does not support `train_on_prompt`.")
-
     # Load tokenized dataset
     if data_args.tokenized_path is not None:
         if has_tokenized_data(data_args.tokenized_path):
@@ -226,6 +220,7 @@ def get_dataset(
             dataset_module: Dict[str, "Dataset"] = {}
             if "train" in dataset_dict:
                 dataset_module["train_dataset"] = dataset_dict["train"]
+
             if "validation" in dataset_dict:
                 dataset_module["eval_dataset"] = dataset_dict["validation"]
 
@@ -331,6 +326,7 @@ def get_dataset(
         dataset_module = {}
         if "train" in dataset_dict:
             dataset_module["train_dataset"] = dataset_dict["train"]
+
         if "validation" in dataset_dict:
             dataset_module["eval_dataset"] = dataset_dict["validation"]
 

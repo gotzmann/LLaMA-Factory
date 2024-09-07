@@ -19,7 +19,7 @@ finetuning_type: lora
 lora_target: all # all == q_proj,k_proj,v_proj,o_proj,gate_proj,up_proj,down_proj
 # https://www.reddit.com/r/LocalLLaMA/comments/1d86k5y/continued_pretraining_2x_faster_notebook_to/
 lora_target: "q_proj,k_proj,v_proj,o_proj,gate_proj,up_proj,down_proj,embed_tokens,lm_head"
-lora_rank: 128
+lora_rank: 96
 lora_alpha: 32
 lora_dropout: 0.0
 use_rslora: true
@@ -36,9 +36,10 @@ preprocessing_num_workers: 48
 num_train_epochs: 1.0
 per_device_train_batch_size: 1
 gradient_accumulation_steps: 2
-learning_rate: 0.00005
+learning_rate: 0.00008
+min_lr: 0.00002
 weight_decay: 0.001
-lr_scheduler_type: linear # constant | linear | cosine | constant_with_warmup
+lr_scheduler_type: cosine_with_min_lr # constant | constant_with_warmup | linear | cosine
 optim: adamw_torch_fused # adamw_torch | adamw_8bit | adamw_torch_fused
 warmup_steps: 100
 flash_attn: fa2
