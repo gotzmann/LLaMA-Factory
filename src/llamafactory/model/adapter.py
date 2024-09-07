@@ -257,8 +257,8 @@ def _setup_lora_tuning(
     # === PARAM | base_model.model.model.embed_tokens.base_layer.weight ===
     #print("=== Upcasting embed_tokens to float32")
     #for param in model.parameters():
-    for name, param in model.named_parameters():
-        if not param.requires_grad: continue
+    #for name, param in model.named_parameters():
+    #    if not param.requires_grad: continue
         #if name.endswith("modules_to_save.default.weight"):
         # print(f"=== PARAM | {name} ===")
         #print(param)

@@ -120,7 +120,7 @@ class Runner:
             dataset=",".join(get("train.dataset")),
             cutoff_len=get("train.cutoff_len"),
             learning_rate=float(get("train.learning_rate")),
-            embedding_learning_rate = 5e-6, # gotzmann
+            #embedding_learning_rate = 5e-6, # gotzmann
             num_train_epochs=float(get("train.num_train_epochs")),
             max_samples=int(get("train.max_samples")),
             per_device_train_batch_size=get("train.batch_size"),
