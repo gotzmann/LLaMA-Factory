@@ -398,7 +398,24 @@ def create_custom_optimizer(
     finetuning_args: "FinetuningArguments",
 ) -> Optional["torch.optim.Optimizer"]:
     
-    # print(finetuning_args) # gotzmann
+    # === [ optimizer_kwargs ] ===
+
+    # {'lr': 8e-05, 'betas': (0.9, 0.999), 'eps': 1e-08, 'fused': True}
+
+    # === [ training_args ] ===
+    
+    # Seq2SeqTrainingArguments(
+    #   ...
+    #   weight_decay=1e-05,
+    #   bf16=True,
+    #   ...
+    # )
+    
+    # === [ optimizer_cls ] ===
+
+    #<class 'torch.optim.adamw.AdamW'>
+    
+    # === [ finetuning_args ] ===
 
     # FinetuningArguments(use_badam=False, badam_mode='layer', badam_start_block=None, badam_switch_mode='ascending', 
     # badam_switch_interval=50, badam_update_ratio=0.05, badam_mask_mode='adjacent', badam_verbose=0, 
@@ -431,16 +448,20 @@ def create_custom_optimizer(
     if 'embed_tokens' in finetuning_args.lora_target or 'lm_head' in finetuning_args.lora_target:
         from trl import SFTTrainer
         #print("=== [ 1 ] === if finetuning_args.use_unsloth")
-        embedding_learning_rate = 8e-6 # getattr(self.args, "embedding_learning_rate", None)
+        # TODO: Better heuristics for lr/2 .. lr/10
+        embedding_learning_rate = training_args.lr / 10 # 8e-6 # getattr(self.args, "embedding_learning_rate", None)
+        print("=== lr = ", training_args.lr)
+        print("=== embedding_learning_rate = ", embedding_learning_rate)
         #print("=== [ 2 ] === if finetuning_args.use_unsloth")
         optimizer_cls, optimizer_kwargs = SFTTrainer.get_optimizer_cls_and_kwargs(training_args)
+        optimizer_kwargs.weight_decay = training_args.weight_decay
         print("=== [ training_args ] ===")
         print(training_args)
         print("=== [ optimizer_cls ] ===")
         print(optimizer_cls)
         print("=== [ optimizer_kwargs ] ===")
         print(optimizer_kwargs)
-        exit()
+        #exit()
         #print("=== [ 3 ] === if finetuning_args.use_unsloth")
         optimizer = _create_unsloth_optimizer(
             model,
