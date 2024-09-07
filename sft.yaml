@@ -1,11 +1,13 @@
 # Train with Continuous PreTraining [ embed_tokens + lm_head ]
 # https://www.reddit.com/r/LocalLLaMA/comments/1d86k5y/continued_pretraining_2x_faster_notebook_to/
+# all == q_proj,k_proj,v_proj,o_proj,gate_proj,up_proj,down_proj
+# additional_target: lm_head,embed_tokens
 
 ### gotzmann
 #enable_liger_kernel: true # works with FSDP
-#use_unsloth: true # just for ONE card
-#upcast_layernorm: true # FSDP: Must flatten tensors with uniform dtype
-#upcast_lmhead_output: true
+use_unsloth: true # just for ONE card
+upcast_layernorm: true # FSDP: Must flatten tensors with uniform dtype
+upcast_lmhead_output: true
 
 ### resume if needed ?
 # ignore_data_skip: true
@@ -20,9 +22,9 @@ double_quantization: false
 stage: sft
 do_train: true
 finetuning_type: lora
-lora_target: all # all == q_proj,k_proj,v_proj,o_proj,gate_proj,up_proj,down_proj
+lora_target: all
 #lora_target: "q_proj,k_proj,v_proj,o_proj,gate_proj,up_proj,down_proj,lm_head,embed_tokens" # ,embed_tokens
-additional_target: "lm_head,embed_tokens"
+additional_target: lm_head,embed_tokens
 lora_rank: 96
 lora_alpha: 16
 lora_dropout: 0.0
@@ -43,15 +45,15 @@ gradient_accumulation_steps: 2
 lr_scheduler_type: cosine # cosine_with_min_lr # constant | constant_with_warmup | linear | cosine
 learning_rate: 0.00008
 #min_lr: 0.00002
-optim: adamw_torch # adamw_torch | adamw_8bit | adamw_torch_fused
+optim: adamw_torch_fused # adamw_torch | adamw_8bit | adamw_torch_fused
 #weight_decay: 0.00001 # FIXME
-warmup_steps: 100
+warmup_steps: 200
 bf16: true # fp16 | bf16
 
 ### output
 output_dir: /home/exported
 logging_steps: 1
-save_steps: 300
+save_steps: 500
 
 ### etc
 flash_attn: fa2
@@ -61,8 +63,8 @@ ddp_timeout: 180000000
 ddp_find_unused_parameters: false # False for LoRA in DDP training
 overwrite_cache: true
 overwrite_output_dir: true
-#plot_loss: false
 
+#plot_loss: false
 # use_fast_tokenizer: false
 # loraplus_lr_ratio: 4.0
 # use_reentrant: true
