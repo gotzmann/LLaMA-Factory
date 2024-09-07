@@ -491,10 +491,29 @@ def _create_unsloth_optimizer(
     for name, param in model.named_parameters():
         if not param.requires_grad: continue
         if name.endswith("modules_to_save.default.weight"):
+
             partial_name = name[:-len(".modules_to_save.default.weight")]
             partial_name = partial_name[partial_name.rfind(".")+1:]
             print(f"=== Unsloth: Setting lr = {embedding_lr:.2e} instead of {lr:.2e} for {partial_name}.")
             param_groups["embeddings"]    [name] = param
+
+            # https://github.com/unslothai/unsloth/blob/d91d40a7b6b556f2d1fdd3e1e430f7a76a799627/unsloth/models/llama.py#L1940
+            
+            # Offload!
+            # [TODO] First offload lm_head and embed_tokens to CPU (should be disk!!)
+            if partial_name == "embed_tokens":
+                print("\n\n=== MODEL ===\n\n")
+                print(model)
+                print(f"=== Unsloth: Casting {partial_name} to float32")
+                model.model.model.embed_tokens.modules_to_save.default\
+                    .to(device = "cuda:0", dtype = torch.float32, non_blocking = True)
+                model.model.model.embed_tokens.modules_to_save.default.requires_grad_(True)
+
+                # [TODO] Move old embed_tokens to CPU - should be disk!
+                model.model.model.embed_tokens.original_module\
+                    .to(device = "cpu", non_blocking = True)
+                model.model.model.embed_tokens.original_module.requires_grad_(False)
+
         else:
             param_groups["non_embeddings"][name] = param
 
