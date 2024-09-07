@@ -453,7 +453,7 @@ def create_custom_optimizer(
         #print("=== [ 2 ] === if finetuning_args.use_unsloth")
         optimizer_class, optimizer_kwargs = SFTTrainer.get_optimizer_cls_and_kwargs(training_args)
         # TODO: Better heuristics for lr/2 .. lr/10
-        embedding_learning_rate = optimizer_kwargs["lr"] / 5 # 8e-6 # getattr(self.args, "embedding_learning_rate", None)
+        embedding_learning_rate = optimizer_kwargs["lr"] / 8 # 8e-6 # getattr(self.args, "embedding_learning_rate", None)
         optimizer_kwargs["weight_decay"] = training_args.weight_decay
         #print("=== [ training_args ] ===")
         #print(training_args)
