@@ -219,13 +219,10 @@ def preprocess_packed_supervised_dataset(
         if length <= remaining_capacity:
             packed_input_ids += batch_input_ids[index]
             packed_labels += batch_labels[index]
-            if data_args.neat_packing:
-                packed_attention_masks += [i] * len(batch_input_ids[index])
-            else:
-                packed_attention_masks += [1] * len(batch_input_ids[index])
+            packed_attention_masks += [i] * len(batch_input_ids[index])
+            if data_args.neat_packing: i += 1
             remaining_capacity -= length
-            used_samples.append(index)    
-            i += 1
+            used_samples.append(index)
             continue
         else:
             # -- looking for samples fitting into knapsack
@@ -238,20 +235,16 @@ def preprocess_packed_supervised_dataset(
                 if lengths[current] > remaining_capacity: continue
                 packed_input_ids += batch_input_ids[current]
                 packed_labels += batch_labels[current]
-                if data_args.neat_packing:
-                    packed_attention_masks += [i] * len(batch_input_ids[current])
-                else:
-                    packed_attention_masks += [1] * len(batch_input_ids[current])
+                packed_attention_masks += [i] * len(batch_input_ids[current])
+                if data_args.neat_packing: i += 1
                 remaining_capacity -= lengths[current]    
                 used_samples.append(current)
                 i += 1
                 continue 
         packed_input_ids += [tokenizer.pad_token_id] * remaining_capacity
         packed_labels += [IGNORE_INDEX] * remaining_capacity
-        if data_args.neat_packing:
-            packed_attention_masks += [i] * remaining_capacity # start from 1
-        else:
-            packed_attention_masks += [1] * remaining_capacity
+        packed_attention_masks += [i] * remaining_capacity
+        #if data_args.neat_packing: i += 1
         # -- sanity check
         if len(packed_input_ids) != data_args.cutoff_len:
             print("\n\n=== packed_input_ids " + str(len(packed_input_ids)) + " === \n\n")
@@ -269,13 +262,10 @@ def preprocess_packed_supervised_dataset(
             # print("[ WARNING ] Sample not in used samples") # DEBUG
             packed_input_ids += batch_input_ids[index]
             packed_labels += batch_labels[index]
-            if data_args.neat_packing:
-                packed_attention_masks += [i] * len(batch_input_ids[index])
-            else:
-                packed_attention_masks += [1] * len(batch_input_ids[index])
+            packed_attention_masks += [i] * len(batch_input_ids[index])
+            if data_args.neat_packing: i += 1
             remaining_capacity -= length
             used_samples.append(index)
-            i += 1
     # TODO: Check out all used_sampled are really used!        
     return model_inputs
     # gotzmann | KNAPSACKS ===
