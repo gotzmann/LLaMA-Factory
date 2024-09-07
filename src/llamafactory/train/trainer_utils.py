@@ -447,7 +447,7 @@ def create_custom_optimizer(
     # if finetuning_args.use_unsloth:
     if 'embed_tokens' in finetuning_args.lora_target or 'lm_head' in finetuning_args.lora_target:
         from trl import SFTTrainer
-        #print("=== [ 1 ] === if finetuning_args.use_unsloth")
+        print("=== [ TADAM ] ===")
         # print("=== lr = ", training_args.lr)
         # print("=== embedding_learning_rate = ", embedding_learning_rate)
         #print("=== [ 2 ] === if finetuning_args.use_unsloth")
