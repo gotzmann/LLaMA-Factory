@@ -2,9 +2,9 @@
 # https://www.reddit.com/r/LocalLLaMA/comments/1d86k5y/continued_pretraining_2x_faster_notebook_to/
 
 ### gotzmann
-#enable_liger_kernel: true # works with FSDP
-use_unsloth: true # just for ONE card
-upcast_layernorm: true # FSDP: Must flatten tensors with uniform dtype
+enable_liger_kernel: true # works with FSDP
+#use_unsloth: true # just for ONE card
+#upcast_layernorm: true # FSDP: Must flatten tensors with uniform dtype
 
 ### resume if needed ?
 # ignore_data_skip: true
