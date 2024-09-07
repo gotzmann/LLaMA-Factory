@@ -257,10 +257,10 @@ def _setup_lora_tuning(
     print("=== Upcasting embed_tokens to float32")
     #for param in model.parameters():
     for name, param in model.named_parameters():
-        if not param.requires_grad: continue
-        if name.endswith("modules_to_save.default.weight"):
-            print(f"=== PARAM | {name} ===")
-            print(param)
+        #if not param.requires_grad: continue
+        #if name.endswith("modules_to_save.default.weight"):
+        print(f"=== PARAM | {name} ===")
+        print(param)
     print("\n\n=== MODEL 1 ===\n\n")
     print(model)
     print("\n\n=== MODEL 2 ===\n\n")
