@@ -254,6 +254,7 @@ def _setup_lora_tuning(
             param.data = param.data.to(torch.float32)
 
     # gotzmann Unsloth
+    # === PARAM | base_model.model.model.embed_tokens.base_layer.weight ===
     print("=== Upcasting embed_tokens to float32")
     #for param in model.parameters():
     for name, param in model.named_parameters():
@@ -265,9 +266,9 @@ def _setup_lora_tuning(
     print(model)
     print("\n\n=== MODEL 2 ===\n\n")
     print(model)
-    model.model.model.embed_tokens.modules_to_save.default\
-        .to(device = "cuda:0", dtype = torch.float32, non_blocking = True)
-    model.model.model.embed_tokens.modules_to_save.default.requires_grad_(True)       
+    #model.model.model.embed_tokens.modules_to_save.default\
+    #    .to(device = "cuda:0", dtype = torch.float32, non_blocking = True)
+    #model.model.model.embed_tokens.modules_to_save.default.requires_grad_(True)       
 
     return model
 
