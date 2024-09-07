@@ -430,18 +430,25 @@ def create_custom_optimizer(
     # if finetuning_args.use_unsloth:
     if 'embed_tokens' in finetuning_args.lora_target or 'lm_head' in finetuning_args.lora_target:
         from trl import SFTTrainer
-        print("=== [ 1 ] === if finetuning_args.use_unsloth")
+        #print("=== [ 1 ] === if finetuning_args.use_unsloth")
         embedding_learning_rate = 8e-6 # getattr(self.args, "embedding_learning_rate", None)
-        print("=== [ 2 ] === if finetuning_args.use_unsloth")
+        #print("=== [ 2 ] === if finetuning_args.use_unsloth")
         optimizer_cls, optimizer_kwargs = SFTTrainer.get_optimizer_cls_and_kwargs(training_args)
-        print("=== [ 3 ] === if finetuning_args.use_unsloth")
+        print("=== [ training_args ] ===")
+        print(training_args)
+        print("=== [ optimizer_cls ] ===")
+        print(optimizer_cls)
+        print("=== [ optimizer_kwargs ] ===")
+        print(optimizer_kwargs)
+        exit()
+        #print("=== [ 3 ] === if finetuning_args.use_unsloth")
         optimizer = _create_unsloth_optimizer(
             model,
             optimizer_cls,
             optimizer_kwargs,
             embedding_learning_rate,
         )
-        print("=== [ 8 ] === if finetuning_args.use_unsloth")
+        #print("=== [ 8 ] === if finetuning_args.use_unsloth")
         return optimizer
     
 #gotzmann    
@@ -451,11 +458,11 @@ def _create_unsloth_optimizer(
     optimizer_kwargs,
     embedding_lr = 5e-5,
 ):
-    print("=== [ 4 ] === _create_unsloth_optimizer")
+    #print("=== [ 4 ] === _create_unsloth_optimizer")
     lr = optimizer_kwargs["lr"]
-    print("=== [ lr = ", lr)
+    print("=== lr = ", lr, " ===")
     weight_decay = optimizer_kwargs.get("weight_decay", 0.0)
-    print("=== [ weight_decay = ", weight_decay)
+    print("=== weight_decay = ", weight_decay, " ===")
 
     param_groups = \
     {
