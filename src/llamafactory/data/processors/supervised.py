@@ -212,18 +212,15 @@ def preprocess_packed_supervised_dataset(
     packed_input_ids, packed_attention_masks, packed_labels = [], [], []
     used_samples = []
     remaining_capacity = data_args.cutoff_len
-    i = 0 # number of sample within knapsack for cross-contamination attention
+    i = 1 # number of sample within knapsack for cross-contamination attention, start from 1
     for index, length in enumerate(lengths):
-        #print("===> # " + str(index) + " OF " + str(len(lengths))) # DEBUG
         if index in used_samples: continue
         # -- just fit current sample into knapsack
         if length <= remaining_capacity:
-            #print("\n\nremaining == " + str(remaining_capacity))
             packed_input_ids += batch_input_ids[index]
             packed_labels += batch_labels[index]
-            #print("remaining == " + str(remaining_capacity))
             if data_args.neat_packing:
-                packed_attention_masks += [i + 1] * len(batch_input_ids[index]) # start from 1
+                packed_attention_masks += [i] * len(batch_input_ids[index])
             else:
                 packed_attention_masks += [1] * len(batch_input_ids[index])
             remaining_capacity -= length
@@ -233,33 +230,28 @@ def preprocess_packed_supervised_dataset(
         else:
             # -- looking for samples fitting into knapsack
             for current in range(index+1, len(lengths)):
-                #print("=> #" + str(current) + " OF " + str(len(lengths)))
                 # -- filling current knapsack with padding + starting new one
                 if remaining_capacity < 100 or current == len(lengths)-1:
-                    #print("\n\n BREAK !!!")
                     break
                 # -- else skipping or adding current sample into knapsack
                 if current in used_samples: continue
                 if lengths[current] > remaining_capacity: continue
-                #print("\n\nremaining == " + str(remaining_capacity))
                 packed_input_ids += batch_input_ids[current]
                 packed_labels += batch_labels[current]
                 if data_args.neat_packing:
-                    packed_attention_masks += [i + 1] * len(batch_input_ids[current]) # start from 1
+                    packed_attention_masks += [i] * len(batch_input_ids[current])
                 else:
                     packed_attention_masks += [1] * len(batch_input_ids[current])
                 remaining_capacity -= lengths[current]    
                 used_samples.append(current)
                 i += 1
-                continue
-        #print("\n\nPADDING: " + str(remaining_capacity))    
+                continue 
         packed_input_ids += [tokenizer.pad_token_id] * remaining_capacity
         packed_labels += [IGNORE_INDEX] * remaining_capacity
         if data_args.neat_packing:
-            packed_attention_masks += [i + 1] * remaining_capacity # start from 1
+            packed_attention_masks += [i] * remaining_capacity # start from 1
         else:
             packed_attention_masks += [1] * remaining_capacity
-        #remaining_capacity = 0
         # -- sanity check
         if len(packed_input_ids) != data_args.cutoff_len:
             print("\n\n=== packed_input_ids " + str(len(packed_input_ids)) + " === \n\n")
@@ -268,11 +260,9 @@ def preprocess_packed_supervised_dataset(
         model_inputs["input_ids"].append(packed_input_ids)
         model_inputs["attention_mask"].append(packed_attention_masks)
         model_inputs["labels"].append(packed_labels)
-        # packed_input_ids, packed_labels = [], []
         packed_input_ids, packed_attention_masks, packed_labels = [], [], []
         remaining_capacity = data_args.cutoff_len
-        # maxi = i
-        i = 0
+        i = 1
         # TODO: Could we rethink to not remember [ maxi ] and avoid the last edge case?
         # FIXME: Most last sample could be lost
         if index not in used_samples:
@@ -280,13 +270,9 @@ def preprocess_packed_supervised_dataset(
             packed_input_ids += batch_input_ids[index]
             packed_labels += batch_labels[index]
             if data_args.neat_packing:
-                # packed_attention_masks += [maxi + 1] * len(batch_input_ids[index]) # start from 1
-                packed_attention_masks += [i] * len(batch_input_ids[index]) # start from 1
+                packed_attention_masks += [i] * len(batch_input_ids[index])
             else:
                 packed_attention_masks += [1] * len(batch_input_ids[index])
-            #model_inputs["input_ids"].append(packed_input_ids)
-            #model_inputs["attention_mask"].append(packed_attention_masks)
-            #model_inputs["labels"].append(packed_labels)
             remaining_capacity -= length
             used_samples.append(index)
             i += 1
