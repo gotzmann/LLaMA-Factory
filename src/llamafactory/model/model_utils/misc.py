@@ -48,13 +48,15 @@ def find_all_linear_modules(model: "PreTrainedModel", freeze_vision_tower: bool)
 
     module_names = set()
     for name, module in model.named_modules():
+        print(f"=== LINEAR | {name} ===")
         if any(forbidden_module in name for forbidden_module in forbidden_modules):
+            print(f"=== ^^^ FORBIDDEN ^^^ ===")
             continue
 
         # gotzmann
         # if "Linear" in module.__class__.__name__ and "Embedding" not in module.__class__.__name__:
         if "Linear" in module.__class__.__name__ and "RotaryEmbedding" not in module.__class__.__name__:
-            print(f"=== LINEAR | {name} ===")
+            print(f"=== REAL LINEAR | {name} ===")
             module_names.add(name.split(".")[-1])
 
     logger.info("Found linear modules: {}".format(",".join(module_names)))
