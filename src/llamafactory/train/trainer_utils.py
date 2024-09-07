@@ -448,12 +448,12 @@ def create_custom_optimizer(
     if 'embed_tokens' in finetuning_args.lora_target or 'lm_head' in finetuning_args.lora_target:
         from trl import SFTTrainer
         #print("=== [ 1 ] === if finetuning_args.use_unsloth")
-        # TODO: Better heuristics for lr/2 .. lr/10
-        embedding_learning_rate = training_args["lr"] / 10 # 8e-6 # getattr(self.args, "embedding_learning_rate", None)
-        print("=== lr = ", training_args["lr"])
-        print("=== embedding_learning_rate = ", embedding_learning_rate)
+        # print("=== lr = ", training_args.lr)
+        # print("=== embedding_learning_rate = ", embedding_learning_rate)
         #print("=== [ 2 ] === if finetuning_args.use_unsloth")
         optimizer_cls, optimizer_kwargs = SFTTrainer.get_optimizer_cls_and_kwargs(training_args)
+        # TODO: Better heuristics for lr/2 .. lr/10
+        embedding_learning_rate = optimizer_kwargs["lr"] / 10 # 8e-6 # getattr(self.args, "embedding_learning_rate", None)
         optimizer_kwargs.weight_decay = training_args.weight_decay
         print("=== [ training_args ] ===")
         print(training_args)
