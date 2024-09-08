@@ -401,39 +401,6 @@ def create_custom_optimizer(
     finetuning_args: "FinetuningArguments",
 ) -> Optional["torch.optim.Optimizer"]:
     
-    # === [ optimizer_kwargs ] ===
-
-    # {'lr': 8e-05, 'betas': (0.9, 0.999), 'eps': 1e-08, 'fused': True}
-
-    # === [ training_args ] ===
-    
-    # Seq2SeqTrainingArguments(
-    #   ...
-    #   weight_decay=1e-05,
-    #   bf16=True,
-    #   ...
-    # )
-    
-    # === [ optimizer_cls ] ===
-
-    #<class 'torch.optim.adamw.AdamW'>
-    
-    # === [ finetuning_args ] ===
-
-    # FinetuningArguments(use_badam=False, badam_mode='layer', badam_start_block=None, badam_switch_mode='ascending', 
-    # badam_switch_interval=50, badam_update_ratio=0.05, badam_mask_mode='adjacent', badam_verbose=0, 
-    # use_galore=False, galore_target=['all'], galore_rank=16, galore_update_interval=200, galore_scale=0.25, galore_proj_type='std', 
-    # galore_layerwise=False, pref_beta=0.1, pref_ftx=0.0, pref_loss='sigmoid', dpo_label_smoothing=0.0, kto_chosen_weight=1.0, 
-    # kto_rejected_weight=1.0, simpo_gamma=0.5, ppo_buffer_size=1, ppo_epochs=4, ppo_score_norm=False, ppo_target=6.0, 
-    # ppo_whiten_rewards=False, ref_model=None, ref_model_adapters=None, ref_model_quantization_bit=None, reward_model=None, 
-    # reward_model_adapters=None, reward_model_quantization_bit=None, reward_model_type='lora', additional_target=None, 
-    # lora_alpha=32, lora_dropout=0.0, lora_rank=96, 
-    # lora_target=['q_proj', 'k_proj', 'v_proj', 'o_proj', 'gate_proj', 'up_proj', 'down_proj', 'embed_tokens', 'lm_head'], 
-    # loraplus_lr_ratio=None, loraplus_lr_embedding=1e-06, use_rslora=True, use_dora=False, pissa_init=False, pissa_iter=16, 
-    # pissa_convert=False, create_new_adapter=False, freeze_trainable_layers=2, freeze_trainable_modules=['all'], 
-    # freeze_extra_modules=None, pure_bf16=False, stage='sft', finetuning_type='lora', use_llama_pro=False, use_adam_mini=False, 
-    # freeze_vision_tower=True, train_mm_proj_only=False, compute_accuracy=False, plot_loss=False)
-
     if finetuning_args.use_galore:
         return _create_galore_optimizer(model, training_args, finetuning_args)
 
@@ -446,23 +413,13 @@ def create_custom_optimizer(
     if finetuning_args.use_adam_mini:
         return _create_adam_mini_optimizer(model, training_args)
     
-    # gotzmann
+    # gotzmann | Lower LR for embeddings and head, as recommended by Unsloth maintainers
     if "embed_tokens" in finetuning_args.additional_target or "lm_head" in finetuning_args.additional_target:
-        print("=== [ !!! ] === if finetuning_args.use_unsloth")
-    #if 'embed_tokens' in finetuning_args.lora_target or 'lm_head' in finetuning_args.lora_target:
         from trl import SFTTrainer
         optimizer_class, optimizer_kwargs = SFTTrainer.get_optimizer_cls_and_kwargs(training_args)
-        # TODO: Better heuristics for lr/2 .. lr/10
-        embedding_learning_rate = optimizer_kwargs["lr"] / 5 # getattr(self.args, "embedding_learning_rate", None)
+        # TODO: Better heuristics for lr/2 .. lr/10 OR getattr(self.args, "embedding_learning_rate", None)
+        embedding_learning_rate = optimizer_kwargs["lr"] / 5
         optimizer_kwargs["weight_decay"] = training_args.weight_decay
-        #print("=== [ training_args ] ===")
-        #print(training_args)
-        #print("=== [ optimizer_cls ] ===")
-        #print(optimizer_cls)
-        #print("=== [ optimizer_kwargs ] ===")
-        #print(optimizer_kwargs)
-        #exit()
-        #print("=== [ 3 ] === if finetuning_args.use_unsloth")
         optimizer = _create_unsloth_optimizer(
             model,
             optimizer_class,
@@ -490,6 +447,8 @@ def _create_unsloth_optimizer(
             module_name = name.split(".")[-1]
             print(f"=== OPTIMIZER | Setting LR = {embedding_lr:.2e} instead of {lr:.2e} for {module_name}.")
             param_groups["embeddings"][name] = param
+
+        # Looks like upcasting of embeddings and head to FP32 is already done by LLaMA-Factory  
 
         #if name.endswith("modules_to_save.default.weight"):
             #partial_name = name[:-len(".modules_to_save.default.weight")]
@@ -524,7 +483,7 @@ def _create_unsloth_optimizer(
             "lr"           : embedding_lr,
         },
     ]
-    
+
     optimizer = optimizer_class(optimizer_grouped_parameters, **optimizer_kwargs)
     return optimizer
 
