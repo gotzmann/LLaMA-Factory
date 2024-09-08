@@ -448,7 +448,7 @@ def create_custom_optimizer(
     
     # gotzmann
     # if finetuning_args.use_unsloth:
-    if finetuning_args.use_unsloth:
+    if training_args.use_unsloth:
         print("=== [ !!! ] === if finetuning_args.use_unsloth")
     #if 'embed_tokens' in finetuning_args.lora_target or 'lm_head' in finetuning_args.lora_target:
         from trl import SFTTrainer
