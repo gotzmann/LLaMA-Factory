@@ -442,8 +442,9 @@ def _create_unsloth_optimizer(
     param_groups = { "non_embeddings": {}, "embeddings": {} }
 
     for name, param in model.named_parameters():
-        if not param.requires_grad: continue
-        if "embed_tokens" in param.__class__.__name__ or "lm_head" in param.__class__.__name__:
+        # if not param.requires_grad: continue
+        print("=== NAME = ",name)
+        if "embed_tokens" in name or "lm_head" in name:
             module_name = name.split(".")[-1]
             print(f"=== OPTIMIZER | Setting LR = {embedding_lr:.2e} instead of {lr:.2e} for {module_name}.")
             param_groups["embeddings"][name] = param
