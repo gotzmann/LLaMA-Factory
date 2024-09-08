@@ -414,7 +414,7 @@ def create_custom_optimizer(
         return _create_adam_mini_optimizer(model, training_args)
     
     # gotzmann | Lower LR for embeddings and head, as recommended by Unsloth maintainers
-    if "embed_tokens" in finetuning_args.additional_target or "lm_head" in finetuning_args.additional_target:
+    if finetuning_args.additional_target or "lm_head" in finetuning_args.additional_target:
         from trl import SFTTrainer
         optimizer_class, optimizer_kwargs = SFTTrainer.get_optimizer_cls_and_kwargs(training_args)
         # TODO: Better heuristics for lr/2 .. lr/10 OR getattr(self.args, "embedding_learning_rate", None)
@@ -443,9 +443,13 @@ def _create_unsloth_optimizer(
 
     for name, param in model.named_parameters():
         # if not param.requires_grad: continue
-        print("=== NAME = ",name)
-        if "embed_tokens" in name or "lm_head" in name:
+        print("=== NAME = ", name)
+        if "modules_to_save" in name and ("embed_tokens" in name or "lm_head" in name):
             module_name = name.split(".")[-1]
+            print("=== MODULE NAME = ", module_name)
+            partial_name = name[:-len(".modules_to_save.default.weight")]
+            partial_name = partial_name[partial_name.rfind(".")+1:]
+            print("=== partial_name = ", partial_name)
             print(f"=== OPTIMIZER | Setting LR = {embedding_lr:.2e} instead of {lr:.2e} for {module_name}.")
             param_groups["embeddings"][name] = param
 
