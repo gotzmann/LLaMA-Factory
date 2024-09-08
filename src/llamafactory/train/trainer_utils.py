@@ -441,40 +441,50 @@ def _create_unsloth_optimizer(
 
     param_groups = { "non_embeddings": {}, "embeddings": {} }
 
+    # -- Regular Naming
+
+    # base_model.model.lm_head.original_module.weight
+    # base_model.model.lm_head.modules_to_save.default.weight
+
+    # -- FSDP NAMING
+
+    # _fsdp_wrapped_module.base_model.model.model.embed_tokens.original_module.weight
+    # _fsdp_wrapped_module.base_model.model.model.embed_tokens.modules_to_save.default._fsdp_wrapped_module.weight
+
     for name, param in model.named_parameters():
-        # if not param.requires_grad: continue
-        print("=== NAME = ", name)
+        if not param.requires_grad: continue
+        # print("=== NAME = ", name)
         if "modules_to_save" in name and ("embed_tokens" in name or "lm_head" in name):
-            module_name = name.split(".")[-1]
-            print("=== MODULE NAME = ", module_name)
-            partial_name = name[:-len(".modules_to_save.default.weight")]
-            partial_name = partial_name[partial_name.rfind(".")+1:]
-            print("=== partial_name = ", partial_name)
-            print(f"=== OPTIMIZER | Setting LR = {embedding_lr:.2e} instead of {lr:.2e} for {module_name}.")
+            # Looks like upcasting of embeddings and head to FP32 is already done by LLaMA-Factory 
             param_groups["embeddings"][name] = param
-
-        # Looks like upcasting of embeddings and head to FP32 is already done by LLaMA-Factory  
-
-        #if name.endswith("modules_to_save.default.weight"):
-            #partial_name = name[:-len(".modules_to_save.default.weight")]
-            #partial_name = partial_name[partial_name.rfind(".")+1:]
-            # https://github.com/unslothai/unsloth/blob/d91d40a7b6b556f2d1fdd3e1e430f7a76a799627/unsloth/models/llama.py#L1940
-            # Offload!
-            # [TODO] First offload lm_head and embed_tokens to CPU (should be disk!!)
-            #if partial_name == "embed_tokens":
-            #    print("\n\n=== MODEL ===\n\n")
-            #    print(model)
-            #    print(f"=== Unsloth: Casting {partial_name} to float32")
-            #    model.model.model.embed_tokens.modules_to_save.default\
-            #        .to(device = "cuda:0", dtype = torch.float32, non_blocking = True)
-            #    model.model.model.embed_tokens.modules_to_save.default.requires_grad_(True)
-            # [TODO] Move old embed_tokens to CPU - should be disk!
-            #    model.model.model.embed_tokens.original_module\
-            #        .to(device = "cpu", non_blocking = True)
-            #    model.model.model.embed_tokens.original_module.requires_grad_(False)
-
+            # print(f"=== OPTIMIZER | Setting LR = {embedding_lr:.2e} instead of {lr:.2e} for {module_name}.")
+            print(f"=== OPTIMIZER | Set LR = {embedding_lr:.2e} => {name}")
         else:
-            param_groups["non_embeddings"][name] = param
+            param_groups["non_embeddings"][name] = param    
+
+        # module_name = name.split(".")[-1]
+        # print("=== MODULE NAME = ", module_name)
+        # partial_name = name[:-len(".modules_to_save.default")]
+        # partial_name = partial_name[partial_name.rfind(".")+1:]
+        # print("=== partial_name = ", partial_name)
+        
+        #if name.endswith("modules_to_save.default.weight"):
+        #partial_name = name[:-len(".modules_to_save.default.weight")]
+        #partial_name = partial_name[partial_name.rfind(".")+1:]
+        # https://github.com/unslothai/unsloth/blob/d91d40a7b6b556f2d1fdd3e1e430f7a76a799627/unsloth/models/llama.py#L1940
+        # Offload!
+        # [TODO] First offload lm_head and embed_tokens to CPU (should be disk!!)
+        #if partial_name == "embed_tokens":
+        #    print("\n\n=== MODEL ===\n\n")
+        #    print(model)
+        #    print(f"=== Unsloth: Casting {partial_name} to float32")
+        #    model.model.model.embed_tokens.modules_to_save.default\
+        #        .to(device = "cuda:0", dtype = torch.float32, non_blocking = True)
+        #    model.model.model.embed_tokens.modules_to_save.default.requires_grad_(True)
+        # [TODO] Move old embed_tokens to CPU - should be disk!
+        #    model.model.model.embed_tokens.original_module\
+        #        .to(device = "cpu", non_blocking = True)
+        #    model.model.model.embed_tokens.original_module.requires_grad_(False)
 
     optimizer_grouped_parameters = [
         {
