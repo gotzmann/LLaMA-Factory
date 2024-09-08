@@ -447,19 +447,13 @@ def create_custom_optimizer(
         return _create_adam_mini_optimizer(model, training_args)
     
     # gotzmann
-    # if finetuning_args.use_unsloth:
-    #if training_args.use_unsloth:
-    if 'embed_tokens' in finetuning_args.additional_target or 'lm_head' in finetuning_args.additional_target:
+    if "embed_tokens" in finetuning_args.additional_target or "lm_head" in finetuning_args.additional_target:
         print("=== [ !!! ] === if finetuning_args.use_unsloth")
     #if 'embed_tokens' in finetuning_args.lora_target or 'lm_head' in finetuning_args.lora_target:
         from trl import SFTTrainer
-        #print("=== [ TADAM ] ===")
-        # print("=== lr = ", training_args.lr)
-        # print("=== embedding_learning_rate = ", embedding_learning_rate)
-        #print("=== [ 2 ] === if finetuning_args.use_unsloth")
         optimizer_class, optimizer_kwargs = SFTTrainer.get_optimizer_cls_and_kwargs(training_args)
         # TODO: Better heuristics for lr/2 .. lr/10
-        embedding_learning_rate = optimizer_kwargs["lr"] / 5 # 8e-6 # getattr(self.args, "embedding_learning_rate", None)
+        embedding_learning_rate = optimizer_kwargs["lr"] / 5 # getattr(self.args, "embedding_learning_rate", None)
         optimizer_kwargs["weight_decay"] = training_args.weight_decay
         #print("=== [ training_args ] ===")
         #print(training_args)
@@ -475,7 +469,6 @@ def create_custom_optimizer(
             optimizer_kwargs,
             embedding_learning_rate,
         )
-        #print("=== [ 8 ] === if finetuning_args.use_unsloth")
         return optimizer
     
 #gotzmann    
@@ -485,40 +478,36 @@ def _create_unsloth_optimizer(
     optimizer_kwargs,
     embedding_lr = 5e-5,
 ):
-    #print("=== [ 4 ] === _create_unsloth_optimizer")
     lr = optimizer_kwargs["lr"]
-    print("=== lr = ", lr, " ===")
     weight_decay = optimizer_kwargs.get("weight_decay", 0.0)
-    print("=== embedding_lr = ", embedding_lr, " ===")
-    print("=== weight_decay = ", weight_decay, " ===")
+    print(f"=== OPTIMIZER [ LR = {lr} | EMBEDDING_LR = {embedding_lr} | WEIGHT_DECAY = {weight_decay} ] ===")
 
     param_groups = { "non_embeddings": {}, "embeddings": {} }
 
     for name, param in model.named_parameters():
         if not param.requires_grad: continue
-        if name.endswith("modules_to_save.default.weight"):
+        if "embed_tokens" in param.__class__.__name__ or "lm_head" in param.__class__.__name__:
+            module_name = name.split(".")[-1]
+            print(f"=== OPTIMIZER | Setting LR = {embedding_lr:.2e} instead of {lr:.2e} for {module_name}.")
+            param_groups["embeddings"][name] = param
 
-            partial_name = name[:-len(".modules_to_save.default.weight")]
-            partial_name = partial_name[partial_name.rfind(".")+1:]
-            print(f"=== Unsloth: Setting lr = {embedding_lr:.2e} instead of {lr:.2e} for {partial_name}.")
-            param_groups["embeddings"]    [name] = param
-
+        #if name.endswith("modules_to_save.default.weight"):
+            #partial_name = name[:-len(".modules_to_save.default.weight")]
+            #partial_name = partial_name[partial_name.rfind(".")+1:]
             # https://github.com/unslothai/unsloth/blob/d91d40a7b6b556f2d1fdd3e1e430f7a76a799627/unsloth/models/llama.py#L1940
-            
             # Offload!
             # [TODO] First offload lm_head and embed_tokens to CPU (should be disk!!)
-            if partial_name == "embed_tokens":
-                print("\n\n=== MODEL ===\n\n")
-                print(model)
-                print(f"=== Unsloth: Casting {partial_name} to float32")
-                model.model.model.embed_tokens.modules_to_save.default\
-                    .to(device = "cuda:0", dtype = torch.float32, non_blocking = True)
-                model.model.model.embed_tokens.modules_to_save.default.requires_grad_(True)
-
-                # [TODO] Move old embed_tokens to CPU - should be disk!
-                model.model.model.embed_tokens.original_module\
-                    .to(device = "cpu", non_blocking = True)
-                model.model.model.embed_tokens.original_module.requires_grad_(False)
+            #if partial_name == "embed_tokens":
+            #    print("\n\n=== MODEL ===\n\n")
+            #    print(model)
+            #    print(f"=== Unsloth: Casting {partial_name} to float32")
+            #    model.model.model.embed_tokens.modules_to_save.default\
+            #        .to(device = "cuda:0", dtype = torch.float32, non_blocking = True)
+            #    model.model.model.embed_tokens.modules_to_save.default.requires_grad_(True)
+            # [TODO] Move old embed_tokens to CPU - should be disk!
+            #    model.model.model.embed_tokens.original_module\
+            #        .to(device = "cpu", non_blocking = True)
+            #    model.model.model.embed_tokens.original_module.requires_grad_(False)
 
         else:
             param_groups["non_embeddings"][name] = param
@@ -535,6 +524,7 @@ def _create_unsloth_optimizer(
             "lr"           : embedding_lr,
         },
     ]
+    
     optimizer = optimizer_class(optimizer_grouped_parameters, **optimizer_kwargs)
     return optimizer
 
