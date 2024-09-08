@@ -414,7 +414,7 @@ def create_custom_optimizer(
         return _create_adam_mini_optimizer(model, training_args)
     
     # gotzmann | Lower LR for embeddings and head, as recommended by Unsloth maintainers
-    if finetuning_args.additional_target or "lm_head" in finetuning_args.additional_target:
+    if finetuning_args.additional_target is not None and (finetuning_args.additional_target or "lm_head" in finetuning_args.additional_target):
         from trl import SFTTrainer
         optimizer_class, optimizer_kwargs = SFTTrainer.get_optimizer_cls_and_kwargs(training_args)
         # TODO: Better heuristics for lr/2 .. lr/10 OR getattr(self.args, "embedding_learning_rate", None)
