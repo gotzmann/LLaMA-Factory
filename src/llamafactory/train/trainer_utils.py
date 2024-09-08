@@ -441,15 +441,39 @@ def _create_unsloth_optimizer(
 
     param_groups = { "non_embeddings": {}, "embeddings": {} }
 
+    # unsloth
+    # embedding_lr = 5e-5
+
     # -- Regular Naming
 
     # base_model.model.lm_head.original_module.weight
     # base_model.model.lm_head.modules_to_save.default.weight
 
+    # === OPTIMIZER [ LR = 5e-05 | EMBEDDING_LR = 1e-05 | WEIGHT_DECAY = 0.0 ] ===
+    # === OPTIMIZER | Set LR = 1.00e-05 => base_model.model.model.embed_tokens.modules_to_save.default.weight
+    # === OPTIMIZER | Set LR = 1.00e-05 => base_model.model.lm_head.modules_to_save.default.weight
+
     # -- FSDP NAMING
 
     # _fsdp_wrapped_module.base_model.model.model.embed_tokens.original_module.weight
     # _fsdp_wrapped_module.base_model.model.model.embed_tokens.modules_to_save.default._fsdp_wrapped_module.weight
+
+    # === OPTIMIZER [ LR = 5e-05 | EMBEDDING_LR = 1e-05 | WEIGHT_DECAY = 0.0 ] ===
+    # === OPTIMIZER | Set LR = 1.00e-05 => _fsdp_wrapped_module.base_model.model.model.embed_tokens.modules_to_save.default._fsdp_wrapped_module.weight
+    # === OPTIMIZER [ LR = 5e-05 | EMBEDDING_LR = 1e-05 | WEIGHT_DECAY = 0.0 ] ===
+    # === OPTIMIZER | Set LR = 1.00e-05 => _fsdp_wrapped_module.base_model.model.model.embed_tokens.modules_to_save.default._fsdp_wrapped_module.weight
+    # === OPTIMIZER [ LR = 5e-05 | EMBEDDING_LR = 1e-05 | WEIGHT_DECAY = 0.0 ] ===
+    # === OPTIMIZER | Set LR = 1.00e-05 => _fsdp_wrapped_module.base_model.model.model.embed_tokens.modules_to_save.default._fsdp_wrapped_module.weight
+    # === OPTIMIZER [ LR = 5e-05 | EMBEDDING_LR = 1e-05 | WEIGHT_DECAY = 0.0 ] ===
+    # === OPTIMIZER | Set LR = 1.00e-05 => _fsdp_wrapped_module.base_model.model.model.embed_tokens.modules_to_save.default._fsdp_wrapped_module.weight
+    # === OPTIMIZER [ LR = 5e-05 | EMBEDDING_LR = 1e-05 | WEIGHT_DECAY = 0.0 ] ===
+    # === OPTIMIZER | Set LR = 1.00e-05 => _fsdp_wrapped_module.base_model.model.model.embed_tokens.modules_to_save.default._fsdp_wrapped_module.weight
+    # === OPTIMIZER [ LR = 5e-05 | EMBEDDING_LR = 1e-05 | WEIGHT_DECAY = 0.0 ] ===
+    # === OPTIMIZER | Set LR = 1.00e-05 => _fsdp_wrapped_module.base_model.model.model.embed_tokens.modules_to_save.default._fsdp_wrapped_module.weight
+    # === OPTIMIZER [ LR = 5e-05 | EMBEDDING_LR = 1e-05 | WEIGHT_DECAY = 0.0 ] ===
+    # === OPTIMIZER | Set LR = 1.00e-05 => _fsdp_wrapped_module.base_model.model.model.embed_tokens.modules_to_save.default._fsdp_wrapped_module.weight
+    # === OPTIMIZER [ LR = 5e-05 | EMBEDDING_LR = 1e-05 | WEIGHT_DECAY = 0.0 ] ===
+    # === OPTIMIZER | Set LR = 1.00e-05 => _fsdp_wrapped_module.base_model.model.model.embed_tokens.modules_to_save.default._fsdp_wrapped_module.weight
 
     for name, param in model.named_parameters():
         if not param.requires_grad: continue

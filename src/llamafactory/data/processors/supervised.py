@@ -95,17 +95,18 @@ def _encode_supervised_example(
         if text == "":
             return [], []
         # Use BOS token to split CPT samples by default, otherwise split them with cross-contamination attention
-        if neat_packing:
-            input_ids = tokenizer.encode(text, add_special_tokens=False)
-            if len(input_ids) >= cutoff_len:
-                input_ids = input_ids[:cutoff_len]
-            labels = input_ids
-        else:
-            input_ids = [ tokenizer.bos_token_id ] + tokenizer.encode(text, add_special_tokens=False)
-            labels = [ IGNORE_INDEX ] + input_ids[1:]
-            if len(input_ids) >= cutoff_len:
-                input_ids = input_ids[:cutoff_len]
-                labels = labels[:cutoff_len]
+        # if neat_packing:
+        #     input_ids = tokenizer.encode(text, add_special_tokens=False)
+        #     if len(input_ids) >= cutoff_len:
+        #         input_ids = input_ids[:cutoff_len]
+        #     labels = input_ids
+        # else:
+        # Combine BOS + diagonal attention
+        input_ids = [ tokenizer.bos_token_id ] + tokenizer.encode(text, add_special_tokens=False)
+        labels = [ IGNORE_INDEX ] + input_ids[1:]
+        if len(input_ids) >= cutoff_len:
+            input_ids = input_ids[:cutoff_len]
+            labels = labels[:cutoff_len]
     # gotzmann | TRINITY ===		
 
     return input_ids, labels
