@@ -26,6 +26,7 @@ from transformers.modeling_utils import is_fsdp_enabled
 from transformers.optimization import get_scheduler
 from transformers.pytorch_utils import ALL_LAYERNORM_LAYERS
 from transformers.trainer_pt_utils import get_parameter_names
+from typing_extensions import override
 
 from ..extras.constants import IGNORE_INDEX
 from ..extras.logging import get_logger
@@ -60,9 +61,11 @@ class DummyOptimizer(torch.optim.Optimizer):
         self.optimizer_dict = optimizer_dict
         super().__init__([dummy_tensor], {"lr": lr})
 
+    @override
     def zero_grad(self, set_to_none: bool = True) -> None:
         pass
 
+    @override
     def step(self, closure: Optional[Callable[[], float]] = None) -> Optional[float]:
         pass
 
@@ -445,15 +448,17 @@ def create_custom_optimizer(
     
     # gotzmann
     # if finetuning_args.use_unsloth:
-    if 'embed_tokens' in finetuning_args.lora_target or 'lm_head' in finetuning_args.lora_target:
+    if finetuning_args.use_unsloth:
+        print("=== [ !!! ] === if finetuning_args.use_unsloth")
+    #if 'embed_tokens' in finetuning_args.lora_target or 'lm_head' in finetuning_args.lora_target:
         from trl import SFTTrainer
-        print("=== [ TADAM ] ===")
+        #print("=== [ TADAM ] ===")
         # print("=== lr = ", training_args.lr)
         # print("=== embedding_learning_rate = ", embedding_learning_rate)
         #print("=== [ 2 ] === if finetuning_args.use_unsloth")
         optimizer_class, optimizer_kwargs = SFTTrainer.get_optimizer_cls_and_kwargs(training_args)
         # TODO: Better heuristics for lr/2 .. lr/10
-        embedding_learning_rate = optimizer_kwargs["lr"] / 8 # 8e-6 # getattr(self.args, "embedding_learning_rate", None)
+        embedding_learning_rate = optimizer_kwargs["lr"] / 5 # 8e-6 # getattr(self.args, "embedding_learning_rate", None)
         optimizer_kwargs["weight_decay"] = training_args.weight_decay
         #print("=== [ training_args ] ===")
         #print(training_args)

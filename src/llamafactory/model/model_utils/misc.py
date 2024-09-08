@@ -30,7 +30,6 @@ def find_all_linear_modules(model: "PreTrainedModel", freeze_vision_tower: bool)
     """
     model_type = getattr(model.config, "model_type", None)
     forbidden_modules = {"lm_head"}
-    # forbidden_modules = {} # gotzmann
     if model_type == "chatglm":
         forbidden_modules.add("output_layer")
     elif model_type == "internlm2":
@@ -48,15 +47,10 @@ def find_all_linear_modules(model: "PreTrainedModel", freeze_vision_tower: bool)
 
     module_names = set()
     for name, module in model.named_modules():
-        #print(f"=== LINEAR | {name} ===") # gotzmann
         if any(forbidden_module in name for forbidden_module in forbidden_modules):
-            #print(f"=== ^^^ FORBIDDEN ^^^ ===") # gotzmann
             continue
 
-        # gotzmann
         if "Linear" in module.__class__.__name__ and "Embedding" not in module.__class__.__name__:
-        #if "Linear" in module.__class__.__name__ and "RotaryEmbedding" not in module.__class__.__name__:
-            #print(f"=== REAL LINEAR | {name} ===")
             module_names.add(name.split(".")[-1])
 
     logger.info("Found linear modules: {}".format(",".join(module_names)))

@@ -94,7 +94,7 @@ def _encode_supervised_example(
             text = prompt[0]['content']
         if text == "":
             return [], []
-        # Use BOS token to split PT samples by default, otherwise split them with cross-contamination attention
+        # Use BOS token to split CPT samples by default, otherwise split them with cross-contamination attention
         if neat_packing:
             input_ids = tokenizer.encode(text, add_special_tokens=False)
             if len(input_ids) >= cutoff_len:
@@ -184,7 +184,7 @@ def preprocess_packed_supervised_dataset(
             neat_packing=data_args.neat_packing, # gotzmann
         )
 
-        # === NEW DEBUG | gotzmann
+        # === DEBUG | gotzmann
         # NB! ^^^ _encode_supervised_example ^^^ already knows how to process PRE-TRAIN samples correct
         # if i < 3:
         #     print("\n\n=== [ INPUTS ] =======================================================================\n\n")
@@ -193,7 +193,7 @@ def preprocess_packed_supervised_dataset(
         #     print(input_ids)
         #     print("\n\n=== [ LABELS : " + str(len(labels)) + " ] =======================================================================\n\n")
         #     print(labels)
-        # gotzmann | NEW DEBUG ===
+        # gotzmann | DEBUG ===
 
         length = len(input_ids)
         if length > data_args.cutoff_len:

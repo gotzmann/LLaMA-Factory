@@ -103,9 +103,7 @@ def prepare_model_for_training(model: "PreTrainedModel", model_args: "ModelArgum
             logger.info("Gradient checkpointing enabled.")
 
     if model_args.upcast_lmhead_output:
-        #print("=== model_args.upcast_lmhead_output") # gotzmann
         output_layer = model.get_output_embeddings()
         if isinstance(output_layer, torch.nn.Linear) and output_layer.weight.dtype != torch.float32:
-            #print("=== output_layer = ", output_layer) # gotzmann
             logger.info("Upcasting lm_head outputs in float32.")
             output_layer.register_forward_hook(_fp32_forward_post_hook)
