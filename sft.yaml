@@ -11,6 +11,9 @@ enable_liger_kernel: true # works with FSDP
 #upcast_layernorm: true # FSDP: Must flatten tensors with uniform dtype
 #upcast_lmhead_output: true
 
+gradient_checkpointing_kwargs:
+  use_reentrant: false
+
 ### resume if needed ?
 # ignore_data_skip: true
 # resume_from_checkpoint: /home/exported/checkpoint-4115
@@ -25,7 +28,7 @@ stage: sft
 do_train: true
 finetuning_type: lora
 lora_target: all
-additional_target: embed_tokens
+# additional_target: embed_tokens
 lora_rank: 96
 lora_alpha: 32
 lora_dropout: 0.0
@@ -44,10 +47,9 @@ num_train_epochs: 1.0
 per_device_train_batch_size: 1
 gradient_accumulation_steps: 2
 lr_scheduler_type: constant_with_warmup # cosine_with_min_lr # constant | constant_with_warmup | linear | cosine
-learning_rate: 0.00005
-#min_lr: 0.00002
+learning_rate: 0.0001
 optim: adamw_torch_fused # adamw_torch | adamw_8bit | adamw_torch_fused
-#weight_decay: 0.00001 # FIXME
+weight_decay: 0.001 # FIXME
 warmup_steps: 100
 bf16: true
 
@@ -65,11 +67,12 @@ ddp_find_unused_parameters: false # False for LoRA in DDP training
 overwrite_cache: true
 overwrite_output_dir: true
 
-#plot_loss: false
 # use_fast_tokenizer: false
 # loraplus_lr_ratio: 4.0
 # use_reentrant: true
 # warmup_ratio: 0.1
+# plot_loss: false
+# min_lr: 0.00002
 
 ### eval
 # val_size: 0 # 0.1
