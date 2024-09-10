@@ -29,8 +29,8 @@ do_train: true
 finetuning_type: lora
 lora_target: all
 # additional_target: embed_tokens
-lora_rank: 128
-lora_alpha: 128
+lora_rank: 64
+lora_alpha: 64
 #lora_dropout: 0.0
 #use_rslora: true
 use_dora: true
