@@ -29,11 +29,11 @@ do_train: true
 finetuning_type: lora
 lora_target: all
 # additional_target: embed_tokens
-lora_rank: 64
-lora_alpha: 64
+lora_rank: 128
+lora_alpha: 128
 #lora_dropout: 0.0
-#use_rslora: true
-use_dora: true
+use_rslora: true
+#use_dora: true
 
 ### dataset
 dataset: x2
@@ -46,7 +46,7 @@ preprocessing_num_workers: 48
 ### train
 num_train_epochs: 1.0
 per_device_train_batch_size: 1
-gradient_accumulation_steps: 4
+gradient_accumulation_steps: 1
 lr_scheduler_type: constant_with_warmup # cosine_with_min_lr # constant | constant_with_warmup | linear | cosine
 learning_rate: 0.00005
 optim: adamw_torch_fused # adamw_torch | adamw_8bit | adamw_torch_fused
