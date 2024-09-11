@@ -5,7 +5,7 @@
 # [ lm_head ] with [ liger_kernel ] RuntimeError: size mismatch, got input (1), mat (1x4096), vec (65667072)
 
 ### gotzmann
-enable_liger_kernel: true # works with FSDP
+#enable_liger_kernel: true # works with FSDP
 #use_unsloth: true # just for ONE card
 #use_unsloth_gc: true # use unsloth's gradient checkpointing
 #upcast_layernorm: true # FSDP: Must flatten tensors with uniform dtype
@@ -40,7 +40,7 @@ dataset: x2
 template: llama3
 packing: true
 neat_packing: true
-cutoff_len: 32768 # 8192 | 10240 | 16384 | 24576 | 32768 
+cutoff_len: 16384 # 32768 # 8192 | 10240 | 16384 | 24576 | 32768 
 preprocessing_num_workers: 24
 
 ### train
@@ -49,7 +49,7 @@ per_device_train_batch_size: 1
 gradient_accumulation_steps: 4
 lr_scheduler_type: constant_with_warmup # cosine_with_min_lr # constant | constant_with_warmup | linear | cosine
 learning_rate: 0.00005
-optim: adamw_torch_fused # adamw_torch | adamw_8bit | adamw_torch_fused
+optim: adamw_torch # adamw_torch_fused # adamw_torch | adamw_8bit | adamw_torch_fused
 #weight_decay: 0.001 # FIXME
 warmup_steps: 100
 bf16: true
