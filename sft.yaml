@@ -5,8 +5,8 @@
 # [ lm_head ] with [ liger_kernel ] RuntimeError: size mismatch, got input (1), mat (1x4096), vec (65667072)
 
 ### gotzmann
-#enable_liger_kernel: true # works with FSDP
-use_unsloth: true # just for ONE card
+enable_liger_kernel: true # works with FSDP
+#use_unsloth: true # just for ONE card
 #use_unsloth_gc: true # use unsloth's gradient checkpointing
 #upcast_layernorm: true # FSDP: Must flatten tensors with uniform dtype
 #upcast_lmhead_output: true
