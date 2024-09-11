@@ -60,7 +60,7 @@ logging_steps: 1
 save_steps: 1000
 
 ### etc
-flash_attn: fa2
+#flash_attn: fa2
 gradient_checkpointing: true
 max_grad_norm: 1.0
 ddp_timeout: 180000000
