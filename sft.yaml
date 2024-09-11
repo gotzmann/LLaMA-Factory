@@ -5,11 +5,11 @@
 # [ lm_head ] with [ liger_kernel ] RuntimeError: size mismatch, got input (1), mat (1x4096), vec (65667072)
 
 ### gotzmann
-enable_liger_kernel: true # works with FSDP
-#use_unsloth: true # just for ONE card
-#use_unsloth_gc: true # use unsloth's gradient checkpointing
-#upcast_layernorm: true # FSDP: Must flatten tensors with uniform dtype
-#upcast_lmhead_output: true
+#enable_liger_kernel: true # works with FSDP
+use_unsloth: true # just for ONE card
+use_unsloth_gc: true # use unsloth's gradient checkpointing
+upcast_layernorm: true # FSDP: Must flatten tensors with uniform dtype
+upcast_lmhead_output: true
 
 #gradient_checkpointing_kwargs:
 #  use_reentrant: false
@@ -32,21 +32,21 @@ lora_target: all
 lora_rank: 128
 lora_alpha: 128
 #lora_dropout: 0.0
-use_rslora: true
-#use_dora: true
+#use_rslora: true
+use_dora: true
 
 ### dataset
 dataset: x2
 template: llama3
 packing: true
 neat_packing: true
-cutoff_len: 16384 # 8192 | 10240 | 16384 | 24576 | 32768 
-preprocessing_num_workers: 48
+cutoff_len: 32768 # 8192 | 10240 | 16384 | 24576 | 32768 
+preprocessing_num_workers: 24
 
 ### train
 num_train_epochs: 1.0
 per_device_train_batch_size: 1
-gradient_accumulation_steps: 1
+gradient_accumulation_steps: 4
 lr_scheduler_type: constant_with_warmup # cosine_with_min_lr # constant | constant_with_warmup | linear | cosine
 learning_rate: 0.00005
 optim: adamw_torch_fused # adamw_torch | adamw_8bit | adamw_torch_fused
@@ -57,7 +57,7 @@ bf16: true
 ### output
 output_dir: /home/exported
 logging_steps: 1
-save_steps: 500
+save_steps: 1000
 
 ### etc
 flash_attn: fa2
