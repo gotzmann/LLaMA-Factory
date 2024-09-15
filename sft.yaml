@@ -1,9 +1,3 @@
-# Train with Continuous PreTraining [ embed_tokens + lm_head ]
-# https://www.reddit.com/r/LocalLLaMA/comments/1d86k5y/continued_pretraining_2x_faster_notebook_to/
-# all == q_proj,k_proj,v_proj,o_proj,gate_proj,up_proj,down_proj
-# additional_target: lm_head,embed_tokens
-# [ lm_head ] with [ liger_kernel ] RuntimeError: size mismatch, got input (1), mat (1x4096), vec (65667072)
-
 ### gotzmann
 enable_liger_kernel: true # works with FSDP
 #use_unsloth: true # just for ONE card
@@ -11,12 +5,9 @@ enable_liger_kernel: true # works with FSDP
 #upcast_layernorm: true # FSDP: Must flatten tensors with uniform dtype
 #upcast_lmhead_output: true
 
-#gradient_checkpointing_kwargs:
-#  use_reentrant: false
-
-### resume if needed ?
-# ignore_data_skip: true
-# resume_from_checkpoint: /home/exported/checkpoint-4115
+### resume
+#ignore_data_skip: true
+#resume_from_checkpoint: /home/exported/checkpoint-4115
 
 ### model
 model_name_or_path: NousResearch/Meta-Llama-3.1-8B-Instruct
@@ -75,8 +66,17 @@ overwrite_output_dir: true
 # plot_loss: false
 # min_lr: 0.00002
 
+#gradient_checkpointing_kwargs:
+#  use_reentrant: false
+
 ### eval
 # val_size: 0 # 0.1
 # per_device_eval_batch_size: 1
 # evaluation_strategy: steps
 # eval_steps: 0 # 500
+
+# Train with Continuous PreTraining [ embed_tokens + lm_head ]
+# https://www.reddit.com/r/LocalLLaMA/comments/1d86k5y/continued_pretraining_2x_faster_notebook_to/
+# all == q_proj,k_proj,v_proj,o_proj,gate_proj,up_proj,down_proj
+# additional_target: lm_head,embed_tokens
+# [ lm_head ] with [ liger_kernel ] RuntimeError: size mismatch, got input (1), mat (1x4096), vec (65667072)
