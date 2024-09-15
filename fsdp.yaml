@@ -12,13 +12,16 @@ fsdp_config:
   fsdp_sync_module_states: true
   fsdp_offload_params: false
   fsdp_sharding_strategy: FULL_SHARD
-  fsdp_state_dict_type: FULL_STATE_DICT # FULL_STATE_DICT # SHARDED_STATE_DICT | FULL_STATE_DICT
-  fsdp_use_orig_params: false # For FSDP, when using torch.compile please set True # FSDP DoRA needs [ false ]
+  # SHARDED_STATE_DICT | FULL_STATE_DICT
+  fsdp_state_dict_type: FULL_STATE_DICT
+  # FSDP DoRA needs [ false ]
+  # For FSDP, when using torch.compile please set True
+  fsdp_use_orig_params: false
 machine_rank: 0
 main_training_function: main
 mixed_precision: bf16
-num_machines: 1 # the number of nodes
-num_processes: 8 # the number of GPUs in all nodes
+num_machines: 1
+num_processes: 8
 rdzv_backend: static
 same_network: true
 tpu_env: []
