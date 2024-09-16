@@ -1,6 +1,6 @@
 id: pod
 host: 0.0.0.0
-port: 8888
+port: 8080
 log: booster.log
 deadline: 180
 debug:
