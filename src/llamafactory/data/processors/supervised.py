@@ -213,10 +213,15 @@ def preprocess_packed_supervised_dataset(
     used_samples = []
     remaining_capacity = data_args.cutoff_len
     i = 1 # number of sample within knapsack for cross-contamination attention, start from 1
+    firstLen = 0 # gotzmann
+    firstCount = 0 # gotzmann 
     for index, length in enumerate(lengths):
         if index in used_samples: continue
         # -- just fit current sample into knapsack
         if length <= remaining_capacity:
+            if i == 1: 
+                firstLen += len(batch_input_ids[index])
+                firstCount += 1
             packed_input_ids += batch_input_ids[index]
             packed_labels += batch_labels[index]
             packed_attention_masks += [i] * len(batch_input_ids[index])
@@ -236,6 +241,9 @@ def preprocess_packed_supervised_dataset(
                 packed_input_ids += batch_input_ids[current]
                 packed_labels += batch_labels[current]
                 packed_attention_masks += [i] * len(batch_input_ids[current])
+                if i == 1: 
+                    firstLen += len(batch_input_ids[index])
+                    firstCount += 1
                 if data_args.neat_packing: i += 1
                 remaining_capacity -= lengths[current]    
                 used_samples.append(current)
@@ -263,10 +271,14 @@ def preprocess_packed_supervised_dataset(
             packed_input_ids += batch_input_ids[index]
             packed_labels += batch_labels[index]
             packed_attention_masks += [i] * len(batch_input_ids[index])
+            if i == 1: 
+                firstLen += len(batch_input_ids[index])
+                firstCount += 1
             if data_args.neat_packing: i += 1
             remaining_capacity -= length
             used_samples.append(index)
-    # TODO: Check out all used_sampled are really used!        
+    # TODO: Check out all used_sampled are really used!
+    print("\n\n=== PACKING | ", str(firstLen/firstCount), "\n\n")
     return model_inputs
     # gotzmann | KNAPSACKS ===
 
