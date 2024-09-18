@@ -244,8 +244,8 @@ def preprocess_packed_supervised_dataset(
                 packed_input_ids, packed_attention_masks, packed_labels = [], [], []
                 remaining_capacity = data_args.cutoff_len
                 i = 1
-                print("\n\n=== CPT Sample ===\n\n")
-                print(format(tokenizer.decode(shrinked_ids, skip_special_tokens=False)))
+                # print("\n\n=== CPT Sample ===\n\n")
+                # print(format(tokenizer.decode(shrinked_ids, skip_special_tokens=False)))
                 continue
             # -- looking for samples fitting into knapsack
             for current in range(index+1, len(lengths)):
