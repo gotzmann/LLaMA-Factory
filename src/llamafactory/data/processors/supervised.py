@@ -231,22 +231,22 @@ def preprocess_packed_supervised_dataset(
             continue
         else:
             # -- trying to shrink longer CPT samples to allow shorter samples fill beginning of the batch
-            # if batch_input_ids[index][0] != tokenizer.bos_token_id:
-            #     shrinked_ids = batch_input_ids[index][:remaining_capacity]
-            #     shrinked_labels = batch_labels[index][:remaining_capacity]
-            #     shrinked_attention_masks = [i] * remaining_capacity
-            #     packed_input_ids += shrinked_ids
-            #     packed_labels += shrinked_labels
-            #     packed_attention_masks += shrinked_attention_masks
-            #     model_inputs["input_ids"].append(packed_input_ids)
-            #     model_inputs["attention_mask"].append(packed_attention_masks)
-            #     model_inputs["labels"].append(packed_labels)
-            #     packed_input_ids, packed_attention_masks, packed_labels = [], [], []
-            #     remaining_capacity = data_args.cutoff_len
-            #     i = 1
+            if batch_input_ids[index][0] != tokenizer.bos_token_id:
+                shrinked_ids = batch_input_ids[index][:remaining_capacity]
+                shrinked_labels = batch_labels[index][:remaining_capacity]
+                shrinked_attention_masks = [i] * remaining_capacity
+                packed_input_ids += shrinked_ids
+                packed_labels += shrinked_labels
+                packed_attention_masks += shrinked_attention_masks
+                model_inputs["input_ids"].append(packed_input_ids)
+                model_inputs["attention_mask"].append(packed_attention_masks)
+                model_inputs["labels"].append(packed_labels)
+                packed_input_ids, packed_attention_masks, packed_labels = [], [], []
+                remaining_capacity = data_args.cutoff_len
+                i = 1
                 # print("\n\n=== CPT Sample ===\n\n")
                 # print(format(tokenizer.decode(shrinked_ids, skip_special_tokens=False)))
-            #    continue
+                continue
             # -- looking for samples fitting into knapsack
             for current in range(index+1, len(lengths)):
                 # -- filling current knapsack with padding + starting new one
