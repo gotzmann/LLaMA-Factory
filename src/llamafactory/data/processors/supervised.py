@@ -253,10 +253,11 @@ def preprocess_packed_supervised_dataset(
                 for current in range(index+1, len(lengths)):
                     if current in used_samples: continue
                     # -- filling current knapsack with padding + starting new one
-                    if remaining_capacity < 0.03 * data_args.cutoff_len: # 200: # or current == len(lengths)-1:
-                        break
+                    if remaining_capacity < 0.03 * data_args.cutoff_len: break
                     # -- else skipping or adding current sample into knapsack
                     if lengths[current] > remaining_capacity: continue
+                    # -- ignore super short samples, it better to place them where block begins
+                    if lengths[current] < 0.05 * data_args.cutoff_len: continue
                     packed_input_ids += batch_input_ids[current]
                     packed_labels += batch_labels[current]
                     packed_attention_masks += [i] * len(batch_input_ids[current])
@@ -297,7 +298,6 @@ def preprocess_packed_supervised_dataset(
             # used_samples.append(index)
     # TODO: Check out all used_sampled are really used!
     print("\n=== PACKING |", str(round(firstLen/firstCount)))
-
     # === DEBUG | gotzmann | _encode_supervised_example process CPT samples correct
     # from colorama import Fore, Back, Style
     # if i < 10:
@@ -310,7 +310,6 @@ def preprocess_packed_supervised_dataset(
     #             color = Fore.LIGHTBLACK_EX
     #         print(color + word, end="")
     # gotzmann | DEBUG ===
-
     return model_inputs
     # gotzmann | KNAPSACKS ===
 
