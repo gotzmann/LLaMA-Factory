@@ -265,23 +265,45 @@ def get_dataset(
         for block in iter(dataset):
 
             if num >= 20: break
+            continue # DEBUG
 
-            sample = format(tokenizer.decode(block["input_ids"], skip_special_tokens=False))
+            input_ids = block["input_ids"]
+            labels = block["labels"]
+            attention = block["attention_mask"]
+
+            # === DEBUG | gotzmann | _encode_supervised_example process CPT samples correct
+            from colorama import Fore, Back, Style
+            prev_attention = 0
+            print(Fore.WHITE + f"\n\n============================== [ SAMPLE # {num} ] ==============================")
+            for pos, word in enumerate(input_ids):
+                word = tokenizer.decode(input_ids[pos], skip_special_tokens=False)
+                if prev_attention != attention[pos]:
+                    print(Fore.LIGHTMAGENTA_EX + "\n\n[ " + str(attention[pos]) + " ]\n\n", end="")
+                    prev_attention = attention[pos]
+                if labels[pos] >= 0:
+                    color = Fore.LIGHTGREEN_EX if input_ids[pos] < 128000 else Fore.LIGHTYELLOW_EX
+                else:
+                    color = Fore.LIGHTBLACK_EX
+                print(color + word, end="")
+            print(Style.RESET_ALL)  
+            # gotzmann | DEBUG ===
+
+            sample = format(tokenizer.decode(input_ids, skip_special_tokens=False))
             f = open('./batches/input_ids.' + str(num), 'w')
             f.write(sample)
             f.close()
 
-            labels = ', ' . join(map(str, block["labels"]))
+            labels = ', ' . join(map(str, labels))
             f = open('./batches/labels.' + str(num), 'w')
             f.write(labels)
             f.close()
 
-            labels = ', ' . join(map(str, block["attention_mask"]))
+            attention_mask = ', ' . join(map(str, attention))
             f = open('./batches/attention_mask.' + str(num), 'w')
-            f.write(labels)
+            f.write(attention_mask)
             f.close()
 
-            num += 1  
+            num += 1
 		
         # print ("\n\n=== SEARCHING FOR DUBS... ===\n\n")
 

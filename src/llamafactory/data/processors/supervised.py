@@ -184,17 +184,6 @@ def preprocess_packed_supervised_dataset(
             neat_packing=data_args.neat_packing, # gotzmann
         )
 
-        # === DEBUG | gotzmann
-        # NB! ^^^ _encode_supervised_example ^^^ already knows how to process PRE-TRAIN samples correct
-        # if i < 3:
-        #     print("\n\n=== [ INPUTS ] =======================================================================\n\n")
-        #     print(format(tokenizer.decode(input_ids, skip_special_tokens=False)))
-        #     print("\n\n=== [ IDS : " + str(len(input_ids)) + " ] =======================================================================\n\n")
-        #     print(input_ids)
-        #     print("\n\n=== [ LABELS : " + str(len(labels)) + " ] =======================================================================\n\n")
-        #     print(labels)
-        # gotzmann | DEBUG ===
-
         length = len(input_ids)
         if length > data_args.cutoff_len:
             logger.warning("Dropped lengthy example with length {} > {}.".format(length, data_args.cutoff_len))
@@ -214,14 +203,22 @@ def preprocess_packed_supervised_dataset(
     remaining_capacity = data_args.cutoff_len
     i = 1 # number of sample within knapsack for cross-contamination attention, start from 1
     firstLen = 0 # gotzmann
-    firstCount = 0 # gotzmann 
+    firstCount = 0 # gotzmann
+    skipped = 0
     for index, length in enumerate(lengths):
         if index in used_samples: continue
+        # -- skip too lengthy samples with mostly no data for active learning (most labels are -100)
+        total = len(batch_input_ids[index])
+        cutoff = data_args.cutoff_len
+        wasted = sum(label < 0 for label in batch_labels[index])
+        # print(f"=== WASTED LEN | {wasted}")
+        if total > 0.10 * cutoff and (wasted > 0.70 * total or wasted > 0.30 * cutoff):
+            skipped += 1;
+            # print(f"=== WASTED COUNT | {skipped} ===");
+            continue
         # -- just fit current sample into knapsack
         if length <= remaining_capacity:
-            if i == 1: 
-                firstLen += len(batch_input_ids[index])
-                firstCount += 1
+            if i == 1: firstLen += len(batch_input_ids[index]); firstCount += 1 # DEBUG | metrics
             packed_input_ids += batch_input_ids[index]
             packed_labels += batch_labels[index]
             packed_attention_masks += [i] * len(batch_input_ids[index])
@@ -232,70 +229,88 @@ def preprocess_packed_supervised_dataset(
         else:
             # -- trying to shrink longer CPT samples to allow shorter samples fill beginning of the batch
             if batch_input_ids[index][0] != tokenizer.bos_token_id:
-                shrinked_ids = batch_input_ids[index][:remaining_capacity]
-                shrinked_labels = batch_labels[index][:remaining_capacity]
-                shrinked_attention_masks = [i] * remaining_capacity
-                packed_input_ids += shrinked_ids
-                packed_labels += shrinked_labels
-                packed_attention_masks += shrinked_attention_masks
-                model_inputs["input_ids"].append(packed_input_ids)
-                model_inputs["attention_mask"].append(packed_attention_masks)
-                model_inputs["labels"].append(packed_labels)
-                packed_input_ids, packed_attention_masks, packed_labels = [], [], []
-                remaining_capacity = data_args.cutoff_len
-                i = 1
+                # shrinked_ids = 
+                # shrinked_labels = 
+                # shrinked_attention_masks = 
+                packed_input_ids += batch_input_ids[index][:remaining_capacity]
+                packed_labels += batch_labels[index][:remaining_capacity]
+                packed_attention_masks += [i] * remaining_capacity
+                # model_inputs["input_ids"].append(packed_input_ids)
+                # model_inputs["attention_mask"].append(packed_attention_masks)
+                # model_inputs["labels"].append(packed_labels)
+                # packed_input_ids, packed_attention_masks, packed_labels = [], [], []
+                # remaining_capacity = data_args.cutoff_len
+                remaining_capacity = 0
+                used_samples.append(index)
+                if i == 1: firstLen += len(batch_input_ids[index]); firstCount += 1 # DEBUG | metrics
+                if data_args.neat_packing: i += 1    
+                # i = 1
                 # print("\n\n=== CPT Sample ===\n\n")
                 # print(format(tokenizer.decode(shrinked_ids, skip_special_tokens=False)))
-                continue
-            # -- looking for samples fitting into knapsack
-            for current in range(index+1, len(lengths)):
-                # -- filling current knapsack with padding + starting new one
-                if remaining_capacity < 100 or current == len(lengths)-1:
-                    break
-                # -- else skipping or adding current sample into knapsack
-                if current in used_samples: continue
-                if lengths[current] > remaining_capacity: continue
-                packed_input_ids += batch_input_ids[current]
-                packed_labels += batch_labels[current]
-                packed_attention_masks += [i] * len(batch_input_ids[current])
-                if i == 1: 
-                    firstLen += len(batch_input_ids[index])
-                    firstCount += 1
-                if data_args.neat_packing: i += 1
-                remaining_capacity -= lengths[current]    
-                used_samples.append(current)
-                i += 1
-                continue 
+                # continue
+            else:    
+                # -- looking for samples fitting into knapsack
+                for current in range(index+1, len(lengths)):
+                    if current in used_samples: continue
+                    # -- filling current knapsack with padding + starting new one
+                    if remaining_capacity < 0.03 * data_args.cutoff_len: # 200: # or current == len(lengths)-1:
+                        break
+                    # -- else skipping or adding current sample into knapsack
+                    if lengths[current] > remaining_capacity: continue
+                    packed_input_ids += batch_input_ids[current]
+                    packed_labels += batch_labels[current]
+                    packed_attention_masks += [i] * len(batch_input_ids[current])
+                    if i == 1: firstLen += len(batch_input_ids[index]); firstCount += 1 # DEBUG | compute metrics
+                    if data_args.neat_packing: i += 1
+                    remaining_capacity -= lengths[current]    
+                    used_samples.append(current)
+                    continue
+        # -- padding        
         packed_input_ids += [tokenizer.pad_token_id] * remaining_capacity
         packed_labels += [IGNORE_INDEX] * remaining_capacity
         packed_attention_masks += [i] * remaining_capacity
-        #if data_args.neat_packing: i += 1
         # -- sanity check
         if len(packed_input_ids) != data_args.cutoff_len:
             print("\n\n=== packed_input_ids " + str(len(packed_input_ids)) + " === \n\n")
             #print(tokenizer.decode(packed_input_ids, skip_special_tokens=False))
             raise ValueError("The length of packed example should be identical to the cutoff length.")
+        # -- expand total samples
         model_inputs["input_ids"].append(packed_input_ids)
         model_inputs["attention_mask"].append(packed_attention_masks)
         model_inputs["labels"].append(packed_labels)
+        # -- reset block buffers and counter
         packed_input_ids, packed_attention_masks, packed_labels = [], [], []
         remaining_capacity = data_args.cutoff_len
         i = 1
-        # TODO: Could we rethink to not remember [ maxi ] and avoid the last edge case?
         # FIXME: Most last sample could be lost
         if index not in used_samples:
+            pass
             # print("[ WARNING ] Sample not in used samples") # DEBUG
-            packed_input_ids += batch_input_ids[index]
-            packed_labels += batch_labels[index]
-            packed_attention_masks += [i] * len(batch_input_ids[index])
-            if i == 1: 
-                firstLen += len(batch_input_ids[index])
-                firstCount += 1
-            if data_args.neat_packing: i += 1
-            remaining_capacity -= length
-            used_samples.append(index)
+            # packed_input_ids += batch_input_ids[index]
+            # packed_labels += batch_labels[index]
+            # packed_attention_masks += [i] * len(batch_input_ids[index])
+            # if i == 1: 
+            #     firstLen += len(batch_input_ids[index])
+            #     firstCount += 1
+            # if data_args.neat_packing: i += 1
+            # remaining_capacity -= length
+            # used_samples.append(index)
     # TODO: Check out all used_sampled are really used!
-    print("\n\n=== PACKING | ", str(firstLen/firstCount), "\n\n")
+    print("\n=== PACKING |", str(round(firstLen/firstCount)))
+
+    # === DEBUG | gotzmann | _encode_supervised_example process CPT samples correct
+    # from colorama import Fore, Back, Style
+    # if i < 10:
+    #     print(f"\n\n============================== [ SAMPLE # {i} ] ==============================\n\n")
+    #     words = tokenizer.decode(input_ids, skip_special_tokens=False)
+    #     for pos, word in enumerate(words):
+    #         if labels[pos] >= 0:
+    #             color = Fore.GREEN if input_ids[pos] < 128000 else Fore.YELLOW
+    #         else:
+    #             color = Fore.LIGHTBLACK_EX
+    #         print(color + word, end="")
+    # gotzmann | DEBUG ===
+
     return model_inputs
     # gotzmann | KNAPSACKS ===
 
