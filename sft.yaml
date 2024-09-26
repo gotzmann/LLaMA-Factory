@@ -32,7 +32,7 @@ template: llama3
 packing: true
 neat_packing: true
 cutoff_len: 16384 # 16384 # 8192 | 10240 | 16384 | 24576 | 32768 
-preprocessing_num_workers: 8
+preprocessing_num_workers: 48
 
 ### train
 num_train_epochs: 1.0
