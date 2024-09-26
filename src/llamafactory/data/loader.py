@@ -265,7 +265,7 @@ def get_dataset(
         for block in iter(dataset):
 
             if num >= 20: break
-            continue # DEBUG
+            # continue # DEBUG
 
             input_ids = block["input_ids"]
             labels = block["labels"]
