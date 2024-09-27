@@ -42,7 +42,7 @@ lr_scheduler_type: constant_with_warmup # cosine_with_min_lr # constant | consta
 learning_rate: 0.0001 # 0.0001 # 0.00005
 optim: adamw_torch_fused # adamw_torch | adamw_8bit | adamw_torch_fused
 #weight_decay: 0.05 # ??
-warmup_steps: 20
+warmup_steps: 50
 bf16: true
 #fp16: true
 
