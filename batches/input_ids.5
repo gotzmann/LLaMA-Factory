@@ -1,0 +1,470 @@
+<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Изучи задание и выполни его<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+Придумай стих, где есть строфа - Две дюжины свежих котлет!<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+Живет у веселой старушки
+Пятнистый большой далматин,
+Она ему вяжет игрушки 
+Он возит ее в магазин!
+
+Положит на спину подушку,
+Укутает бережно в плед
+И мчит хохотушку-старушку
+За мясом для сочных котлет.
+
+Троллейбусы машут усами,
+Трамваи сигналят: «Салют!»,
+И радостными голосами,
+Приветствуя, птицы поют!
+
+Старушка ногами болтает,
+К груди прижимая пакет,
+В нем мясо тихонечко тает
+Для вкусных-превкусных котлет!
+
+А дома сыграют в гляделки
+И вместе посмотрят балет.
+Как славно дымятся в тарелке 
+Две дюжины свежих котлет!
+
+Затем пожелают друг дружке
+Чудесного доброго сна,
+Уснет  на диване старушка,
+А пес  на ковре у окна
+
+Старушке привидится лето,
+Ей снова одиннадцать лет
+А псу  на котлете котлета,
+С котлетой и парой котлет!<|eot_id|><|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Диалог ИИ с пользователем. Изучи задание и дай ответ на вопрос.<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+I am working with Python and I have come across the `return self` statement in the context of a class definition. I have seen a similar question on Stack Overflow, but I am still unclear about the purpose and benefits of using `return self`. Here is an example of the code I am working with:
+
+```python
+class Fib: 
+    def __init__(self, max):
+        self.max = max
+    def __iter__(self): 
+        self.a = 0
+        self.b = 1
+        return self
+    def __next__(self):
+        fib = self.a
+        if fib > self.max:
+            raise StopIteration
+        self.a, self.b = self.b, self.a + self.b
+        return fib
+```
+
+I would like to understand why `return self` is used in this context and what its benefits are.<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+The `return self` statement in your code is used to return an instance of the object itself. This is commonly used in Python when defining an iterator class, allowing the object to be used in a for loop, for example.
+
+In your code, the `Fib` class is an iterable object, it keeps track of state (the current Fibonacci number and the next one) and knows how to calculate the next value (`__next__` method). 
+
+Iterator objects in Python need to implement two methods, `__iter__` and `__next__`. The `__iter__` method is supposed to return the iterator object itself, which is done by `return self`. The `__next__` method should return the next value from the iterator.
+
+Here's a step-by-step explanation of your code:
+
+1. The `__init__` method initializes the `max` attribute, which is the maximum number up to which you want to generate the Fibonacci sequence.
+
+2. The `__iter__` method is what makes this class an iterable. It initializes `self.a` and `self.b` to 0 and 1, respectively, which are the first two numbers of the Fibonacci sequence. Then it returns `self`, which allows this object to be used as an iterator.
+
+3. The `__next__` method is called to get the next number in the iteration. It first stores the current value of `self.a` in `fib`. Then it checks if `fib` has exceeded `self.max`, in which case it raises the `StopIteration` exception to signal the end of the iteration. Otherwise, it updates `self.a` and `self.b` to the next two numbers in the Fibonacci sequence, and returns `fib`.
+
+So, the `return self` in your code allows the `Fib` object to maintain its state for the next iteration, enabling it to produce a series of values over time, rather than computing them all at once and returning them in a list for example. This can be more memory-friendly for large sequences.<|eot_id|>«Бегал, бегал, начал кровью харкать» У чернобыльских ликвидаторов была своя футбольная команда. Они ездили на матчи прямо с АЭС
+
+«Строитель» Припять — футбольная команда работников Чернобыльской атомной электростанции (ЧАЭС). Она успешно выступала в любительской лиге и в 1985 году была в шаге от того, чтобы пробиться в профессиональную. Для «Строителя» даже возвели стадион на пять тысяч зрителей, просто открыть его не успели. 26 апреля 1986 года привычная жизнь чернобыльцев остановилась — дымящийся реактор заставил людей забыть обо всем... Но только не о футболе. Закончив вахту, ликвидаторы аварии ехали на тренировки, а по выходным — на матчи.
+
+
+Город Припять построили специально для того, чтобы расселить работников Чернобыльской атомной электростанции (ЧАЭС). Так что расположился он в непосредственной близости от нее — в трех километрах (в то время как сам город Чернобыль — в 12 километрах). Заложили Припять в 1970 году, практически одновременно с ЧАЭС, а статус города был получен в 1979-м. Спустя шесть лет численность населения Припяти приблизилась к 48 тысячам человек.
+
+Припять была нужна не только как город-спутник. Вблизи нее функционировала крупная железнодорожная станция — Янов. Кроме того, что к платформе примыкали подъездные пути ЧАЭС, она была открыта для высадки и посадки пассажиров и проведения грузовых работ. Еще в Припяти активно использовался речной вокзал, там же был один из узлов автомобильных магистралей Украинского Полесья. Припять была стратегически важным объектом, перевалочным пунктом. Еще и поэтому новый атомоград создавали по самым современным технологиям. Он входил в список передовых населенных пунктов на западе Советского Союза и имел большие перспективы. Детские сады, школы, ЗАГС, кафе и рестораны, парки, дворец культуры, спортплощадки — Припять была образцовым советским городом, в котором должно было быть комфортно.
+
+
+В то время советский футбол подразделялся на мастеров и любителей. Мастера играли в трех лигах: Высшей, Первой и Второй. А для любителей, к которым и относились КФК, проводились отдельные чемпионаты — республиканские Первенства. Структура их была такой: участники распределялись на зоны, а победители зональных соревнований сходились в финале. При этом лучший коллектив физкультуры получал профессиональный статус. Так, чемпион Первенства Украины среди КФК ежегодно выходил во Вторую лигу мастеров.
+
+
+«Строитель» на фоне соперников действительно выглядел солидно: трижды выигрывал чемпионат Киевской области, а в 1985 году даже занял второе место в третьей зоне Первенства Украины. Однако, чтобы попасть во Вторую лигу, высоких результатов было недостаточно.
+
+— Нас во Вторую лигу не пускали, туда была вроде негласная очередность, —  объясняет Литвин. — Сначала команды из областных центров, потом уже все остальные. Еще ждали, когда у нас центральный стадион откроют.
+
+Стадион «Авангард» на пять тысяч человек построили к 1986 году. «Новый стадион нужен людям больше, чем новый реактор», — заявил тогда Кизима. В первом матче на новой арене «Строитель» должен был встретиться с «Шахтером» из Александрии. Команды планировали сыграть 2 мая.
+
+
+Владимир Шома, защитник команды гостей:
+
+Мы планировали приехать на матч заранее. Но перед игрой нас решили заселить в гостиницу, чтобы после тренировок отправляться в Припять отдохнувшими. Ночью начали куда-то уезжать машины — грузовики, автобусы. Мы ничего не понимали — нам даже на игру не дали автобус, сказали только: «Товарищи, транспорт задействован на важное дело».
+
+Непонятная ситуация. Мы остались у себя в Бородянке — вышли тренироваться на следующий день, а вертолет приземлился на наше поле. Выскочили специалисты — дозиметрист принялся измерять радиацию. Мы спрашиваем: «А что такое? Что случилось-то?» Начальство наше пошло узнавать — поговорили, сразу все серьезные такие стали. Спрашиваем вертолетчика: «А откуда вы прилетели? Нам тут в Припять на матч выезжать скоро. Случилось что-то?» Он на нас смотрит и говорит: «Вы что, больные?..»
+
+Валерий Анюхин, член тренерского штаба «Строителя»:
+
+Пришли на стадион, на игру. Там уже станция горит, а мы все не верили, что стряслась настоящая беда и матч наш не состоится. Только после того, как увидели войска химзащиты, а на стадион сел вертолет, поняли: все очень серьезно. До станции-то было не больше километра. Видели, как дым идет оттуда. Многие знакомые ребята работали на станции. После того, как рвануло, они тут же оттуда уехали. Встречаемся, говорят: «Там полный атас!» Прибежала на стадион детвора, мы их тут же по домам отправили.
+
+Владимир Расторгуев, главный тренер «Строителя»:
+
+Тут, откуда ни возьмись, на футбольное поле начинают приземляться вертолеты. Приехали «Волги», стали выходить высокопоставленные люди. Помню, еще выскочил тогда на поле и кричу: «Вы что там, совсем рехнулись? У нас игра через два часа, а вы тут устроили непонятно что!» А они мне говорят: «Сынок, через два часа мы город эвакуируем, а ты в футбол собрался играть». На следующий день радиостанция «Голос Америки» передавала, мол, на станции такая авария, а они играют в футбол!
+
+Оперативно сообщить игрокам «Строителя» об отмене матча возможности также не было. Когда стали поступать первые данные об аварии на АЭС, футболисты как раз направлялись к стадиону. Литвин говорит:
+
+
+Супруга футболиста лежала как раз в той больнице, куда привозили первых жертв катастрофы — пожарных и работников оперативной службы.
+
+— Я заехал к жене, она мне рассказала, что ночью капельницы у всех забрали, потому что не хватало. Скорые одна за другой летали, всех врачей вызвали. Потом поехал в спорткомплекс, где команда перед игрой собиралась, там рядом. Ну подошел к тренеру: «Игра будет?» Он говорит: «Будет». А потом нам сообщили, что на поле вертолет сел, матч отменяется.
+
+Пока Валентин был с командой, его жену из-за нехватки места перевели в другую больницу. Он об этом не знал.
+
+— Тогда я стал мотаться, жену искать. Меня поразило: перед Чернобылем столько автобусов было, какой-то ужас! Большинство были с киевскими номерами. Я тогда понял, что будут Припять эвакуировать. А супругу, как выяснилось, на одной из тех скорых, что ребят со станции привозили, отвезли в районную больницу. Я приехал, а там больные сидят и смотрят, как вертолеты над четвертым блоком заходят. Ну я стал просить врача, чтобы он отпустил супругу. Он сначала отказывался, а потом согласился. Я ее как бы выкрал: она в окно выпрыгнула, там одноэтажное здание было.Л. снова поднимает тему покупки новой машины. Мы хотим такую же, но в новом кузове и с двигателем помощнее.
+
+02:36. Ложусь в кровать, перед этим приняв душ. Пишу дневник трат. Ставлю будильник на 13:30.
+
+Дальше глажу Л. спину, читаю еще несколько статей. Засыпаем в обнимку.
+
+**День шестой, суббота**
+
+**Траты за день: 2437 рублей**
+
+11:58. Просыпаюсь без будильника, пишу подруге, что вчера снова были в рюмочной. Она говорит, что сегодня пойдет со своей подругой в спа. Л. уже на работе.
+
+Лежу в кровати, листаю соцсети.
+
+13:07. Встаю, записываю подробные кружочки о вчерашнем походе, делюсь впечатлениями.
+
+Иду в душ, собираюсь на работу.
+
+Подруга спрашивает, где моя леопардовая шуба, и я решаю ее надеть.
+
+14:33. Выхожу из дома, погода сегодня хороша. Л. пишет мне сообщение, что на работе плохо работает интернет.
+
+Еду в «Ремисити», захожу в «Кофемашину», беру капучино с соленой карамелью. −190 рублей
+
+Дальше заказываю навынос в KFC два премиум-твистера и патибокс. Плачу картой. −617 рублей
+
+15:01. Подъезжаю к работе, паркуюсь вдоль дороги. Захожу, здороваюсь с барменом и хозяином бара — он копошится в щитке, пытается снять сломанный кулер.
+
+Едим с Л., где-то через полчаса приезжает его напарница.
+
+16:00. Выходим с Л. на улицу подышать воздухом, он говорит, что уже очень устал. Предлагаю вместе съездить за резиной к отцу Л. в гараж, заодно и развеемся. Заходим в бар, спрашиваем у коллег, можем ли мы уехать ненадолго. Нам разрешают.
+
+Едем с Л. к его отцу за ключами от гаража, а затем в гараж. У нас не получается открыть замок: ключ не поворачивается. Заливаем замок WD-40, пытаемся снова. Не выходит. Л. хочет попробовать выгнуть опору ключа в ровное положение, отговариваю его: «Сломаешь же». Так и происходит: Л. ломает ключ. Возвращается в машину с истерическим смехом, и мы едем делать дубликат.
+
+Подъезжаем к ближайшему ключнику. Л. идет один, я остаюсь в машине. Л. приходит с букетиком!
+
+17:00. Ключ забрали, едем назад в гараж. Начинаем открывать — идет лучше, проворачивается, но все еще не открывается. Ключ ломается внутри замка. И именно в этот момент звонит отец Л. — интересуется, почему мы так долго. Объясняем ситуацию и говорим, что сейчас заедем.
+
+17:24. Заходим домой к отцу. Рассказываем, что произошло, — не без истерического смеха, конечно. Договариваемся, что спилим замок и купим новый.
+
+17:41. Возвращаемся на работу. Рассказываем коллегам эту занимательную историю о нашей рукожопости.
+
+Дальше обычная рабочая рутина: столики приходят, уходят, ничего интересного или запоминающегося. Иногда такие смены очень полезны для эмоционального отдыха.
+
+21:53. Сажусь ужинать. Мне приготовили удон с морепродуктами.
+
+01:05. Л. уезжает по каким-то своим делам.
+
+01:24. Л. пишет, что подъехал назад к работе и я могу выходить. Но мне нужно помочь ребятам раскидаться по залу. Я уже рассчитала свои столики, мне перевели чаевые на карту, и пара столов отдала наличными.
+
+Доливаю пиво, помогаю коллегам отдать заказы, беру 200 рублей на такси и забираю зарплату за неделю. +10 740 рублей
+
+Записываю в расходы «фонд», беру оттуда 10,000 рублей. Деньги не мои, в доходах не учитываю. Еще нужно будет выдать зарплату уборщице. Выписываю ей аванс 10,000 рублей, прячу деньги в баре. Завтра посчитаю точно, сколько у нее вышла зарплата, и выдам на руки всю сумму сразу.
+
+01:35. Выхожу из бара через склад. Не хочу идти по залу перед людьми.
+
+01:42. Подъезжаем к «Ремисити». Иду класть деньги на карту. Чаевыми за сегодня вышло 4580 рублей. +4580 рублей
+
+Заходим в супермаркет, хотим купить вкусняшек. Плачу картой. −1630 рублей
+
+02:00. Паркуем машину возле соседнего магазина. Заходим домой, Л. убирает кошачий лоток, ставит чайник, моет посуду. Я запускаю мини-стирку со светлыми вещами. По очереди идем в душ. Я завариваю нам лапшу. Люблю корейскую с курицей: в ней нет ничего лишнего и не слишком жирный бульон.
+
+Кормлю кота, даю ему антибиотик — это животное очень сложно заставить есть таблетки.
+
+02:50. Садимся смотреть «Дом Дракона», мы уже на седьмой серии.
+
+04:03. Дописываю дневник трат. Засыпаю.
+
+**День седьмой, воскресенье**
+
+**Траты за день: 80 рублей**
+
+12:08. Просыпаюсь, листаю ленты соцсетей, немного убираюсь дома. Потом по стандартной схеме собираюсь на работу: иду в душ, крашусь, пока волосы сохнут сами по себе. Слушаю музыку с Алисой. Выбираю, что надеть. Сегодня снова пойду в леопардовой шубе.
+
+15:02. Переписываюсь с подругой, собираюсь выходить из дома. Рассказываю подруге в кружочках, что сейчас поеду в строительный магазин за пленкой: надо укрыть холодильники. В баре сегодня будет дезинсекция.
+
+Закидываю коту в рот кусочек антибиотика, он пытается вырваться и царапает мне руку. Насыпаю в миску корм.
+
+15:13. Выхожу, рядом с супермаркетом у дома расположен строительный магазин. Я всегда очень просто объясняю, что мне надо, если не знаю точного названия. Сейчас это звучало так: «Мне нужна такая пленочка, которой укрывают все, когда красят». Меня понимают с полуслова и приносят именно то, что нужно. Плачу своей картой. В тратах не учитываю: в баре заберу наличкой из кассы, потому что это вещь, нужная для работы.
+
+15:20. Паркуюсь вдоль дороги, захожу на работу. На этой неделе я почему-то приезжаю заранее. Не знаю, с чем это связано. Выпиваю йогурт, который купила ночью.
+
+19:01. Получаю на карту чаевые от гостя, который в пятницу обещал скинуть позже, с припиской «пятничное :)». Не забыл. +500 рублей
+
+20:23. Л. звонит отец и говорит, что вскрыл гараж, — резину можно забирать. Тогда Л. договаривается со вторым продавцом, что он ненадолго уйдет, и едет за резиной к отцу домой. Тот положил ее в кузов своего грузовика и припарковал его во дворе дома.
+
+20:46. Л. возвращается на работу.
+
+22:03. Получаю в «Вотсапе» сообщение от постоянника с просьбой придержать для него столик. Отвечаю, что сейчас все занято. Он просит найти ему место и говорит, что уже в пути. Обещаю посадить его за бар и уточняю, что сегодня мы работаем по сокращенному графику.
+
+22:11. Иду в компьютерный клуб, расположенный по соседству с нами, покупаю себе маленькую шоколадку «Милка». Возвращаюсь на работу. −80 рублейДа, это субъективный фактор. А если бы не эти листовки? А если бы не забастовка на Путиловском заводе? А если бы не беспорядок на железных дорогах? Революция в этот момент бы не разразилась, она бы разразилась позднее, потому что не были сняты социальные причины. Было бы другое сочетание обстоятельств, другой расклад борьбы, структура момента, как сейчас принято говорить. Разразившись после Первой мировой войны, она бы снова имела совершенно другой характер.
+
+Допустим, приходят к власти либералы. И мы сразу понимаем, чем бы все кончилось. Мы понимаем, что либерализм плохо совместим с русской душой. Но если мы взглянем на эту ситуацию исторически, мы увидим, что либералы в марте 1917 года пользуются колоссальной популярностью, потому что остальные политические силы не показали себя — говоря современным языком, не пропиарились. Что делают либералы? Они устанавливают либеральную диктатуру. Хочу напомнить, что временное правительство ликвидировало Государственную Думу и присвоило себе все властные полномочия. Откатило страну на уровень 1905 года. О чем они мыслят? О священном праве частной собственности. Идея движет этими людьми: они пытаются загнать революцию обратно в трущобы. И быстро теряют общественный потенциал во всем обществе, кроме миноритарной его части, которая потом активно себя проявляет. Здесь говорилось о ключевом различии между большевизмом и, условно говоря, Корниловым. Так вот, в 1917 году было экспериментально доказано, что этого противоречия не было, потому что корниловская авантюра рухнула с треском по совершенно объективным причинам. Только с началом Гражданской войны эта альтернатива действительно стала реальной. Только Гражданская война ликвидирует возможность вот этих промежуточных состояний, разводит лагеря друг от друга. Ключевая альтернатива 1917 года — это альтернатива между диктатурой и Гражданской войной (одно порождает другое) и другим путем — путем консолидации, компромисса.
+
+И тут мы переходим к другой фазе, потому что истинными подвижниками в сфере компромисса были левые либералы и правые социалисты. Здесь, конечно, на первый план выходит фигура Керенского как символ того пути. Хотя это, конечно, не единственный представитель этого пути. Экспериментально было доказано, что именно желание примирить правое и левое в некоторой точке покоя все погубило. В то время, когда общество требовало радикальных преобразований, образовался тяни-толкай, невозможность двигаться ни в одном направлении, и авторитет тех партий, которые были мегапопулярными в начале революции, начал стремительно падать. Мораль этого этапа заключается в том, что успех или неуспех идеологии, политики заключается в умении соотносить намерения и реальную расстановку социальных сил.
+
+И, наконец, последняя альтернатива — народное социалистическое или народно-демократическое правительство. Можно по-разному рассуждать о нем: вот не приехал бы Ленин, тогда на лидирующие позиции выходит Каменев. Напомню, что в начале сентября 1917 года Ленин протягивал руку своим оппонентам из социалистического лагеря, и эта рука была отвергнута. Весь 1917 год пронизан этими альтернативами, где очень многое в судьбе нашего отечества зависело от людей. Уроки этого года вытекают из сказанного: необходим социальный анализ, необходима не ликвидация противоречий и конфронтация в обществе, а преодоление только путем преобразования.
+
+**О трагедии российской социал-демократии в интерьере политических битв 1917 года**
+
+Заведующий кафедрой новейшей истории России Московского государственного областного университета, доктор исторически наук Валерий Журавлёв:
+
+Почтенный исторический возраст российской социал-демократии с трудом позволяет сегодня в полной мере осознать тот очевидный факт, что РСДРП исполнилось всего 19 лет, когда она вознамерилась действовать с двух концов (меньшевистского и большевистского), перевернуть Россию. Если же вести счет с того момента, когда РСДРП фактически оформилась в партию, расколовшись надвое, то к 1917 году она пришла в 14-летнем отроческом возрасте. По человеческим меркам в пору активного бурления гормонов, наибольшего проявления максимализма, неуступчивости и радикализма. Что нашло более яркое проявление у большевиков. Российская социал-демократия возникла не из пролетарского движения, а была интеллигентским рычагом, побудителем этого движения.
+
+РСДРП окунулась в водоворот событий 1917 года, ставшего для нее и этапом наивысшего взлета и сокрушительного падения. Исторический опыт заставляет менять акценты видения ряда важных событий прошлого. Сегодня для меня очевидно, что своей кульминацией, с точки зрения судьбы демократической альтернативы России, наиболее важными были политические процессы не в октябре, а в ноябре 1917 года. Это были выборы в Учредительное собрание 12 ноября, осуществленные по самой демократической на тот момент пропорционной системе, сочетавшей выдвижение кандидатов от территориальных округов — 68 тыловых и 7 фронтовых, голосование по партийным спискам. В этих выборах приняло участие 58 миллионов человек, впервые включая женщин. Добавим, что пришли они к урнам политически подкованными. Согласно крылатой фразе писателя Паустовского: с февраля до осени 17 года Россия выговорила все, о чем молчала столетиями.
+
+Страна тогда подошла к исторической развилке, точке бифуркации цивилизационного масштаба и значения. Вопрос стоял лишь в том, в каких социально политических догмах этот назревший вопрос эпохи найдет свое рациональное решение. Именно итоги выборов 12 ноября представляются моментом истины для российской социал-демократии. Большевики и меньшевики получили не в пылу митинговых страстей, а в ходе демократических выборов, четвертую часть голосов российского электората. Для 14-летней политической партии, находящейся в публичной политике всего 8 месяцев, тем более, находящейся в состоянии раскола, это был выдающийся успех. Но он не был абсолютным, он требовал кропотливого диалога с другими партиями марксистского и неонароднического толка.
+
+Нравится ли это кому-то или нет, но я остаюсь убежден, что осенью 1917 года путь России к радикальному социальному эксперименту цивилизационного масштаба и значения был объективно неизбежным. Страна была обречена на этот эксперимент, более 39 миллионов россиян, то есть более 80 процентов однозначно высказались за демократическое, на базе многопартийности, будущее страны в русле так или иначе понимаемого принципа социальной справедливости. Это был вердикт народа. Однако вердикта этого претенденты на звание демократов сочли нужным не заметить.Increased Creature Loot. В третьем «Ведьмаке» можно и нужно охотиться, но с убитого животного не всегда удается добыть шкуру, мясо и прочий лут. С этим модом ценные предметы выпадают всегда.
+
+Over 9000 — Weight limit mod. Обязательный мод для тех, кто не любит выбрасывать снаряжение. С ним ведьмачья сумка становится почти бездонной, потому что переносимый вес увеличивается буквально до 9000.
+
+Lore-friendly Witchers. Один из лучших модов для изменения внешности Геральта. В отличие от аналогов, он лишь слегка редактирует внешность всех ведьмаков в игре. Их кожа становится бледнее, а вертикальные зрачки — выразительнее.
+
+New Hairstyles and Beards for Geralt (DLC2 Improved). Мод добавляет 19 новых причесок и 12 типов бороды для Геральта. Отличный вариант для тех, кто любит менять герою внешность.
+
+E3 Improved Combat Animations. Значительно улучшает анимации боя в игре. Они выглядят зрелищнее и правдоподобнее.
+
+E3 Dodge System. Заменяет анимации уворотов на те, что были показаны на презентации для игровой выставки E3 2014. Эти боевые анимации выглядят куда лаконичнее и эффектнее. Идеальный мод для тех, кого не устраивают движения Геральта в итоговой игре.
+
+More Shadows. Мод для тех, у кого мощная видеокарта. С ним разные источники света создают собственные тени.
+
+Vampires Have No Shadows. Маленький, но важный для фанатов мод. В оригинальных книгах у вампиров не было теней, а в игре почему-то есть. Эта модификация делает игру более соответствующей первоисточнику.
+
+New Clouds. Заменяет текстуры облаков на более естественные и красивые. Мод совместим с обновленной версией.
+
+Increased Draw Distance. Увеличивает дальность прорисовки локаций. Отличный мод для владельцев мощных компьютеров.
+
+Next-Gen AutoLoot. Обновленная версия мода, который автоматизирует сбор лута. Собирать вручную снаряжение с убитых врагов больше не нужно.
+
+More Money for Traders (Next-Gen). С этим модом у торговцев всегда хватит денег на выкуп всего, что вы собрали.
+
+Random Encounters Reworked. Добавляет в игру случайные стычки с монстрами и новые контракты на охоту. Еще с этим модом игра становится сложнее и разнообразнее, а монстры и дикие звери ведут себя естественнее. Например, хищники начинают охотиться на травоядных.
+
+Complete Animations Redux. Добавляет в игру анимации разных рутинных действий вроде сбора лута, приема пищи и нанесения масел на мечи. Одно неудобство — мод для обновленной версии придется скачать c дискорд-сервера разработчика.
+
+Lore-friendly Silver Swords. Улучшает внешний вид серебряных мечей, добавляет им характерный блеск.
+
+Immersive Cam. Делает камеру в игре более кинематографичной, а заодно позволяет настраивать ее под свой вкус. Игрок может сам выбирать ракурс и удаленность камеры от модели Геральта.
+
+Face Them — ReUploads (Next-Gen and Old-Gen). С этим модом Геральт будет смотреть туда, куда направлена камера.
+
+Sezon Burz Witcher’s Gear. Для игры существует множество модов с экипировкой, но этот особенно хорош. Он добавляет в игру одежду, вдохновленную описаниями из романа Анджея Сапковского «Сезон гроз». Экипировка выглядит стильно и эффектно.
+
+White Wolf Scavenger Hunt — Russian Translation. Сюжетный мод, который превращает поиски брони из модификации Sezon Burz Witcher’s Gear в полноценное приключение. Есть русский перевод.
+
+Critical Slow Motion Combat Mod. Теперь каждое эффектное добивание сопровождается замедлением времени. Мод можно настроить под свой вкус.
+
+Ultra Gore 2 Next-Gen (includes dismembering guards). Делает игру более кровавой, убийства врагов теперь практически всегда сопровождаются расчленением.
+
+Brutal Blood. Улучшает внешний вид крови и исправляет связанные с ней баги.
+
+Skilled Humans. Делает людей более опасными врагами и улучшает их искусственный интеллект в бою. Мод ощущается специфично: после него даже бандиты на большаке кажутся опаснее иных монстров. Но игрокам, которым в «Ведьмаке 3» не хватает сложности, этот мод точно понравится.
+
+Enemies of Rivia. Другой мод для усиления врагов. Меняет им искусственный интеллект и дорабатывает анимации боя.
+
+Auto Apply Oils (Next Gen Compatible). В бою автоматически наносит нужное масло на меч в зависимости от типа врага. Идеальный мод для ленивых игроков, совместим с обновленной версией.
+
+Improved Sign Effects Next Gen. Улучшает визуальные эффекты при использовании ведьмачьих знаков. Можно установить на обновленную версию.
+
+Exotic Arsenal — Weapon DLC. Добавляет в игру 55 новых клинков для Геральта. Отличный мод для тех, кому надоело махать стандартными ведьмачьими мечами.
+
+New Quest — A Night to Remember. Добавляет в игру новый квест, продолжающий историю Орианны после событий аддона «Кровь и вино».
+
+Ciri’s Sole Memento. Сюжетный мод про Цири. Добавляет в игру своеобразный эпилог, который активируется только после прохождения игры на хорошую концовку. Мод добавляет квест, в котором Цири просит Геральта помочь ей найти памятный подарок.
+
+Toussaint Extended Project. Расширяет территорию Туссента. Необходим для установки нескольких сюжетных модов.
+
+New W3 quest — TE Mountain Madness. Добавляет новые квесты в Туссенте. Требует установки Toussaint Extended Project. С этим модом Геральту доступны новые ведьмачьи контракты.
+
+New W3 quest — TE Endangered Vacation. Продолжение прошлого мода, добавляет еще больше контрактов в расширенную версию Туссента.
+
+Witcher 1 Prologue Remastered. Этот огромный мод позволяет скрасить ожидание ремейка первого «Ведьмака». Здесь полностью воссозданы события пролога игры в Каэр Морхене.
+
+**Другие игры по «Ведьмаку»**
+
+Кроме «Дикой охоты» рекомендую ознакомиться с другими играми CD Projekt RED.
+
+**«Ведьмак».** Первая часть игровой трилогии продолжает книжную сагу, действие происходит через пять лет после событий «Владычицы озера». В начале истории Геральт страдает амнезией. О событиях книг он узнает постепенно, вместе с игроками. Несмотря на тесную привязку к событиям эпопеи, игра рассказывает новую и относительно камерную историю о судьбе одного города и одного одаренного мальчика.
+
+Игра вышла в 2007 году и с тех пор долго дорабатывалась. Разработчикам из студии CD Projekt RED тогда не хватало мастерства и опыта, а бюджет у них был ограниченным. Даже по тем временам «Ведьмак» не впечатлял технической реализацией, а сейчас игра и вовсе сильно состарилась: особенно отталкивает неестественная анимация персонажей. Однако попробовать первую часть однозначно стоит — хотя бы ради трогательной истории и мрачной, но чарующей атмосферы.<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Диалог ИИ с человеком. Ответь на вопрос.<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+How have the cultural and economic ties between Lothian and neighboring regions been influenced by the geography of the area?<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+The geography of Lothian has had a significant impact on its cultural and economic ties with neighboring regions. Lothian is a lowland region that stretches along the east coast of Scotland, bordered by the North Sea to the east and the Scottish Highlands to the west. Its fertile soils have made it one of the most productive agricultural regions in Scotland, and its strategic location has made it an important center of trade and commerce.
+
+One of the most significant cultural ties that has been influenced by the geography of the area is the region's longstanding links with England. Lothian lies along the historic border between Scotland and England, and has long been a crossroads of cultural exchange between the two nations. This has led to a rich legacy of Scottish-English cultural exchange, including the adoption of English as the primary language of the region, as well as a shared history of political and economic development.
+
+In terms of economics, the geography of Lothian has played a critical role in shaping its economic ties with neighboring regions. The region's access to the North Sea has been a key factor in its development as a center of commerce and industry, with ports like Edinburgh and Leith serving as important points of entry for goods and travelers from around the world. The region's fertile soils have also made it an important center of agriculture, with crops like wheat, barley, and oats playing a key role in the local economy.
+
+Overall, the geography of Lothian has had a profound impact on its cultural and economic ties with neighboring regions. Its location along the border between Scotland and England, along with its access to the North Sea and rich agricultural lands, have made it an important center of trade and exchange, shaping its relationship with the wider world and leaving a lasting impact on its cultural and economic identity.<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+How has the geography of Lothian affected the region's tourism industry?<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+The geography of Lothian has played a significant role in influencing the region's tourism industry. Lothian is a lowland region in the east of Scotland known for its picturesque coastlines, rugged hills, and scenic countryside. The region is home to several popular tourist destinations including Edinburgh, the capital of Scotland, historic towns like Musselburgh and Haddington, and stunning seaside resorts such as North Berwick and Dunbar.
+
+One of the key ways that geography has influenced the region's tourism industry is by providing a rich resource base for outdoor activities. Tourists come to the region to hike in the Lammermuir Hills or the Pentland Hills, play golf on world-renowned courses like Muirfield and Gullane, surf the waves at the popular surfing spot of Belhaven Bay, or stroll along the numerous beaches and nature reserves scattered throughout the region. The rugged coastline and diverse wildlife in the area also make it an attractive destination for birdwatching, fishing, and boating. 
+
+Furthermore, Lothian's rich history and culture have also been heavily influenced by its geography, providing visitors with a unique and interesting tourism experience. For example, Edinburgh Castle is built on a hilltop that overlooks the city, giving visitors incredible panoramic views of the surrounding areas. The city’s Old Town is recognized as a UNESCO World Heritage Site and has preserved its narrow alleyways and glorious medieval buildings, which captivates tourists. Lothian's proximity to the Scottish Borders and England also grants visitors access to several historic sites and cultural attractions in the surrounding regions.
+
+In conclusion, the geography of Lothian has impacted its tourism industry by providing a multitude of recreational opportunities and an extensive cultural and historical heritage for tourists to explore.<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+Are there any particular events or festivals in Lothian that take advantage of its geography and attract tourists?<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+Yes, Lothian hosts several events and festivals each year that take advantage of its geography and attract tourists from all around the world. Some of the notable events and festivals that showcase the region's natural beauty and cultural heritage are:
+
+1. The Edinburgh International Festival: Every summer, Edinburgh hosts a month-long celebration of the arts. The festival features performances by some of the world’s top artists and musicians across several venues in the city, including the Festival Theatre, Edinburgh Castle, and the Royal Botanic Garden Edinburgh.
+
+2. The Royal Highland Show: The Royal Highland Show is Scotland's largest agricultural event, attracting hundreds of thousands of visitors every year. The four-day show features competitive events, such as livestock judging, equestrian displays, and agricultural machinery exhibits, along with live music, food and drink stalls and a carnival atmosphere.
+
+3. The Beltane Fire Festival: The Beltane Fire Festival is a unique celebration of the changing seasons that takes place on Calton Hill in Edinburgh. The event involves a procession of hundreds of participants in elaborate costumes, as well as fire dancers, drummers, and other performers.
+
+4. The Edinburgh Fringe Festival: The Edinburgh Fringe Festival is the world's largest arts festival and is held annually in August. Performances range from theatre and comedy to music, dance, and spoken word, and take place across the city in dozens of venues.
+
+5. The North Berwick Highland Games: The North Berwick Highland Games is a traditional Scottish Highland Games event. The games are held annually in August and feature events such as caber tossing, tug of war, and pipe band competitions.
+
+These events and festivals are just a few examples of the many events that take advantage of Lothian's geography to attract visitors to the region. The variety of events reflects the diverse and rich cultural heritage and natural beauty of the region.<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+Do you think the geography of Lothian has also influenced its cuisine and local food traditions?<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+Yes, the geography of Lothian has influenced its cuisine and local food traditions. Being a coastal region, Lothian benefits from an abundance of fresh seafood, such as haddock, lobster, crab, and mussels, which feature prominently in traditional dishes. The region's fertile agricultural land also provides an abundance of fresh vegetables and meat, including lamb and beef. Lothian's farms often grow crops such as oats and barley, which is why they play a significant role in the local diet, with traditional dishes often featuring them.
+
+Edinburgh, Lothian's capital city, is home to a range of restaurants serving traditional food, with many of them focused on using locally sourced ingredients. The city hosts several food festivals and markets throughout the year, such as The Edinburgh Farmers' Market and The Foodies Festival, which are popular among locals and tourists alike.
+
+One of the most famous Scottish dishes, Haggis, was created in part due to the geography of the region. The dish, which consists of sheep's innards cooked with onions, oatmeal, spices, and served with neeps and tatties (turnips and potatoes), was created by Scottish farmers who used every part of the animal, including the offal. Scottish Whisky, which is well-known worldwide, is also produced in the region, thanks to the natural resources available, including pure water from the region's natural sources.
+
+In conclusion, the geography of Lothian has undoubtedly influenced its cuisine and local food traditions, with fresh seafood, locally grown vegetables and crops, and meat being key ingredients in traditional dishes. This has created a unique culinary identity for Lothian, which continues to attract food enthusiasts from all around the world.<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+It's fascinating to see how the geography of Lothian has played such an integral role in shaping the region's cultural identity, economy, and even cuisine. Are there any lesser-known tourist destinations in the area that you would recommend?<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+here are several lesser-known tourist destinations in Lothian that are worth exploring. Here are a few recommendations:
+
+1. Rosslyn Chapel: Rosslyn Chapel, located in the village of Roslin, is a beautiful and historic building with intricate stone carvings and a fascinating history. It’s also known as the filming location of The Da Vinci Code. The chapel has been the subject of many myths and legends over the years, making it a popular destination for history buffs and architecture enthusiasts alike.
+
+2. Dunbar Castle: Dunbar Castle, located in the coastal town of Dunbar, is a ruined fortress that dates back to the 13th century. The castle has a rich history and has played an important role in Scottish history during its time. Today, visitors can tour the castle's remains and take in stunning views of the surrounding coastline from atop the castle walls.
+
+3. John Muir’s Birthplace Museum: John Muir's Birthplace Museum in Dunbar celebrates the life and work of John Muir, a Scotsman who played a crucial role in the preservation of America’s wilderness. The museum showcases the natural wonders that inspired his work and contains many of his personal artifacts.
+
+4. The Pentland Hills: The Pentland Hills are a range of hills located just south of Edinburgh, and one of the lesser-known attractions in the area. They offer stunning views of the surrounding countryside and are home to a variety of wildlife, including deer and birds of prey. The hills are a popular destination for hiking, walking, and picnicking.
+
+In conclusion, Lothian features a wealth of lesser-known tourist destinations to explore, ranging from historic landmarks and natural wonders to cultural and historical museums. The above recommendations are just a few examples, and there are many more to discover throughout the region.<|eot_id|>**Человек с топором Зачем украинским депутатам неприкосновенность**
+
+На Украине вернулись к идее отмены депутатской неприкосновенности. Соответствующий пункт, как стало известно, решили включить в соглашение о создании новой правящей коалиции. Лишение депутатов иммунитета от уголовного преследования было одним из лозунгов Майдана, его поддержали политики разного уровня, включая президента Петра Порошенко. Хотя в нынешних условиях идея потеряла часть своей актуальности. Фактически положение депутатов — и не только их — определяет не столько официальный статус, сколько неформальная система отношений, критериями которой являются принадлежность к Майдану, «революционная целесообразность» и готовность применять силу.
+
+Сама по себе идея отмены или ограничения неприкосновенности имеет давнюю историю. Еще в 2000 году этот вопрос, среди прочих, вынесли на референдум о реформе государственного устройства. Тогда за это высказались около 90 процентов участников голосования (в абсолютных цифрах — около 26 миллионов человек). Тем не менее до внесения соответствующих поправок в Конституцию дело так и не дошло.
+
+Идею обсуждали и в период президентства Виктора Ющенко, и позднее — при Викторе Януковиче. Поправки в Конституцию рассматривались в Верховной Раде, но окончательно приняты не были.
+
+Сторонники отмены неприкосновенности считали, что такая мера позволит лишить депутатов статуса «священных коров», повысит их ответственность и поможет в борьбе с коррупцией. Скептики опасались, что власть может воспользоваться этим для расправы с парламентской оппозицией.
+
+На данный момент основной закон (статья 80) и регламент Верховной Рады (статья 27) гарантируют, что депутат не может быть привлечен к уголовной ответственности, задержан или арестован — если на это не даст согласие парламент. Санкция парламента на уголовное преследование депутата требуется и в том случае, когда речь идет об обыске или прослушивании его телефонных переговоров.
+
+Действующее законодательство при этом предусматривает довольно простую процедуру лишения неприкосновенности. Закон о прокуратуре (статья 218) позволяет снять с депутата Верховной Рады иммунитет по ходатайству генерального прокурора — если это одобрит большинство членов парламента. В разное время неприкосновенности лишились диссидент Степан Хмара (он проходил по делу о нападении на милиционера), бывший вице-премьер Ефим Звягильский (его обвинили в злоупотреблении служебным положением) и бывший премьер Павел Лазаренко, уличенный в финансовых махинациях. В конце 2000-х годов запрос прокуратуры поступил на депутата Виктора Лозинского, проходившего по делу об «охоте на человека» (в итоге его лишили не только неприкосновенности, но и депутатского мандата).
+
+Уже после «революции» 2014 года Верховная Рада сняла неприкосновенность с Олега Царева, на которого завели дело о призывах к сепаратизму. Запросы Генеральной прокуратуры поступили также на Владимира Олейника и Игоря Калетника, которых обвинили в причастности к принятию так называемых «диктаторских законов» (речь идет о законах, принятых в январе 2014 года и ограничивавших, в частности, свободу собраний, позднее они были отменены).
+
+Последние случаи, правда, коснулись лишь тех, кто ассоциировался с прежней властью — депутатов от Партии регионов и Компартии Украины. С представителями тех партий, которые принимали участие в «Революции достоинства», дело обстояло иначе.
+
+Можно вспомнить историю с нападением группы депутатов от националистической партии «Свобода» (которая после Майдана вошла в состав новой правящей коалиции) на директора Первого национального канала Александра Пантелеймонова. Парламентарии тогда явились в кабинет к телевизионщику, отвесили ему несколько подзатыльников и, перемежая свою речь бранью, потребовали написать заявление об отставке. Тогдашний генпрокурор Олег Махницкий — выдвиженец от той же «Свободы» — обещал, что действиям его соратников «будет дана объективная оценка». Завели даже дело по статьям о препятствовании журналистской деятельности и грубом нарушении общественного порядка. Однако позднее дело без лишнего шума закрыли — «за отсутствием состава преступления».
+
+Героем другой истории стал депутат, лидер Радикальной партии Олег Ляшко. В августе он вместе с бойцами батальона «Шахтерск» задержал начальника милиции Мариуполя Олега Моргуна — якобы по подозрению в «сотрудничестве с террористами». Вскоре, однако, выяснилось, что уголовное дело на Моргуна не заводилось. Начальника милиции отпустили с извинениями. Советник главы МВД Антон Геращенко признал действия депутата незаконными. «Для того, чтобы задерживать работника милиции, должны быть основания, мотивированные решением прокуратуры, — заявил он. — Насколько нам известно, таких решений прокуратура Украины не выдавала, соответственно подобные действия депутата Ляшко и лиц, которые были в этом задействованы, являются самоуправством». Однако наказания лидера Радикальной партии не последовало.
+
+Если бы прокуратура в случае с Ляшко — как и в случае с представителями «Свободы» — начала процедуру лишения неприкосновенности, а парламент бы этому воспрепятствовал, тогда действительно можно было бы говорить о том, что депутатов спас их иммунитет. Но до рассмотрения этого вопроса в Раде дело даже не дошло. Что изменилось бы, если бы официальной неприкосновенности у депутатов не было?
+
+Внимание привлек и недавний случай в Полтаве, где депутат Верховной Рады Сергей Каплин (от Блока Петра Порошенко) явился в городскую администрацию с топором и стал ломиться в кабинеты, требуя встречи с мэром. Милиция этому не препятствовала. Как сообщило местное издание «Полтавщина», «наряд милиции зафиксировал взлом дверей, описал повреждения и отправился в Октябрьский райотдел». На вопрос журналистов, почему представители правоохранительных органов не помешали ломать коммунальную собственность, начальник городской милиции заявил: «Потому, что он является народным депутатом» (позднее стало известно, что в связи с инцидентом все же завели дело о хулиганстве).
+
+Неизвестно, вмешалась бы милиция, даже если бы человек, ломавший двери в мэрии, вообще не имел депутатского статуса. Когда в Одессе пару месяцев назад избили представителя бывшей правящей Партии регионов Нестора Шуфрича, депутатами нападавшие не являлись, и рядом присутствовали сотрудники милиции. Однако расправе это не помешало (хотя позднее в МВД утверждали, что милиция Шуфрича якобы спасла — в противном случае его, как выразился советник министра Антон Геращенко, вообще разорвали бы на части).<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+Диалог ИИ с пользователем. Изучи задание и дай ответ на вопрос.<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+Как адвокат, представляющий интересы Дженны Джонс, получившей травмы в автомобильной катастрофе, я прошу вашей помощи в составлении вступительного заявления по делу 234234, которое представлено в Южном окружном суде Калифорнии. Наш клиент подает в суд на компанию водителя, виновника ДТП, о возмещении ущерба. Дай ответ на английском языке.<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+Good morning, your Honor and members of the jury.
+
+Today, we are here to seek justice for Jenna Jones, who has suffered tremendously as a result of the defendant's actions. On a day like any other, Jenna was driving down the street, minding her own business, when her life was forever changed by the negligent actions of the defendant.
+
+The defendant, an employee of the company being sued, was driving recklessly and without regard for the safety of others when they collided with Jenna's vehicle, causing significant injuries and damages. The defendant's actions were not only careless, but they also violated the law and the standards of conduct that we all expect from drivers on the road.
+
+Jenna's injuries have had a significant impact on her life. She has endured physical pain and emotional distress, missed work and lost wages, and had to undergo extensive medical treatment and rehabilitation. All of this has caused a great deal of hardship for Jenna and her family.
+
+Today, we ask that you hold the defendant and the company they work for accountable for their actions. We ask that you award Jenna the damages she deserves for her injuries, pain and suffering, and financial losses. And we ask that you send a message to others that reckless driving will not be tolerated, and that we all have a duty to keep each other safe on the road.
+
+Thank you for your attention, and we look forward to presenting our case.<|eot_id|><|begin_of_text|><|start_header_id|>system<|end_header_id|>
+
+You are an AI assistant that follows instruction extremely well.<|eot_id|><|start_header_id|>user<|end_header_id|>
+
+Thanks. Can you make it even simpler?<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+
+"Which definition best describes a hypothesis in research?
+
+A. An idea that tries to explain facts, supported by some evidence but not fully proven yet.
+
+B. A statement about a consistent pattern, based on strong evidence and accepted by everyone.
+
+C. A temporary proposal tested by comparing it with known or discoverable facts to prove or disprove it."<|eot_id|>ФАС vs Arconic. Почему американские металлурги обратились за помощью в российское правительство
+
+Глава международной корпорации Arconic Тимоти Майерс рассказал в интервью газете «Ведомости» о споре компании с Федеральной антимонопольной службой РФ, а также о письме, которое он направил председателю правительства Михаилу Мишустину с просьбой о содействии в разрешении конфликтной ситуации.
+
+В марте 2020 года стало известно, что Федеральная антимонопольная служба подала иск в Арбитражный суд Самарской области. Он касается одного из крупнейших производителей алюминиевых полуфабрикатов в России — Самарского металлургического завода (АО «Арконик СМЗ»), где работает около 3000 человек, и его СП с ПАО «Корпорация ВСМПО-АВИСМА» — АО «АлТи Фордж». ФАС потребовала лишить OOO «Арконик Рус Инвестмент Холдингс» и Alti Forge Holding Sarl, материнские компании АО «Арконик СМЗ» и АО «АлТи Фордж», их прав голоса на общих собраниях акционеров.
+
+Как утверждают в ведомстве, в 2019 году были допущены нарушения положений федерального закона №57 «О порядке осуществления иностранных инвестиций в хозяйственные общества, имеющие стратегическое значение для обеспечения обороны страны и безопасности государства»: без предварительного согласования с правительственной комиссией по контролю за осуществлением иностранных инвестиций в Российской Федерации корпорация Arconic якобы перешла под контроль группы американских инвестиционных компаний «Эллиотт», номинировавшей своих «представителей» в совет директоров корпорации. Таким образом, по мнению ФАС, группа «Эллиотт» установила незаконный косвенный контроль над российскими активами Arconic.
+
+
+Как следует из электронной картотеки дел Арбитражного суда Самарской области,  по иску ФАС уже прошло несколько заседаний. Так, в апреле суд наложил на  материнские компании АО «Арконик СМЗ» и АО «АлТи Фордж» беспрецедентные обеспечительные меры: по требованию ФАС в отношении них запрещено принимать любые сколько-нибудь значимые решения, включая одобрение крупных сделок, выплату дивидендов и назначение руководства, что влечет за собой значительное ограничение прав собственности Arconic.
+
+Попытки обжалования обеспечительных мер в судах первой и апелляционной инстанций успехом не увенчались. Доказывая, что группа «Эллиотт» никогда не контролировала Arconic, американцы добиваются снятия наложенных по иску ФАС ограничений. Как пояснили в компании, эти ограничения никак не сказываются на текущей деятельности предприятий — «Арконик СМЗ» и АО «АлТи Фордж», но серьезно ограничивают права акционеров и ставят под вопрос целесообразность дальнейшего инвестирования в развитие производства.
+
+Известно, что владельцем Самарского металлургического завода Arconic (компания-преемница Alcoa) стала в 2005 году. И перед покупкой завода инвесторами были получены все необходимые разрешения ФАС. В соответствии с ними контролирующий предприятие иностранный инвестор должен сохранять производственно-технологические возможности и обеспечивать добросовестное исполнение контрактов на поставку продукции, имеющей отношение к государственному оборонному заказу и федеральным целевым программам в области авиационной и космической деятельности.
+
+За прошедшие годы компания вложила в модернизацию производства более 500 миллионов долларов, а само предприятие стало за это время одним из ведущих в мире по производству полуфабрикатов из алюминия. Представитель Arconic подчеркивает, что «за 15 лет никаких существенных неурегулированных претензий со стороны российских контролирующих органов не было, мы  добросовестно исполняли все предписанные законом обязательства». В 2016 году на базе «Арконик СМЗ» было создано совместное предприятие с ПАО «Корпорация ВСМПО-АВИСМА» по производству полуфабрикатов из титана для заказчиков в России и за рубежом.
+
+
+«Cкорее всего, претензия ФАС является следствием недоразумения. В число многочисленных акционеров Arconic, среди которых, к слову, нет одного контролирующего, помимо частных инвесторов входят инвестиционные, пенсионные и паевые фонды. Утверждая, что в 2019 году группа "Эллиотт" номинировала больше, чем положено ей по статусу миноритария членов совета директоров корпорации Arconic, ФАС могла ошибочно посчитать это признаком контроля, — поясняет Лев Ковалев, директор по правовым вопросам Арконик Россия. — Согласно законодательству штата Нью-Йорк, применимому в отношении публичных корпораций, большинство членов совета директоров должны быть независимыми, а это значит, что группа "Эллиотт" никак не могла контролировать их решения. Эта позиция заявлена и отстаивается нами в суде».
+
+Похоже, с этим согласился и Арбитражный суд Самарской области, решивший по итогам заседания 20 апреля (определение суда опубликовано на arbitr.ru удовлетворить ходатайство Arconic «об определении порядка установления содержания норм права США». В частности, суд решил исследовать, «какие требования Комиссия по ценным бумагам и биржам США предъявляет к независимым директорам, которыми должны были являться кандидаты, предложенные группой "Эллиотт"».  То есть суд, по сути, признал, что члены совета директоров, предложенные группой «Эллиотт», не могут рассматриваться как представители этого инвестора. Подробная позиция по этому вопросу должна быть представлена Arconic к дате следующего заседания 8 июня.
+
+
+Судебное разбирательство между ФАС и Arconic может стать прецедентным не только с юридической и корпоративной точки зрения, но даже и с внешнеполитической. Очередное судебное заседание по иску назначено накануне готовящейся в июне встречи президентов Владимира Путина и Джо Байдена. Вряд ли конфликт двух сторон повлияет на повестку встречи двух лидеров, но международные инвесторы определенно будут следить за ходом этого дела и делать свои выводы.
+
+«Время для выяснения отношений с американским инвестором выбрано не лучшее.  Бизнесу обеих стран неуютно работать в условиях напряженных политических отношений между странами. Это несет большие риски для хозяйственной деятельности и американских компаний в РФ, и международных операций отечественных предпринимателей, — говорит экономист Сергей Суверов. — Если Arconic придется доказывать свою правоту в международных судах, это точно не будет на пользу и так не слишком благоприятному климату для иностранных инвестиций. Технологические и финансовые инвестиции с Запада необходимы для ускорения экономического роста в России, повышения культуры предпринимательства. Их нужно развивать и масштабировать».**Талисманы Олимпийских игр: лучшие и худшие, от Фрижа 2024 года до ласкового Мишки 1980
+
+**
+
+Первым олимпийским талисманом считается пес Смоки, который в 1932 году жил в олимпийской деревне в Лос-Анджелесе.
+
+Бездомный щенок так полюбился спортсменам, что они стали фотографироваться с ним после каждого соревнования. Традиция не прижилась, но в 1968 году маскоты вернулись в виде вымышленных персонажей. А с 1970-х ни одни Игры уже не проходили без официальных «представителей».
+
+Талисманы отражают культуру и традиции одновременно олимпийского движения и страны, в которых проводятся соревнования. А еще они помогают рекламировать мероприятия и частично окупать организацию: удачные маскоты приносят немало денег от продажи мерча. Собрали все официальные талисманы Олимпиады в единый рейтинг.
+
+**Фриж**
+
+**Турнир:** ☀️ Париж-2024
+**Авторы:** команда дизайнеров Парижа-2024
+
+**Что за персонажи.** Имя и образ парижского талисмана — отсылка к традиционным фригийским колпакам. Головные уборы появились еще в Древних Греции и Риме, а в 18 веке их носили французские революционеры — в том числе Марианна, главная героиня знаменитой картины «Свобода, ведущая народ».
+
+С тех пор красные колпаки считаются символами свободы по всей стране. «Мы выбрали идеал, а не животное», — заявил на презентации талисманов глава парижского оргкомитета. По задумке авторов, спорт меняет жизни, а Фрижи должны «возглавить эту революцию».
+
+**Почему на 27-м месте.** Отказавшись от изображения знакомых животных, дизайнеры сделали что-то странное. Здорово, что персонажи инклюзивны: символ Паралимпиады изображен с протезированной ногой. Но они больше напоминают кровавые пятна, чем что-то светлое и поддерживающее. Создатели как будто намекают, что ради заветных медалей придется пролить не только пот.
+
+В соцсетях шапки вообще окрестили «клитором в кроссовках». Аллюзия не только повеселила пользователей и мировые СМИ, но и порадовала фем-активистов. По их словам, подобная анатомическая модель, особенно на фоне явно фаллической Эйфелевой башни, — признак прогресса.
+
+**Неве и Глиц**
+
+**Турнир:** ❄️ Турин-2006
+**Автор:** Педро Альбукерке
+
+**Что за персонажи.** Дизайнер Педро Альбукерке вдохновлялся способностью воды менять структуру и принимать разные формы. Так появились девочка-снежок по имени Неве и кубик льда Глиц. Первая своими плавными округлыми формами отражает грацию и изящество, второй, угловатый и

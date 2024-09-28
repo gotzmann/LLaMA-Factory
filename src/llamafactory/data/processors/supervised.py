@@ -183,7 +183,6 @@ def preprocess_packed_supervised_dataset(
             mask_history=data_args.mask_history,
             neat_packing=data_args.neat_packing, # gotzmann
         )
-
         length = len(input_ids)
         if length > data_args.cutoff_len:
             logger.warning("Dropped lengthy example with length {} > {}.".format(length, data_args.cutoff_len))

@@ -1,5 +1,9 @@
 {
   "mac": {
+    "file_name": "/Users/me/models/final2/mac.jsonl",
+    "formatting": "sharegpt"
+  },  
+  "mac2": {
     "file_name": "/Users/me/models/final2/final-x1.jsonl",
     "formatting": "sharegpt"
   },  

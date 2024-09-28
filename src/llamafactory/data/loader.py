@@ -115,6 +115,12 @@ def _load_single_dataset(
             trust_remote_code=True,
         )
 
+        # gotzmann
+        # print("=== NUM EPOCHs = ", training_args.num_train_epochs)
+        # for epoch in range(1, training_args.num_train_epochs):
+        #     print("=== EPOCH = ", epoch)
+        # exit(1)    
+
     if data_args.streaming and (dataset_attr.load_from == "file"):  # faster than specifying streaming=True
         dataset = dataset.to_iterable_dataset()  # TODO: add num shards parameter
 
