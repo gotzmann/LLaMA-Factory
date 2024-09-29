@@ -115,11 +115,22 @@ def _load_single_dataset(
             trust_remote_code=True,
         )
 
-        # gotzmann
+        # gotzmann --
+        from datasets import concatenate_datasets
+        from random import randint
+        if training_args.num_train_epochs != int(training_args.num_train_epochs):
+            raise ValueError("Use only integer numbers for [ num_train_epochs ] parameter.")
         # print("=== NUM EPOCHs = ", training_args.num_train_epochs)
-        # for epoch in range(1, training_args.num_train_epochs):
-        #     print("=== EPOCH = ", epoch)
-        # exit(1)    
+        epoch_datasets = []
+        epoch_datasets.append(dataset)
+        for epoch in range(1, int(training_args.num_train_epochs)):
+            epoch_datasets.append(dataset.shuffle(keep_in_memory = True)) # seed=randint(0, 1980)
+            # print("=== EPOCH #", epoch)
+        #exit(1)
+        dataset = concatenate_datasets(epoch_datasets)
+        dataset.to_json("./merged.jsonl", force_ascii=False) # DEBUG
+        training_args.num_train_epochs = 1 # NB!
+        # -- gotzmann
 
     if data_args.streaming and (dataset_attr.load_from == "file"):  # faster than specifying streaming=True
         dataset = dataset.to_iterable_dataset()  # TODO: add num shards parameter
@@ -161,7 +172,9 @@ def _get_merged_dataset(
         if (stage == "rm" and dataset_attr.ranking is False) or (stage != "rm" and dataset_attr.ranking is True):
             raise ValueError("The dataset is not applicable in the current training stage.")
 
+        print("=== NUM EPOCHs before = ", training_args.num_train_epochs) # gotzmann | DEBUG
         datasets.append(_load_single_dataset(dataset_attr, model_args, data_args, training_args))
+        print("=== NUM EPOCHs after = ", training_args.num_train_epochs) # gotzmann | DEBUG
 
     return merge_dataset(datasets, data_args, seed=training_args.seed)
 
@@ -312,10 +325,8 @@ def get_dataset(
             num += 1
 		
         # print ("\n\n=== SEARCHING FOR DUBS... ===\n\n")
-
         # hashes = []
         # samples = []
-
         # num = 0
         # for block in iter(dataset):
         #     sample = format(tokenizer.decode(block["input_ids"], skip_special_tokens=False))

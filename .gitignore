@@ -1,3 +1,9 @@
+merged.jsonl
+
+batches/labels.*
+batches/input_ids.*
+batches/attention_mask.*
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

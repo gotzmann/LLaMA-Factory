@@ -301,7 +301,7 @@ def preprocess_packed_supervised_dataset(
                 # remaining_capacity -= length
                 # used_samples.append(index)
     # TODO: Check out all used_sampled are really used!
-    print("\n=== PACKING |", str(round(firstLen/firstCount)))
+    print("\n=== PACKING |", str(round(firstLen/firstCount)), "===")
     # === DEBUG | gotzmann | _encode_supervised_example process CPT samples correct
     # from colorama import Fore, Back, Style
     # if i < 10:
