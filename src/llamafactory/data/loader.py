@@ -124,11 +124,12 @@ def _load_single_dataset(
         epoch_datasets = []
         epoch_datasets.append(dataset)
         for epoch in range(1, int(training_args.num_train_epochs)):
-            epoch_datasets.append(dataset.shuffle(keep_in_memory = True)) # seed=randint(0, 1980)
+            # epoch_datasets.append(dataset.shuffle(keep_in_memory = True)) # seed=randint(0, 1980)
+            epoch_datasets.append(dataset.shuffle())
             # print("=== EPOCH #", epoch)
         #exit(1)
         dataset = concatenate_datasets(epoch_datasets)
-        dataset.to_json("./merged.jsonl", force_ascii=False) # DEBUG
+        # dataset.to_json("./merged.jsonl", force_ascii=False) # DEBUG
         training_args.num_train_epochs = 1 # NB!
         # -- gotzmann
 
