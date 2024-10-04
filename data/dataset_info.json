@@ -1,22 +1,18 @@
 {
-  "mac": {
-    "file_name": "/Users/me/models/final2/mac.jsonl",
-    "formatting": "sharegpt"
-  },  
-  "mac2": {
-    "file_name": "/Users/me/models/final2/final-x1.jsonl",
-    "formatting": "sharegpt"
-  },
   "x1": {
-    "file_name": "/Users/me/models/final2/final-x1.jsonl",
+    "file_name": "/home/git/final2/final-x1.jsonl",
     "formatting": "sharegpt"
   },  
   "x2": {
     "file_name": "/home/git/final2/final-x2.jsonl",
     "formatting": "sharegpt"
   },
-  "x3": {
-    "file_name": "/home/git/final2/final-x3.jsonl",
+  "mac": {
+    "file_name": "/Users/me/models/final2/mac.jsonl",
+    "formatting": "sharegpt"
+  },  
+  "mac2": {
+    "file_name": "/Users/me/models/final2/final-x1.jsonl",
     "formatting": "sharegpt"
   },
   "identity": {
