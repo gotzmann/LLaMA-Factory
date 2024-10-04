@@ -19,7 +19,7 @@ stage: sft
 do_train: true
 finetuning_type: lora
 lora_target: all
-# additional_target: embed_tokens
+additional_target: embed_tokens
 lora_rank: 128 # 96
 lora_alpha: 96 # 96
 lora_dropout: 0.1
@@ -35,7 +35,7 @@ cutoff_len: 16384 # 8192 | 10240 | 16384 | 24576 | 32768
 preprocessing_num_workers: 48
 
 ### train
-num_train_epochs: 1.0
+num_train_epochs: 3.0
 per_device_train_batch_size: 1
 gradient_accumulation_steps: 1
 lr_scheduler_type: constant_with_warmup # cosine_with_min_lr # constant | constant_with_warmup | linear | cosine
