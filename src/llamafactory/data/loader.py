@@ -172,9 +172,7 @@ def _get_merged_dataset(
         if (stage == "rm" and dataset_attr.ranking is False) or (stage != "rm" and dataset_attr.ranking is True):
             raise ValueError("The dataset is not applicable in the current training stage.")
 
-        # print("=== NUM EPOCHs before = ", training_args.num_train_epochs) # gotzmann | DEBUG
         datasets.append(_load_single_dataset(dataset_attr, model_args, data_args, training_args))
-        # print("=== NUM EPOCHs after = ", training_args.num_train_epochs) # gotzmann | DEBUG
 
     return merge_dataset(datasets, data_args, seed=training_args.seed)
 
