@@ -96,7 +96,7 @@ def _encode_supervised_example(
             return [], []
         
         # Always BOS
-        input_ids = [ tokenizer.bos_token_id ] + tokenizer.encode(text, add_special_tokens=False)
+        input_ids = [ tokenizer.bos_token_id ] + tokenizer.encode(text, add_special_tokens=False) # + [ tokenizer.eot_token_id ]
         labels = [ IGNORE_INDEX ] + input_ids[1:]
         if len(input_ids) >= cutoff_len:
             input_ids = input_ids[:cutoff_len]
