@@ -205,6 +205,7 @@ def preprocess_packed_supervised_dataset(
             valid_num += 1
 
     # === KNAPSACKS | gotzmann
+    from random import randint
     model_inputs = { "input_ids": [], "attention_mask": [], "labels": [] }
     packed_input_ids, packed_attention_masks, packed_labels = [], [], []
     used_samples = []
@@ -221,8 +222,10 @@ def preprocess_packed_supervised_dataset(
             cutoff = data_args.cutoff_len
             wasted = sum(label < 0 for label in batch_labels[index])
             # -- do not allow longer samples as first ones within the packed block for the first iteration 
-            if i == 1 and step == 1 and total > 0.05 * cutoff: continue
-            if i == 2 and step == 1 and total > 0.10 * cutoff: continue
+            if i == 1 and step == 1 and total > 0.03 * cutoff and randint(0, 90): continue
+            if i == 2 and step == 1 and total > 0.05 * cutoff and randint(0, 80): continue
+            if i == 3 and step == 1 and total > 0.07 * cutoff and randint(0, 70): continue
+            if i == 4 and step == 1 and total > 0.10 * cutoff and randint(0, 50): continue
             # -- ignore too lengthy samples with mostly no data for active learning (most labels are -100)
             if total > 0.10 * cutoff and (wasted > 0.70 * total or wasted > 0.30 * cutoff):
                 skipped += 1;
