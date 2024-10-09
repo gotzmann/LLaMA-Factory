@@ -7,6 +7,10 @@
     "file_name": "/home/git/final2/final-x2.jsonl",
     "formatting": "sharegpt"
   },
+  "x3": {
+    "file_name": "/home/git/final2/final-x3.jsonl",
+    "formatting": "sharegpt"
+  },
   "mac": {
     "file_name": "/Users/me/models/final2/mac.jsonl",
     "formatting": "sharegpt"
