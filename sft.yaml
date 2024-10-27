@@ -27,7 +27,7 @@ use_rslora: true
 #use_dora: true
 
 ### dataset
-dataset: x3 # mac
+dataset: x1 # mac
 template: llama3
 packing: true
 neat_packing: true
