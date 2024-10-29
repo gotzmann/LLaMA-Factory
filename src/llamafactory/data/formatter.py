@@ -83,6 +83,14 @@ class StringFormatter(Formatter):
             if isinstance(slot, str):
                 for name, value in kwargs.items():
                     if not isinstance(value, str):
+                        import pprint
+                        print("=== KWARGS ===")
+                        pprint.pprint(kwargs)
+                        print("=== KWARGS ===")
+                        print(kwargs)
+                        print("=== NAME ===")
+                        print(name)
+                        print("=== VALUE ===")
                         print(value)
                         raise RuntimeError(f"Expected a string, got {value}")
 
