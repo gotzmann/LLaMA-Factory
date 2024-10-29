@@ -79,8 +79,8 @@ class StringFormatter(Formatter):
     @override
     def apply(self, **kwargs) -> SLOTS:
         elements = []
-        print("=== KWARGS ===")
-        print(kwargs.items())
+        #print("=== KWARGS ===")
+        #print(kwargs.items())
         for slot in self.slots:
             if isinstance(slot, str):
                 for name, value in kwargs.items():
@@ -94,7 +94,8 @@ class StringFormatter(Formatter):
                         print(name)
                         print("=== VALUE ===")
                         print(value)
-                        raise RuntimeError(f"Expected a string, got {value}")
+                        #raise RuntimeError(f"Expected a string, got {value}")
+                        value = "" #gotzmann : hotfix
 
                     slot = slot.replace("{{" + name + "}}", value, 1)
                 elements.append(slot)
