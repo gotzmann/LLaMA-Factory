@@ -484,7 +484,7 @@ def create_custom_optimizer(
         return _create_adam_mini_optimizer(model, training_args)
 
     # gotzmann
-    if finetuning_args.use_unsloth:
+    if training_args.use_unsloth:
         return create_unsloth_optimizer(model, training_args, finetuning_args)
 
 
