@@ -402,7 +402,9 @@ def _create_unsloth_optimizer(
     embedding_lr = 2e-5, # 5e-5,
 ):
     lr = optimizer_kwargs["lr"]
+    print("Unsloth optimizer with LR =", lr)
     weight_decay = optimizer_kwargs.get("weight_decay", 0.0)
+    print("Unsloth optimizer with WD =", weight_decay)
 
     param_groups = \
     {
@@ -448,8 +450,6 @@ def create_unsloth_optimizer(
     ##### embedding_lr = 0.00002 # gotzmann
 
     optim_class, optim_kwargs = Trainer.get_optimizer_cls_and_kwargs(training_args)
-
-    ##### optimizer_cls, optimizer_kwargs = SFTTrainer.get_optimizer_cls_and_kwargs(self.args)
 
     optimizer = _create_unsloth_optimizer(
         model,
