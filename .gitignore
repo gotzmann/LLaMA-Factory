@@ -168,6 +168,7 @@ cython_debug/
 # custom .gitignore
 ms_cache/
 hf_cache/
+om_cache/
 cache/
 config/
 saves/

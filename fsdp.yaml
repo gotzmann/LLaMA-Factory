@@ -1,4 +1,5 @@
 # https://huggingface.co/docs/accelerate/usage_guides/fsdp
+# https://github.com/pytorch/pytorch/blob/main/torch/distributed/fsdp/api.py
 
 compute_environment: LOCAL_MACHINE
 debug: false
@@ -16,7 +17,7 @@ fsdp_config:
   fsdp_state_dict_type: FULL_STATE_DICT
   # FSDP DoRA needs [ false ]
   # For FSDP, when using torch.compile please set True
-  fsdp_use_orig_params: false
+  fsdp_use_orig_params: true
 machine_rank: 0
 main_training_function: main
 mixed_precision: bf16
