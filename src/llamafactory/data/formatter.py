@@ -83,6 +83,7 @@ class StringFormatter(Formatter):
             if isinstance(slot, str):
                 for name, value in kwargs.items():
                     if not isinstance(value, str):
+                        print(value)
                         raise RuntimeError(f"Expected a string, got {value}")
 
                     slot = slot.replace("{{" + name + "}}", value, 1)
