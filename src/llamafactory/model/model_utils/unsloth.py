@@ -41,7 +41,7 @@ def _get_unsloth_kwargs(
         "fix_tokenizer": False,
         "trust_remote_code": True,
         "use_gradient_checkpointing": "unsloth",
-        "embedding_learning_rate": 0.00002,
+        # "embedding_learning_rate": 0.00002, # gotzmann
     }
 
 
