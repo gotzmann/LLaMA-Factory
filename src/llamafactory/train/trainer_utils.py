@@ -394,6 +394,77 @@ def _create_adam_mini_optimizer(
     logger.info("Using Adam-mini optimizer.")
     return optimizer
 
+# gotzmann - code from Unsloth
+def _create_unsloth_optimizer(
+    model,
+    optimizer_cls,
+    optimizer_kwargs,
+    embedding_lr = 2e-5, # 5e-5,
+):
+    lr = optimizer_kwargs["lr"]
+    weight_decay = optimizer_kwargs.get("weight_decay", 0.0)
+
+    param_groups = \
+    {
+        "non_embeddings" : {},
+        "embeddings"     : {},
+    }
+
+    for name, param in model.named_parameters():
+        if not param.requires_grad: continue
+        if name.endswith("modules_to_save.default.weight"):
+            partial_name = name[:-len(".modules_to_save.default.weight")]
+            partial_name = partial_name[partial_name.rfind(".")+1:]
+            print(f"Unsloth: Setting lr = {embedding_lr:.2e} instead of {lr:.2e} for {partial_name}.")
+            param_groups["embeddings"]    [name] = param
+        else:
+            param_groups["non_embeddings"][name] = param
+        pass
+    pass
+
+    optimizer_grouped_parameters = [
+        {
+            "params"       : list(param_groups["non_embeddings"].values()),
+            "weight_decay" : weight_decay,
+            "lr"           : lr,
+        },
+        {
+            "params"       : list(param_groups["embeddings"].values()),
+            "weight_decay" : weight_decay,
+            "lr"           : embedding_lr,
+        },
+    ]
+    optimizer = optimizer_cls(optimizer_grouped_parameters, **optimizer_kwargs)
+    return optimizer
+
+# gotzmann - local code
+def create_unsloth_optimizer(
+    model: "PreTrainedModel",
+    training_args: "Seq2SeqTrainingArguments",
+    finetuning_args: "FinetuningArguments",
+) -> "torch.optim.Optimizer":
+
+    ##### default_lr = training_args.learning_rate
+    ##### embedding_lr = 0.00002 # gotzmann
+
+    optim_class, optim_kwargs = Trainer.get_optimizer_cls_and_kwargs(training_args)
+
+    ##### optimizer_cls, optimizer_kwargs = SFTTrainer.get_optimizer_cls_and_kwargs(self.args)
+
+    optimizer = _create_unsloth_optimizer(
+        model,
+        optim_class,
+        optim_kwargs,
+        0.00002, #  embedding_learning_rate,
+    )
+
+    # optimizer = optim_class(param_groups, **optim_kwargs)
+    # logger.info(f"Using LoRA+ optimizer with loraplus lr ratio {finetuning_args.loraplus_lr_ratio:.2f}.")
+    # return optimizer
+
+    logger.info("Using Unsloth optimizer with [ embedding_learning_rate = 2e-5 ]")
+    return optimizer
+
 
 def create_custom_optimizer(
     model: "PreTrainedModel",
@@ -411,6 +482,10 @@ def create_custom_optimizer(
 
     if finetuning_args.use_adam_mini:
         return _create_adam_mini_optimizer(model, training_args)
+
+    # gotzmann
+    if finetuning_args.use_unsloth:
+        return create_unsloth_optimizer(model, training_args, finetuning_args)
 
 
 def create_custom_scheduler(
