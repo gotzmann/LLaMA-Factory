@@ -79,8 +79,6 @@ class StringFormatter(Formatter):
     @override
     def apply(self, **kwargs) -> SLOTS:
         elements = []
-        #print("=== KWARGS ===")
-        #print(kwargs.items())
         for slot in self.slots:
             if isinstance(slot, str):
                 for name, value in kwargs.items():
