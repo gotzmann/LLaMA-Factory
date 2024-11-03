@@ -463,7 +463,7 @@ def create_unsloth_optimizer(
     # logger.info(f"Using LoRA+ optimizer with loraplus lr ratio {finetuning_args.loraplus_lr_ratio:.2f}.")
     # return optimizer
 
-    logger.info("Using Unsloth optimizer with [ embedding_learning_rate = 2e-5 ]")
+    logger.info_rank0("Using Unsloth optimizer with [ embedding_learning_rate = 2e-5 ]")
     return optimizer
 
 

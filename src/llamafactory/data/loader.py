@@ -289,7 +289,8 @@ def get_dataset(
 		
         # NEW DEBUG | gotzmann --
 
-        print ("\n\n=== Writing [ 20 ] blocks to disk... ===\n\n")
+        # print ("\n\n=== Writing [ 20 ] blocks to disk... ===\n\n")
+        logger.warning_rank0 ("\n\n=== Writing [ 20 ] blocks to disk... ===\n\n")
 
         num = 0
         for block in iter(dataset):
