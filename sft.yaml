@@ -20,7 +20,7 @@ do_train: true
 finetuning_type: lora
 lora_target: all
 additional_target: embed_tokens,lm_head
-lora_rank: 256
+lora_rank: 128
 lora_alpha: 16
 lora_dropout: 0.1
 use_rslora: true
@@ -48,7 +48,7 @@ bf16: true
 ### output
 output_dir: /home/exported
 logging_steps: 1
-save_steps: 1000
+save_steps: 500
 
 ### etc
 flash_attn: fa2
