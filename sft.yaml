@@ -19,10 +19,10 @@ stage: sft
 do_train: true
 finetuning_type: lora
 lora_target: all
-# additional_target: embed_tokens,lm_head
+additional_target: embed_tokens,lm_head
 lora_rank: 128
 lora_alpha: 16
-lora_dropout: 0.05
+lora_dropout: 0.1
 use_rslora: true
 #use_dora: true
 
@@ -31,24 +31,24 @@ dataset: x1 # mac
 template: llama3
 packing: true
 neat_packing: true
-cutoff_len: 16384 # 8192 | 10240 | 16384 | 24576 | 32768 
-preprocessing_num_workers: 48
+cutoff_len: 8192 # 16384 # 8192 | 10240 | 16384 | 24576 | 32768 
+preprocessing_num_workers: 112
 
 ### train
 num_train_epochs: 1
 per_device_train_batch_size: 1
-gradient_accumulation_steps: 1
+gradient_accumulation_steps: 4
 lr_scheduler_type: constant_with_warmup # cosine_with_min_lr # constant | constant_with_warmup | linear | cosine
-learning_rate: 0.00008
+learning_rate: 0.0001
 optim: adamw_torch_fused # adamw_torch | adamw_8bit | adamw_torch_fused
 weight_decay: 0.01
-warmup_steps: 100
+warmup_steps: 50
 bf16: true
 
 ### output
 output_dir: /home/exported
 logging_steps: 1
-save_steps: 2000
+save_steps: 1000
 
 ### etc
 flash_attn: fa2
