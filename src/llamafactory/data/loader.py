@@ -289,15 +289,16 @@ def get_dataset(
 		
         # NEW DEBUG | gotzmann --
 
-        print("\n\n=== LOCAL_RANK | ", os.environ.get('LOCAL_RANK',-1), " ===")
-
-        print("\n\n=== Writing [ 20 ] blocks to disk... ===\n\n")
-        # logger.info_rank0 ("\n\n=== Writing [ 20 ] blocks to disk... ===\n\n")
+        rank = os.environ.get('LOCAL_RANK',-1)
+        if rank == 0:
+            print("\n\n=== Writing [ 10 ] blocks to disk... ===\n\n")
 
         num = 0
         for block in iter(dataset):
 
-            if num >= 2: break
+            if rank != 0: continue
+
+            if num >= 10: break
             # continue # DEBUG
 
             input_ids = block["input_ids"]
