@@ -303,20 +303,20 @@ def get_dataset(
             attention = block["attention_mask"]
 
             # === DEBUG | gotzmann | _encode_supervised_example process CPT samples correct
-            # from colorama import Fore, Back, Style
-            # prev_attention = 0
-            # print(Fore.WHITE + f"\n\n============================== [ SAMPLE # {num} ] ==============================")
-            # for pos, word in enumerate(input_ids):
-            #     word = tokenizer.decode(input_ids[pos], skip_special_tokens=False)
-            #     if prev_attention != attention[pos]:
-            #         print(Fore.LIGHTMAGENTA_EX + "\n\n[ " + str(attention[pos]) + " ]\n\n", end="")
-            #         prev_attention = attention[pos]
-            #     if labels[pos] >= 0:
-            #         color = Fore.LIGHTGREEN_EX if input_ids[pos] < 128000 else Fore.LIGHTYELLOW_EX
-            #     else:
-            #         color = Fore.LIGHTBLACK_EX
-            #     print(color + word, end="")
-            # print(Style.RESET_ALL)  
+            from colorama import Fore, Back, Style
+            prev_attention = 0
+            print(Fore.WHITE + f"\n\n============================== [ SAMPLE # {num} ] ==============================")
+            for pos, word in enumerate(input_ids):
+                word = tokenizer.decode(input_ids[pos], skip_special_tokens=False)
+                if prev_attention != attention[pos]:
+                    print(Fore.LIGHTMAGENTA_EX + "\n\n[ " + str(attention[pos]) + " ]\n\n", end="")
+                    prev_attention = attention[pos]
+                if labels[pos] >= 0:
+                    color = Fore.LIGHTGREEN_EX if input_ids[pos] < 128000 else Fore.LIGHTYELLOW_EX
+                else:
+                    color = Fore.LIGHTBLACK_EX
+                print(color + word, end="")
+            print(Style.RESET_ALL)  
             # gotzmann | DEBUG ===
 
             sample = format(tokenizer.decode(input_ids, skip_special_tokens=False))
@@ -336,27 +336,29 @@ def get_dataset(
 
             num += 1
 		
-        # print ("\n\n=== SEARCHING FOR DUBS... ===\n\n")
-        # hashes = []
-        # samples = []
-        # num = 0
-        # for block in iter(dataset):
-        #     sample = format(tokenizer.decode(block["input_ids"], skip_special_tokens=False))
-        #     sampleHash = hash(sample)
-        #     #print("\n\n=== SAMPLE # {} ===\n\n".format(num), sample)
-        #     #print("\n\n=== HASH # {} ===\n\n".format(num), sampleHash)
-        #     samples += [ sample ]
-        #     hashes += [ sampleHash ]
-        #     num += 1
-        #     if num > 100:
-        #         break
+        # gotzmann | DEBUG
 
-        # for z in range(len(samples)):
-        #     for dub in range(z+1, len(samples)):
-        #         if hashes[z] == hashes[dub]:
-        #             print("\n\n=== DUB FOUND !!! {} == {} === \n\n".format(z, dub))
-        #             print(samples[dub])
-        #             #exit()
+        print ("\n\n=== SEARCHING FOR DUBS... ===\n\n")
+        hashes = []
+        samples = []
+        num = 0
+        for block in iter(dataset):
+            sample = format(tokenizer.decode(block["input_ids"], skip_special_tokens=False))
+            sampleHash = hash(sample)
+            #print("\n\n=== SAMPLE # {} ===\n\n".format(num), sample)
+            #print("\n\n=== HASH # {} ===\n\n".format(num), sampleHash)
+            samples += [ sample ]
+            hashes += [ sampleHash ]
+            num += 1
+            if num > 100:
+                break
+
+        for z in range(len(samples)):
+            for dub in range(z+1, len(samples)):
+                if hashes[z] == hashes[dub]:
+                    print("\n\n=== DUB FOUND !!! {} == {} === \n\n".format(z, dub))
+                    print(samples[dub])
+                    #exit()
 		
 		# -- NEW DEBUG
 
