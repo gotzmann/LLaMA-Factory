@@ -309,13 +309,15 @@ def get_dataset(
             for pos, word in enumerate(input_ids):
                 word = tokenizer.decode(input_ids[pos], skip_special_tokens=False)
                 if prev_attention != attention[pos]:
-                    logger.info_rank0(Fore.LIGHTMAGENTA_EX + "\n\n[ " + str(attention[pos]) + " ]\n\n", end="")
+                    # print(Fore.LIGHTMAGENTA_EX + "\n\n[ " + str(attention[pos]) + " ]\n\n", end="")
+                    logger.info_rank0(Fore.LIGHTMAGENTA_EX + "\n\n[ " + str(attention[pos]) + " ]\n\n")
                     prev_attention = attention[pos]
                 if labels[pos] >= 0:
                     color = Fore.LIGHTGREEN_EX if input_ids[pos] < 128000 else Fore.LIGHTYELLOW_EX
                 else:
                     color = Fore.LIGHTBLACK_EX
-                logger.info_rank0(color + word, end="")
+                # print(color + word, end="")
+                logger.info_rank0(color + word)
             logger.info_rank0(Style.RESET_ALL)  
             # gotzmann | DEBUG ===
 
