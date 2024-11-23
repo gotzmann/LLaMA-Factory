@@ -289,7 +289,7 @@ def get_dataset(
 		
         # NEW DEBUG | gotzmann --
 
-        rank = os.environ.get('LOCAL_RANK',-1)
+        rank = int(os.environ.get('LOCAL_RANK', -1))
         if rank == 0:
             print("\n\n=== Writing [ 10 ] blocks to disk... ===\n\n")
 
