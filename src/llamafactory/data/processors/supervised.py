@@ -188,15 +188,15 @@ def preprocess_packed_supervised_dataset(
 
         # gotzmann
         
-        # if len(examples["_prompt"][i]) % 2 != 1 or len(examples["_response"][i]) != 1:
-        #     # gotzmann
-        #     logger.warning_rank0(
-        #         "Dropped invalid example: {}".format(examples["_prompt"][0] + examples["_response"][0])
-        #     )
-        #     logger.warning_rank0(
-        #         "Dropped invalid example: {}".format(examples["_prompt"][i] + examples["_response"][i])
-        #     )
-        #     continue
+        if len(examples["_prompt"][i]) % 2 != 1 or len(examples["_response"][i]) != 1:
+            # gotzmann
+            logger.warning_rank0(
+                "Dropped invalid example: {}".format(examples["_prompt"][0] + examples["_response"][0])
+            )
+            logger.warning_rank0(
+                "Dropped invalid example: {}".format(examples["_prompt"][i] + examples["_response"][i])
+            )
+            continue
 
         input_ids, labels = _encode_supervised_example(
             prompt=examples["_prompt"][i],
