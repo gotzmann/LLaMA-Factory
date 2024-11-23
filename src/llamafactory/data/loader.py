@@ -308,11 +308,11 @@ def get_dataset(
             # === DEBUG | gotzmann | _encode_supervised_example process CPT samples correct
             from colorama import Fore, Back, Style
             prev_attention = 0
-            print(Fore.LIGHTYELLOW_EX + f"\n\n============================== [ SAMPLE # {num} ] ==============================") # Fore.WHITE
+            print(Fore.LIGHTYELLOW_EX + f"\n\n====================================== [ SAMPLE # {num} ] ======================================") # Fore.WHITE
             for pos, word in enumerate(input_ids):
                 word = tokenizer.decode(input_ids[pos], skip_special_tokens=False)
                 if prev_attention != attention[pos]:
-                    print(Fore.LIGHTMAGENTA_EX + "\n\n[ " + str(attention[pos]) + " ]\n\n", end="")
+                    print(Fore.LIGHTMAGENTA_EX + "\n\n-- [ " + str(attention[pos]) + " ] --\n\n", end="")
                     # logger.info_rank0(Fore.LIGHTMAGENTA_EX + "\n\n[ " + str(attention[pos]) + " ]\n\n")
                     prev_attention = attention[pos]
                 if labels[pos] >= 0:
