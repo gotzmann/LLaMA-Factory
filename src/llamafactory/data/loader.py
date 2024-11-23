@@ -305,7 +305,7 @@ def get_dataset(
             # === DEBUG | gotzmann | _encode_supervised_example process CPT samples correct
             from colorama import Fore, Back, Style
             prev_attention = 0
-            print(Fore.WHITE + f"\n\n============================== [ SAMPLE # {num} ] ==============================")
+            print(Fore.LIGHTYELLOW_EX + f"\n\n============================== [ SAMPLE # {num} ] ==============================") # Fore.WHITE
             for pos, word in enumerate(input_ids):
                 word = tokenizer.decode(input_ids[pos], skip_special_tokens=False)
                 if prev_attention != attention[pos]:
@@ -338,27 +338,27 @@ def get_dataset(
 		
         # gotzmann | DEBUG
 
-        print ("\n\n=== SEARCHING FOR DUBS... ===\n\n")
-        hashes = []
-        samples = []
-        num = 0
-        for block in iter(dataset):
-            sample = format(tokenizer.decode(block["input_ids"], skip_special_tokens=False))
-            sampleHash = hash(sample)
-            #print("\n\n=== SAMPLE # {} ===\n\n".format(num), sample)
-            #print("\n\n=== HASH # {} ===\n\n".format(num), sampleHash)
-            samples += [ sample ]
-            hashes += [ sampleHash ]
-            num += 1
-            if num > 100:
-                break
+        # print ("\n\n=== SEARCHING FOR DUBS... ===\n\n")
+        # hashes = []
+        # samples = []
+        # num = 0
+        # for block in iter(dataset):
+        #     sample = format(tokenizer.decode(block["input_ids"], skip_special_tokens=False))
+        #     sampleHash = hash(sample)
+        #     #print("\n\n=== SAMPLE # {} ===\n\n".format(num), sample)
+        #     #print("\n\n=== HASH # {} ===\n\n".format(num), sampleHash)
+        #     samples += [ sample ]
+        #     hashes += [ sampleHash ]
+        #     num += 1
+        #     if num > 100:
+        #         break
 
-        for z in range(len(samples)):
-            for dub in range(z+1, len(samples)):
-                if hashes[z] == hashes[dub]:
-                    print("\n\n=== DUB FOUND !!! {} == {} === \n\n".format(z, dub))
-                    print(samples[dub])
-                    #exit()
+        # for z in range(len(samples)):
+        #     for dub in range(z+1, len(samples)):
+        #         if hashes[z] == hashes[dub]:
+        #             print("\n\n=== DUB FOUND !!! {} == {} === \n\n".format(z, dub))
+        #             print(samples[dub])
+        #             #exit()
 		
 		# -- NEW DEBUG
 
