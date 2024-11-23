@@ -289,8 +289,10 @@ def get_dataset(
 		
         # NEW DEBUG | gotzmann --
 
-        # print ("\n\n=== Writing [ 20 ] blocks to disk... ===\n\n")
-        logger.info_rank0 ("\n\n=== Writing [ 20 ] blocks to disk... ===\n\n")
+        print("\n\n=== LOCAL_RANK | ", os.environ.get('LOCAL_RANK',-1), " ===")
+
+        print("\n\n=== Writing [ 20 ] blocks to disk... ===\n\n")
+        # logger.info_rank0 ("\n\n=== Writing [ 20 ] blocks to disk... ===\n\n")
 
         num = 0
         for block in iter(dataset):
@@ -305,20 +307,20 @@ def get_dataset(
             # === DEBUG | gotzmann | _encode_supervised_example process CPT samples correct
             from colorama import Fore, Back, Style
             prev_attention = 0
-            logger.info_rank0(Fore.LIGHTYELLOW_EX + f"\n\n============================== [ SAMPLE # {num} ] ==============================") # Fore.WHITE
+            print(Fore.LIGHTYELLOW_EX + f"\n\n============================== [ SAMPLE # {num} ] ==============================") # Fore.WHITE
             for pos, word in enumerate(input_ids):
                 word = tokenizer.decode(input_ids[pos], skip_special_tokens=False)
                 if prev_attention != attention[pos]:
-                    # print(Fore.LIGHTMAGENTA_EX + "\n\n[ " + str(attention[pos]) + " ]\n\n", end="")
-                    logger.info_rank0(Fore.LIGHTMAGENTA_EX + "\n\n[ " + str(attention[pos]) + " ]\n\n")
+                    print(Fore.LIGHTMAGENTA_EX + "\n\n[ " + str(attention[pos]) + " ]\n\n", end="")
+                    # logger.info_rank0(Fore.LIGHTMAGENTA_EX + "\n\n[ " + str(attention[pos]) + " ]\n\n")
                     prev_attention = attention[pos]
                 if labels[pos] >= 0:
                     color = Fore.LIGHTGREEN_EX if input_ids[pos] < 128000 else Fore.LIGHTYELLOW_EX
                 else:
                     color = Fore.LIGHTBLACK_EX
-                # print(color + word, end="")
-                logger.info_rank0(color + word)
-            logger.info_rank0(Style.RESET_ALL)  
+                print(color + word, end="")
+                # logger.info_rank0(color + word)
+            print(Style.RESET_ALL)  
             # gotzmann | DEBUG ===
 
             sample = format(tokenizer.decode(input_ids, skip_special_tokens=False))
