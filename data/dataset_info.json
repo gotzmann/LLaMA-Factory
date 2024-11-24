@@ -2,11 +2,15 @@
   "x1": {
     "file_name": "/home/git/D06/x1.jsonl",
     "formatting": "sharegpt"
-  },  
+  },
+  "x4": {
+    "file_name": "/home/git/D06/x4.jsonl",
+    "formatting": "sharegpt"
+  },
   "mac": {
     "file_name": "/Users/me/models/final5/mac.jsonl",
     "formatting": "sharegpt"
-  },  
+  },
   "identity": {
     "file_name": "identity.json"
   },
