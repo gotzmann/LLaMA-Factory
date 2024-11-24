@@ -20,22 +20,22 @@ do_train: true
 finetuning_type: lora
 lora_target: all
 additional_target: embed_tokens,lm_head
-lora_rank: 128
+lora_rank: 64
 lora_alpha: 16
-lora_dropout: 0.1
+# lora_dropout: 0.1
 use_rslora: true
 #use_dora: true
 
 ### dataset
-dataset: x1 # mac
+dataset: x4 # mac
 template: llama3
 packing: true
 neat_packing: true
 cutoff_len: 8192 # 16384 # 8192 | 10240 | 16384 | 24576 | 32768 
-preprocessing_num_workers: 96 # 112
+preprocessing_num_workers: 64 # 112
 
 ### train
-num_train_epochs: 4
+num_train_epochs: 1
 per_device_train_batch_size: 1
 gradient_accumulation_steps: 1
 lr_scheduler_type: constant_with_warmup # cosine_with_min_lr # constant | constant_with_warmup | linear | cosine
