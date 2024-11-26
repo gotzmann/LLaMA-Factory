@@ -232,31 +232,31 @@ def preprocess_packed_supervised_dataset(
     used_samples = []
     remaining_capacity = data_args.cutoff_len
     sampleIndex = 1 # sample index within knapsack, starts from 1 [ for cross-contamination attention ]
-    firstLen = 0 # gotzmann
-    firstCount = 0 # gotzmann
+    # firstLen = 0 # gotzmann | DEBUG
+    # firstCount = 0 # gotzmann | DEBUG
     skipped = 0
+    cutoff = data_args.cutoff_len
     # -- trying to build better packing with 2-step looping
     for step in range(1, 3):
         # print(f"=== STEP | {step} ===")
         for index, length in enumerate(lengths):
             if index in used_samples: continue
             total = len(batch_input_ids[index])
-            cutoff = data_args.cutoff_len
+            # -- ignore too lengthy samples with mostly no data for active learning (most labels are -100)
+            wasted = sum(label < 0 for label in batch_labels[index])
+            if total > (0.50 * cutoff) and wasted > (0.80 * total):
+                skipped += 1
+                print(f"=== WASTED COUNT | {skipped} ===")
+                used_samples.append(index)
+                continue
             # -- do not allow longer samples as first ones within the packed block for the first iteration 
             if step == 1 and sampleIndex == 1 and total > 500 * cutoff and randint(0, 100) > 10: continue
             if step == 1 and sampleIndex == 2 and total > 800 * cutoff and randint(0, 100) > 20: continue
             # if step == 1 and sampleIndex == 3 and total > 1000 * cutoff and randint(0, 100) > 30: continue
             # if sampleIndex == 4 and step == 1 and total > 0.10 * cutoff and randint(0, 80): continue
-            # -- ignore too lengthy samples with mostly no data for active learning (most labels are -100)
-            wasted = sum(label < 0 for label in batch_labels[index])
-            if total > (0.30 * cutoff) and wasted > (0.70 * total):
-                skipped += 1
-                print(f"=== WASTED COUNT | {skipped} ===")
-                used_samples.append(index)
-                continue
             # -- just fit current sample into knapsack
             if length <= remaining_capacity:
-                if sampleIndex == 1: firstLen += len(batch_input_ids[index]); firstCount += 1 # DEBUG | metrics
+                # if sampleIndex == 1: firstLen += len(batch_input_ids[index]); firstCount += 1 # DEBUG | metrics
                 packed_input_ids += batch_input_ids[index]
                 packed_labels += batch_labels[index]
                 packed_attention_masks += [sampleIndex] * len(batch_input_ids[index])
@@ -280,7 +280,7 @@ def preprocess_packed_supervised_dataset(
                     # remaining_capacity = data_args.cutoff_len
                     remaining_capacity = 0
                     used_samples.append(index)
-                    if sampleIndex == 1: firstLen += len(batch_input_ids[index]); firstCount += 1 # DEBUG | metrics
+                    # if sampleIndex == 1: firstLen += len(batch_input_ids[index]); firstCount += 1 # DEBUG | metrics
                     if data_args.neat_packing: sampleIndex += 1    
                     # i = 1
                     # print("\n\n=== CPT Sample ===\n\n")
@@ -291,15 +291,17 @@ def preprocess_packed_supervised_dataset(
                     for current in range(index+1, len(lengths)):
                         if current in used_samples: continue
                         # -- filling current knapsack with padding + starting new one
-                        if remaining_capacity < 0.03 * data_args.cutoff_len: break
+                        # if remaining_capacity < (0.03 * data_args.cutoff_len): break
+                        if remaining_capacity < 300: break
                         # -- else skipping or adding current sample into knapsack
                         if lengths[current] > remaining_capacity: continue
                         # -- ignore super short samples, it better to place them where block begins
-                        if lengths[current] < 0.05 * data_args.cutoff_len: continue
+                        # if lengths[current] < (0.05 * data_args.cutoff_len): continue
+                        if lengths[current] < 300: continue
                         packed_input_ids += batch_input_ids[current]
                         packed_labels += batch_labels[current]
                         packed_attention_masks += [sampleIndex] * len(batch_input_ids[current])
-                        if sampleIndex == 1: firstLen += len(batch_input_ids[index]); firstCount += 1 # DEBUG | compute metrics
+                        # if sampleIndex == 1: firstLen += len(batch_input_ids[index]); firstCount += 1 # DEBUG | compute metrics
                         if data_args.neat_packing: sampleIndex += 1
                         remaining_capacity -= lengths[current]    
                         used_samples.append(current)
@@ -319,9 +321,9 @@ def preprocess_packed_supervised_dataset(
             model_inputs["labels"].append(packed_labels)
             # -- reset block buffers and counter
             packed_input_ids, packed_attention_masks, packed_labels = [], [], []
-            remaining_capacity = data_args.cutoff_len
+            remaining_capacity = cutoff
             sampleIndex = 1
-            # FIXME: Most last sample could be lost
+            # FIXME: Most last sample might be lost?
             if index not in used_samples:
                 pass
                 # print("[ WARNING ] Sample not in used samples") # DEBUG
