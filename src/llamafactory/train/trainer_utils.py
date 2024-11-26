@@ -399,7 +399,7 @@ def _create_unsloth_optimizer(
     model,
     optimizer_cls,
     optimizer_kwargs,
-    embedding_lr = 2e-5, # 5e-5,
+    embedding_lr = 1e-5, # 5e-5,
 ):
     lr = optimizer_kwargs["lr"]
     logger.info_rank0(f"Unsloth optimizer with LR = {lr}")
@@ -456,7 +456,7 @@ def create_unsloth_optimizer(
         model,
         optim_class,
         optim_kwargs,
-        0.00002, #  embedding_learning_rate,
+        0.00001, #  embedding_learning_rate,
     )
 
     # optimizer = optim_class(param_groups, **optim_kwargs)

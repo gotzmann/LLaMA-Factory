@@ -82,7 +82,7 @@ class BasePlugin:
         Pre-processes a single image.
         """
         image_resolution: int = kwargs.get("image_resolution")
-        if image.width * image.height > image_resolution:
+        if (image.width * image.height) > image_resolution:
             resize_factor = math.sqrt(image_resolution / (image.width * image.height))
             width, height = int(image.width * resize_factor), int(image.height * resize_factor)
             image = image.resize((width, height), resample=Image.NEAREST)
@@ -753,11 +753,13 @@ class MllamaPlugin(BasePlugin):
         cross_attention_token_mask = [
             get_cross_attention_token_mask(input_ids, image_token_id) for input_ids in batch_ids
         ]
-        mm_inputs["cross_attention_mask"] = convert_sparse_cross_attention_mask_to_dense(
-            cross_attention_token_mask,
-            num_tiles=num_tiles,
-            max_num_tiles=max_image_tiles,
-            length=max(len(input_ids) for input_ids in batch_ids),
+        mm_inputs["cross_attention_mask"] = torch.from_numpy(
+            convert_sparse_cross_attention_mask_to_dense(
+                cross_attention_token_mask,
+                num_tiles=num_tiles,
+                max_num_tiles=max_image_tiles,
+                length=max(len(input_ids) for input_ids in batch_ids),
+            )
         )
         return mm_inputs
 
