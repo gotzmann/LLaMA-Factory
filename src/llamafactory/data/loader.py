@@ -224,7 +224,7 @@ def _get_preprocessed_dataset(
         batch_size=data_args.preprocessing_batch_size,
         remove_columns=column_names,
         **kwargs,
-		batch_size=2000, # gotzmann
+		# batch_size=2000, # gotzmann
     )
 
     if training_args.should_log:
