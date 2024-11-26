@@ -236,7 +236,7 @@ def preprocess_packed_supervised_dataset(
     firstCount = 0 # gotzmann
     skipped = 0
     # -- trying to build better packing with 2-step looping
-    for step in range(1, 2):
+    for step in range(1, 3):
         print(f"=== STEP | {step} ===")
         for index, length in enumerate(lengths):
             if index in used_samples: continue
