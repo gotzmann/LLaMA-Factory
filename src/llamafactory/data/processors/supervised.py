@@ -237,21 +237,21 @@ def preprocess_packed_supervised_dataset(
     skipped = 0
     # -- trying to build better packing with 2-step looping
     for step in range(1, 3):
-        print(f"=== STEP | {step} ===")
+        # print(f"=== STEP | {step} ===")
         for index, length in enumerate(lengths):
             if index in used_samples: continue
             total = len(batch_input_ids[index])
             cutoff = data_args.cutoff_len
-            wasted = sum(label < 0 for label in batch_labels[index])
             # -- do not allow longer samples as first ones within the packed block for the first iteration 
             if step == 1 and sampleIndex == 1 and total > 500 * cutoff and randint(0, 100) > 10: continue
             if step == 1 and sampleIndex == 2 and total > 800 * cutoff and randint(0, 100) > 20: continue
             # if step == 1 and sampleIndex == 3 and total > 1000 * cutoff and randint(0, 100) > 30: continue
             # if sampleIndex == 4 and step == 1 and total > 0.10 * cutoff and randint(0, 80): continue
             # -- ignore too lengthy samples with mostly no data for active learning (most labels are -100)
-            if total > 0.10 * cutoff and (wasted > 0.70 * total or wasted > 0.30 * cutoff):
+            wasted = sum(label < 0 for label in batch_labels[index])
+            if total > (0.30 * cutoff) and wasted > (0.70 * total):
                 skipped += 1
-                print(f"=== WASTED COUNT | {skipped} ===");
+                print(f"=== WASTED COUNT | {skipped} ===")
                 used_samples.append(index)
                 continue
             # -- just fit current sample into knapsack
