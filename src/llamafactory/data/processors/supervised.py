@@ -244,7 +244,7 @@ def preprocess_packed_supervised_dataset(
             total = len(batch_input_ids[index])
             # -- ignore too lengthy samples with mostly no data for active learning (most labels are -100)
             wasted = sum(label < 0 for label in batch_labels[index])
-            if total > (0.50 * cutoff) and wasted > (0.80 * total):
+            if total > (0.80 * cutoff) and wasted > (0.80 * total):
                 skipped += 1
                 print(f"=== WASTED COUNT | {skipped} ===")
                 used_samples.append(index)
