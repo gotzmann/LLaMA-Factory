@@ -11,7 +11,7 @@ stage: sft
 do_train: true
 finetuning_type: lora
 lora_target: all
-additional_target: embed_tokens,lm_head
+# additional_target: embed_tokens,lm_head
 lora_rank: 64
 lora_alpha: 16
 lora_dropout: 0.1
