@@ -440,15 +440,12 @@ def _create_unsloth_optimizer(
     optimizer = optimizer_cls(optimizer_grouped_parameters, **optimizer_kwargs)
     return optimizer
 
-# gotzmann - local code
+# gotzmann - adaptation code
 def create_unsloth_optimizer(
     model: "PreTrainedModel",
     training_args: "Seq2SeqTrainingArguments",
     finetuning_args: "FinetuningArguments",
 ) -> "torch.optim.Optimizer":
-
-    ##### default_lr = training_args.learning_rate
-    ##### embedding_lr = 0.00002 # gotzmann
 
     optim_class, optim_kwargs = Trainer.get_optimizer_cls_and_kwargs(training_args)
 
@@ -458,10 +455,6 @@ def create_unsloth_optimizer(
         optim_kwargs,
         1e-5, #  embedding_learning_rate,
     )
-
-    # optimizer = optim_class(param_groups, **optim_kwargs)
-    # logger.info(f"Using LoRA+ optimizer with loraplus lr ratio {finetuning_args.loraplus_lr_ratio:.2f}.")
-    # return optimizer
 
     logger.info_rank0("Unsloth optimizer embedding LR = 1e-5")
     return optimizer
@@ -486,7 +479,7 @@ def create_custom_optimizer(
 
     # gotzmann
     # if training_args.use_unsloth:
-    return create_unsloth_optimizer(model, training_args, finetuning_args)
+    # return create_unsloth_optimizer(model, training_args, finetuning_args)
 
 
 def create_custom_scheduler(
