@@ -479,7 +479,7 @@ def create_custom_optimizer(
 
     # gotzmann
     # if training_args.use_unsloth:
-    # return create_unsloth_optimizer(model, training_args, finetuning_args)
+    return create_unsloth_optimizer(model, training_args, finetuning_args)
 
 
 def create_custom_scheduler(
