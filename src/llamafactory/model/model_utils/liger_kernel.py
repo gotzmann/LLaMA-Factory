@@ -61,8 +61,8 @@ def apply_liger_kernel(
         logger.info_rank0("Current training stage does not support chunked cross entropy.")
         kwargs = {"fused_linear_cross_entropy": False}
     else:
-        # kwargs = {}
-        kwargs = {"fused_linear_cross_entropy": False} # gotzmann
+        kwargs = {}
+        # kwargs = {"fused_linear_cross_entropy": False} # gotzmann
 
     apply_liger_kernel(**kwargs)
     logger.info_rank0("Liger kernel has been applied to the model.")
