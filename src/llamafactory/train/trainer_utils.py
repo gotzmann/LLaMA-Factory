@@ -404,7 +404,7 @@ def _create_unsloth_optimizer(
     lr = optimizer_kwargs["lr"]
     logger.info_rank0(f"Unsloth optimizer with LR = {lr}")
     # weight_decay = optimizer_kwargs.get("weight_decay", 0.0)
-    weight_decay = optimizer_kwargs.get("weight_decay", 0.02)
+    weight_decay = optimizer_kwargs.get("weight_decay", 0.1)
     logger.info_rank0(f"Unsloth optimizer with WD = {weight_decay}")
 
     param_groups = \
