@@ -72,7 +72,7 @@ class VllmEngine(BaseEngine):
 
         engine_args = {
             "model": model_args.model_name_or_path,
-            "trust_remote_code": True,
+            "trust_remote_code": model_args.trust_remote_code,
             "download_dir": model_args.cache_dir,
             "dtype": model_args.infer_dtype,
             "max_model_len": model_args.vllm_maxlen,
@@ -170,7 +170,7 @@ class VllmEngine(BaseEngine):
             stop=stop,
             stop_token_ids=[self.tokenizer.eos_token_id] + self.tokenizer.additional_special_tokens_ids,
             max_tokens=max_tokens,
-            skip_special_tokens=True,
+            skip_special_tokens=self.generating_args["skip_special_tokens"],
         )
 
         if images is not None:  # add image features

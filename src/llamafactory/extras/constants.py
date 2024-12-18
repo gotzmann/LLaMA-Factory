@@ -81,19 +81,6 @@ TRAINING_STAGES = {
 
 STAGES_USE_PAIR_DATA = {"rm", "dpo"}
 
-SUPPORTED_CLASS_FOR_BLOCK_DIAG_ATTN = {
-    "cohere",
-    "falcon",
-    "gemma",
-    "gemma2",
-    "llama",
-    "mistral",
-    "phi",
-    "phi3",
-    "qwen2",
-    "starcoder2",
-}
-
 SUPPORTED_CLASS_FOR_S2ATTN = {"llama"}
 
 VIDEO_PLACEHOLDER = os.environ.get("VIDEO_PLACEHOLDER", "<video>")
@@ -849,6 +836,10 @@ register_model_group(
         "Llama-3.2-3B-Instruct": {
             DownloadSource.DEFAULT: "meta-llama/Llama-3.2-3B-Instruct",
             DownloadSource.MODELSCOPE: "LLM-Research/Llama-3.2-3B-Instruct",
+        },
+        "Llama-3.3-70B-Instruct": {
+            DownloadSource.DEFAULT: "meta-llama/Llama-3.3-70B-Instruct",
+            DownloadSource.MODELSCOPE: "LLM-Research/Llama-3.3-70B-Instruct",
         },
     },
     template="llama3",

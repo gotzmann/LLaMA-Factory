@@ -237,6 +237,10 @@ class ModelArguments(QuantizationArguments, ProcessorArguments, ExportArguments,
         default=False,
         metadata={"help": "Whether or not to disable gradient checkpointing."},
     )
+    use_reentrant_gc: bool = field(
+        default=True,
+        metadata={"help": "Whether or not to use reentrant gradient checkpointing."},
+    )
     upcast_layernorm: bool = field(
         default=False,
         metadata={"help": "Whether or not to upcast the layernorm weights in fp32."},
@@ -280,6 +284,10 @@ class ModelArguments(QuantizationArguments, ProcessorArguments, ExportArguments,
     print_param_status: bool = field(
         default=False,
         metadata={"help": "For debugging purposes, print the status of the parameters in the model."},
+    )
+    trust_remote_code: bool = field(
+        default=False,
+        metadata={"help": "Whether to trust the execution of code from datasets/models defined on the Hub or not."},
     )
     compute_dtype: Optional[torch.dtype] = field(
         default=None,

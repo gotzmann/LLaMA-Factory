@@ -56,7 +56,7 @@ def run_sft(
 
     data_collator = SFTDataCollatorWith4DAttentionMask(
         template=template,
-        model=model,
+        model=model if not training_args.predict_with_generate else None,
         pad_to_multiple_of=8 if training_args.do_train else None,  # for shift short attention
         label_pad_token_id=IGNORE_INDEX if data_args.ignore_pad_token_for_loss else tokenizer.pad_token_id,
         block_diag_attn=model_args.block_diag_attn,
@@ -130,7 +130,7 @@ def run_sft(
             predict_results.metrics.pop("predict_loss", None)
         trainer.log_metrics("predict", predict_results.metrics)
         trainer.save_metrics("predict", predict_results.metrics)
-        trainer.save_predictions(dataset_module["eval_dataset"], predict_results)
+        trainer.save_predictions(dataset_module["eval_dataset"], predict_results, gen_kwargs)
 
     # Create model card
     create_modelcard_and_push(trainer, model_args, data_args, training_args, finetuning_args)
