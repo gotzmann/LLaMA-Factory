@@ -1,5 +1,6 @@
 enable_liger_kernel: true # works with FSDP
 use_reentrant_gc: true
+disable_shuffling: true
 
 #ignore_data_skip: true
 #resume_from_checkpoint: /home/exported/checkpoint-4115
