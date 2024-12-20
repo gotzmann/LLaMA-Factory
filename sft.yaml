@@ -31,7 +31,7 @@ per_device_train_batch_size: 1
 gradient_accumulation_steps: 2
 lr_scheduler_type: constant_with_warmup # constant | constant_with_warmup | linear | cosine
 optim: adamw_torch_fused # adamw_torch | adamw_8bit | adamw_torch_fused
-learning_rate: 0.00005
+learning_rate: 0.00006
 # embedding_learning_rate: 3e-5
 weight_decay: 0.03
 warmup_steps: 30
