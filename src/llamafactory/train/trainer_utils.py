@@ -399,10 +399,10 @@ def _create_unsloth_optimizer(
     model,
     optimizer_cls,
     optimizer_kwargs,
-    embedding_lr = 3e-5, # 5e-5,
+    embedding_lr = 2e-5, # 5e-5,
 ):
     lr = optimizer_kwargs["lr"]
-    weight_decay = optimizer_kwargs.get("weight_decay", 0.03)
+    weight_decay = optimizer_kwargs.get("weight_decay", 0.002)
 
     logger.info_rank0(f"Unsloth optimizer LR = {lr}")
     logger.info_rank0(f"Unsloth optimizer embedding LR = {embedding_lr}")
