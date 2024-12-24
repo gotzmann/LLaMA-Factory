@@ -31,9 +31,9 @@ per_device_train_batch_size: 1
 gradient_accumulation_steps: 2
 lr_scheduler_type: constant_with_warmup # constant | constant_with_warmup | linear | cosine
 optim: adamw_torch_fused # adamw_torch | adamw_8bit | adamw_torch_fused
-learning_rate: 0.00006
-# embedding_learning_rate: 3e-5
-weight_decay: 0.03
+learning_rate: 0.00005
+# embedding_learning_rate: 2e-5
+weight_decay: 0.002
 warmup_steps: 30
 
 output_dir: /home/exported
@@ -44,7 +44,8 @@ save_steps: 2000
 bf16: true
 flash_attn: fa2
 gradient_checkpointing: true
-max_grad_norm: 1.0
+max_grad_norm: 0.5
+# gradient_clipping: 0.5
 ddp_timeout: 180000000
 ddp_find_unused_parameters: false
 overwrite_cache: true
