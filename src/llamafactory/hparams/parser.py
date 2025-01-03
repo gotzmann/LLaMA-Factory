@@ -112,6 +112,10 @@ def _check_extra_dependencies(
     finetuning_args: "FinetuningArguments",
     training_args: Optional["Seq2SeqTrainingArguments"] = None,
 ) -> None:
+    if os.getenv("DISABLE_VERSION_CHECK", "0").lower() in ["true", "1"]:
+        logger.warning_once("Version checking has been disabled, may lead to unexpected behaviors.")
+        return
+
     if model_args.use_unsloth:
         require_version("unsloth", "Please install unsloth: https://github.com/unslothai/unsloth")
 

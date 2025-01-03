@@ -325,6 +325,7 @@ register_model_group(
     models={
         "Codestral-22B-v0.1-Chat": {
             DownloadSource.DEFAULT: "mistralai/Codestral-22B-v0.1",
+            DownloadSource.MODELSCOPE: "swift/Codestral-22B-v0.1",
         },
     },
     template="mistral",
@@ -420,15 +421,19 @@ register_model_group(
         },
         "DeepSeek-Coder-V2-16B-Base": {
             DownloadSource.DEFAULT: "deepseek-ai/DeepSeek-Coder-V2-Lite-Base",
+            DownloadSource.MODELSCOPE: "deepseek-ai/DeepSeek-Coder-V2-Lite-Base",
         },
         "DeepSeek-Coder-V2-236B-Base": {
             DownloadSource.DEFAULT: "deepseek-ai/DeepSeek-Coder-V2-Base",
+            DownloadSource.MODELSCOPE: "deepseek-ai/DeepSeek-Coder-V2-Base",
         },
         "DeepSeek-Coder-V2-16B-Instruct": {
             DownloadSource.DEFAULT: "deepseek-ai/DeepSeek-Coder-V2-Lite-Instruct",
+            DownloadSource.MODELSCOPE: "deepseek-ai/DeepSeek-Coder-V2-Lite-Instruct",
         },
         "DeepSeek-Coder-V2-236B-Instruct": {
             DownloadSource.DEFAULT: "deepseek-ai/DeepSeek-Coder-V2-Instruct",
+            DownloadSource.MODELSCOPE: "deepseek-ai/DeepSeek-Coder-V2-Instruct",
         },
     },
     template="deepseek",
@@ -443,6 +448,7 @@ register_model_group(
         },
         "DeepSeek-Coder-7B-Base": {
             DownloadSource.DEFAULT: "deepseek-ai/deepseek-coder-7b-base-v1.5",
+            DownloadSource.MODELSCOPE: "deepseek-ai/deepseek-coder-7b-base-v1.5",
         },
         "DeepSeek-Coder-33B-Base": {
             DownloadSource.DEFAULT: "deepseek-ai/deepseek-coder-33b-base",
@@ -454,6 +460,7 @@ register_model_group(
         },
         "DeepSeek-Coder-7B-Instruct": {
             DownloadSource.DEFAULT: "deepseek-ai/deepseek-coder-7b-instruct-v1.5",
+            DownloadSource.MODELSCOPE: "deepseek-ai/deepseek-coder-7b-instruct-v1.5",
         },
         "DeepSeek-Coder-33B-Instruct": {
             DownloadSource.DEFAULT: "deepseek-ai/deepseek-coder-33b-instruct",
@@ -461,6 +468,33 @@ register_model_group(
         },
     },
     template="deepseekcoder",
+)
+
+
+register_model_group(
+    models={
+        "DeepSeek-V2-236B-Chat-0628": {
+            DownloadSource.DEFAULT: "deepseek-ai/DeepSeek-V2-Chat-0628",
+            DownloadSource.MODELSCOPE: "deepseek-ai/DeepSeek-V2-Chat-0628",
+        },
+        "DeepSeek-V2.5-236B-Chat": {
+            DownloadSource.DEFAULT: "deepseek-ai/DeepSeek-V2.5",
+            DownloadSource.MODELSCOPE: "deepseek-ai/DeepSeek-V2.5",
+        },
+        "DeepSeek-V2.5-236B-Chat-1210": {
+            DownloadSource.DEFAULT: "deepseek-ai/DeepSeek-V2.5-1210",
+            DownloadSource.MODELSCOPE: "deepseek-ai/DeepSeek-V2.5-1210",
+        },
+        "DeepSeek-V3-685B-Base": {
+            DownloadSource.DEFAULT: "deepseek-ai/DeepSeek-V3-Base",
+            DownloadSource.MODELSCOPE: "deepseek-ai/DeepSeek-V3-Base",
+        },
+        "DeepSeek-V3-685B-Chat": {
+            DownloadSource.DEFAULT: "deepseek-ai/DeepSeek-V3",
+            DownloadSource.MODELSCOPE: "deepseek-ai/DeepSeek-V3",
+        },
+    },
+    template="deepseek3",
 )
 
 
@@ -482,6 +516,7 @@ register_model_group(
         },
         "Falcon-11B": {
             DownloadSource.DEFAULT: "tiiuae/falcon-11B",
+            DownloadSource.MODELSCOPE: "tiiuae/falcon-11B",
         },
         "Falcon-40B": {
             DownloadSource.DEFAULT: "tiiuae/falcon-40b",
@@ -585,14 +620,99 @@ register_model_group(
 
 register_model_group(
     models={
-        "Index-1.9B-Chat": {
-            DownloadSource.DEFAULT: "IndexTeam/Index-1.9B-Chat",
-            DownloadSource.MODELSCOPE: "IndexTeam/Index-1.9B-Chat",
+        "GPT-2-Small": {
+            DownloadSource.DEFAULT: "openai-community/gpt2",
+            DownloadSource.MODELSCOPE: "AI-ModelScope/gpt2",
         },
-        "Index-1.9B-Character-Chat": {
-            DownloadSource.DEFAULT: "IndexTeam/Index-1.9B-Character",
-            DownloadSource.MODELSCOPE: "IndexTeam/Index-1.9B-Character",
+        "GPT-2-Medium": {
+            DownloadSource.DEFAULT: "openai-community/gpt2-medium",
+            DownloadSource.MODELSCOPE: "AI-ModelScope/gpt2-medium",
         },
+        "GPT-2-Large": {
+            DownloadSource.DEFAULT: "openai-community/gpt2-large",
+            DownloadSource.MODELSCOPE: "AI-ModelScope/gpt2-large",
+        },
+        "GPT-2-XL": {
+            DownloadSource.DEFAULT: "openai-community/gpt2-xl",
+            DownloadSource.MODELSCOPE: "goodbai95/GPT2-xl",
+        },
+    },
+)
+
+
+register_model_group(
+    models={
+        "Granite-3.0-1B-A400M-Base": {
+            DownloadSource.DEFAULT: "ibm-granite/granite-3.0-1b-a400m-base",
+            DownloadSource.MODELSCOPE: "AI-ModelScope/granite-3.0-1b-a400m-base",
+        },
+        "Granite-3.0-3B-A800M-Base": {
+            DownloadSource.DEFAULT: "ibm-granite/granite-3.0-3b-a800m-base",
+            DownloadSource.MODELSCOPE: "AI-ModelScope/granite-3.0-3b-a800m-base",
+        },
+        "Granite-3.0-2B-Base": {
+            DownloadSource.DEFAULT: "ibm-granite/granite-3.0-2b-base",
+            DownloadSource.MODELSCOPE: "AI-ModelScope/granite-3.0-2b-base",
+        },
+        "Granite-3.0-8B-Base": {
+            DownloadSource.DEFAULT: "ibm-granite/granite-3.0-8b-base",
+            DownloadSource.MODELSCOPE: "AI-ModelScope/granite-3.0-8b-base",
+        },
+        "Granite-3.0-1B-A400M-Instruct": {
+            DownloadSource.DEFAULT: "ibm-granite/granite-3.0-1b-a400m-instruct",
+            DownloadSource.MODELSCOPE: "AI-ModelScope/granite-3.0-1b-a400m-instruct",
+        },
+        "Granite-3.0-3B-A800M-Instruct": {
+            DownloadSource.DEFAULT: "ibm-granite/granite-3.0-3b-a800m-instruct",
+            DownloadSource.MODELSCOPE: "AI-ModelScope/granite-3.0-3b-a800m-instruct",
+        },
+        "Granite-3.0-2B-Instruct": {
+            DownloadSource.DEFAULT: "ibm-granite/granite-3.0-2b-instruct",
+            DownloadSource.MODELSCOPE: "AI-ModelScope/granite-3.0-2b-instruct",
+        },
+        "Granite-3.0-8B-Instruct": {
+            DownloadSource.DEFAULT: "ibm-granite/granite-3.0-8b-instruct",
+            DownloadSource.MODELSCOPE: "AI-ModelScope/granite-3.0-8b-instruct",
+        },
+        "Granite-3.1-1B-A400M-Base": {
+            DownloadSource.DEFAULT: "ibm-granite/granite-3.1-1b-a400m-base",
+            DownloadSource.MODELSCOPE: "AI-ModelScope/granite-3.1-1b-a400m-base",
+        },
+        "Granite-3.1-3B-A800M-Base": {
+            DownloadSource.DEFAULT: "ibm-granite/granite-3.1-3b-a800m-base",
+            DownloadSource.MODELSCOPE: "AI-ModelScope/granite-3.1-3b-a800m-base",
+        },
+        "Granite-3.1-2B-Base": {
+            DownloadSource.DEFAULT: "ibm-granite/granite-3.1-2b-base",
+            DownloadSource.MODELSCOPE: "AI-ModelScope/granite-3.1-2b-base",
+        },
+        "Granite-3.1-8B-Base": {
+            DownloadSource.DEFAULT: "ibm-granite/granite-3.1-8b-base",
+            DownloadSource.MODELSCOPE: "AI-ModelScope/granite-3.1-8b-base",
+        },
+        "Granite-3.1-1B-A400M-Instruct": {
+            DownloadSource.DEFAULT: "ibm-granite/granite-3.1-1b-a400m-instruct",
+            DownloadSource.MODELSCOPE: "AI-ModelScope/granite-3.1-1b-a400m-instruct",
+        },
+        "Granite-3.1-3B-A800M-Instruct": {
+            DownloadSource.DEFAULT: "ibm-granite/granite-3.1-3b-a800m-instruct",
+            DownloadSource.MODELSCOPE: "AI-ModelScope/granite-3.1-3b-a800m-instruct",
+        },
+        "Granite-3.1-2B-Instruct": {
+            DownloadSource.DEFAULT: "ibm-granite/granite-3.1-2b-instruct",
+            DownloadSource.MODELSCOPE: "AI-ModelScope/granite-3.1-2b-instruct",
+        },
+        "Granite-3.1-8B-Instruct": {
+            DownloadSource.DEFAULT: "ibm-granite/granite-3.1-8b-instruct",
+            DownloadSource.MODELSCOPE: "AI-ModelScope/granite-3.1-8b-instruct",
+        },
+    },
+    template="granite3",
+)
+
+
+register_model_group(
+    models={
         "Index-1.9B-Base": {
             DownloadSource.DEFAULT: "IndexTeam/Index-1.9B",
             DownloadSource.MODELSCOPE: "IndexTeam/Index-1.9B",
@@ -600,6 +720,14 @@ register_model_group(
         "Index-1.9B-Base-Pure": {
             DownloadSource.DEFAULT: "IndexTeam/Index-1.9B-Pure",
             DownloadSource.MODELSCOPE: "IndexTeam/Index-1.9B-Pure",
+        },
+        "Index-1.9B-Chat": {
+            DownloadSource.DEFAULT: "IndexTeam/Index-1.9B-Chat",
+            DownloadSource.MODELSCOPE: "IndexTeam/Index-1.9B-Chat",
+        },
+        "Index-1.9B-Character-Chat": {
+            DownloadSource.DEFAULT: "IndexTeam/Index-1.9B-Character",
+            DownloadSource.MODELSCOPE: "IndexTeam/Index-1.9B-Character",
         },
         "Index-1.9B-Chat-32K": {
             DownloadSource.DEFAULT: "IndexTeam/Index-1.9B-32K",
@@ -1217,15 +1345,19 @@ register_model_group(
         },
         "PaliGemma2-3B-pt-448": {
             DownloadSource.DEFAULT: "google/paligemma2-3b-pt-448",
+            DownloadSource.MODELSCOPE: "AI-ModelScope/paligemma2-3b-pt-448",
         },
         "PaliGemma2-3B-pt-896": {
             DownloadSource.DEFAULT: "google/paligemma2-3b-pt-896",
+            DownloadSource.MODELSCOPE: "AI-ModelScope/paligemma2-3b-pt-896",
         },
         "PaliGemma2-10B-pt-224": {
             DownloadSource.DEFAULT: "google/paligemma2-10b-pt-224",
+            DownloadSource.MODELSCOPE: "AI-ModelScope/paligemma2-10b-pt-224",
         },
         "PaliGemma2-10B-pt-448": {
             DownloadSource.DEFAULT: "google/paligemma2-10b-pt-448",
+            DownloadSource.MODELSCOPE: "AI-ModelScope/paligemma2-10b-pt-448",
         },
         "PaliGemma2-10B-pt-896": {
             DownloadSource.DEFAULT: "google/paligemma2-10b-pt-896",
@@ -1233,12 +1365,15 @@ register_model_group(
         },
         "PaliGemma2-28B-pt-224": {
             DownloadSource.DEFAULT: "google/paligemma2-28b-pt-224",
+            DownloadSource.MODELSCOPE: "AI-ModelScope/paligemma2-28b-pt-224",
         },
         "PaliGemma2-28B-pt-448": {
             DownloadSource.DEFAULT: "google/paligemma2-28b-pt-448",
+            DownloadSource.MODELSCOPE: "AI-ModelScope/paligemma2-28b-pt-448",
         },
         "PaliGemma2-28B-pt-896": {
             DownloadSource.DEFAULT: "google/paligemma2-28b-pt-896",
+            DownloadSource.MODELSCOPE: "AI-ModelScope/paligemma2-28b-pt-896",
         },
     },
     template="paligemma",
@@ -1933,6 +2068,10 @@ register_model_group(
             DownloadSource.DEFAULT: "Qwen/Qwen2-VL-72B-Instruct-AWQ",
             DownloadSource.MODELSCOPE: "Qwen/Qwen2-VL-72B-Instruct-AWQ",
         },
+        "QVQ-72B-Preview": {
+            DownloadSource.DEFAULT: "Qwen/QVQ-72B-Preview",
+            DownloadSource.MODELSCOPE: "Qwen/QVQ-72B-Preview",
+        },
     },
     template="qwen2_vl",
     vision=True,
@@ -1967,6 +2106,7 @@ register_model_group(
     models={
         "Skywork-o1-Open-Llama-3.1-8B": {
             DownloadSource.DEFAULT: "Skywork/Skywork-o1-Open-Llama-3.1-8B",
+            DownloadSource.MODELSCOPE: "AI-ModelScope/Skywork-o1-Open-Llama-3.1-8B",
         }
     },
     template="skywork_o1",
